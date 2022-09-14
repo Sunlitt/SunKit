@@ -166,7 +166,7 @@ public class Sun {
         return timeCorrectionFactorInSeconds
     }
     
-    init(location: CLLocation,timeZone: Double) {
+    public init(location: CLLocation,timeZone: Double) {
         self.timeZone = timeZone
         self.location = location
         self.daysPassedFromStartOfYear = (try? getDaysPassedFromStartOfTheYear()) ?? 0
