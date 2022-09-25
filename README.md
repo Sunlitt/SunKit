@@ -45,7 +45,7 @@ where:
 
 $$B=\frac{360}{365}(d-81)$$
 
-in degrees and $\(d\)$ is thenumber of days since the start of the year.
+in degrees and $\(d\)$ is the number of days since the start of the year.
 
 ``` swift
 private var b: Angle {
