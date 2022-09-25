@@ -2,8 +2,7 @@
 
 <img height="110" alt="sunkit" src="https://user-images.githubusercontent.com/55358113/192140073-de19a887-b6e8-49b8-bba2-142df171df3e.png">
 
-SunKit is a Swift package which uses advanced math and trigonometry to
-provide to compute several information about the Sun. This package has
+SunKit is a Swift package which uses advanced math and trigonometry to compute several information about the Sun. This package has
 been developed by a team of students not yet very familiar with the
 Swift programming language, which means that there could be a lot of
 space for improvements. Every contribution is welcome.
