@@ -12,7 +12,7 @@ space for improvements. Every contribution is welcome.
 SunKit was first developed as part of a bigger project: Litt (https://github.com/seldon1000/Litt-AppStore). Even though Litt is not meant to be released as Open Source, me and the rest of the team behind it decided to wrap the fundamental logic of the app and make a library out of it.
 
 To compute Sunrise, Sunset, Golden Hour and so on we only need a
-CLLocation and the time zone of that location.
+CLLocation and the time zone of that location. CoreLocation and SwiftUI framework are required for SunKit to work.
 
 ## Local Solar Time Meridian
 
