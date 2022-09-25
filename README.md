@@ -9,10 +9,10 @@ space for improvements. Every contribution is welcome.
 
 <img height="50" alt="sunkit" src="https://user-images.githubusercontent.com/55358113/174021100-c2c410f1-30e0-433c-b8ee-a7152545aa87.png"> [<img src="https://user-images.githubusercontent.com/55358113/174020637-ca23803f-341c-48ce-b896-1fd4b7423310.svg" height="50">](https://apps.apple.com/app/litt/id1628751457)
 
-SunKit was first developed as part of a bigger project: Litt (https://github.com/seldon1000/Litt-AppStore). Even though Litt is not meant to be released as Open Source, me and the rest of team behind it decided to wrap the fundamental logic of the app and make a library out of it.
+SunKit was first developed as part of a bigger project: Litt (https://github.com/seldon1000/Litt-AppStore). Even though Litt is not meant to be released as Open Source, me and the rest of the team behind it decided to wrap the fundamental logic of the app and make a library out of it.
 
-To compute Sunrise, Sunset; Golden Hour and so on we only need a
-location and the time zone of that location.
+To compute Sunrise, Sunset, Golden Hour and so on we only need a
+CLLocation and the time zone of that location.
 
 ## Local Solar Time Meridian
 
