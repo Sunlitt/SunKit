@@ -404,8 +404,8 @@ In photography, the golden hour is the period of daytime shortly after
 sunrise or before sunset, during which daylight is redder and softer
 than when the sun is higher in the sky.
 
-By definition, golden hour starts when the sun it’s at elevation; and
-ends when it is at elevation.
+By definition, golden hour starts when the sun it’s at $6°$ elevation  and
+ends when it is at $-4°$ elevation.
 
 Do compute it we have the function *getDateFrom(elevation : Angle)* ,
 where we pass in it the angle and it outputs the time at which the sun
