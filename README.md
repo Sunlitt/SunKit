@@ -86,19 +86,21 @@ private func getDaysPassedFromStartOfTheYear() throws -> Int {
 }
 ```
 
-The *calendar* variable it’s a private varibale inside the *Sun* struct,
+The *calendar* variable it’s a private variable inside the *Sun* struct,
 it’s initialised with the gregorian identifier.
+We need this to compute the days passed from the start of the year, using a gregorian calendar.
+It could happen that the user uses a Japanese or a Buddhist calendar.
+
 
 ``` swift
 private var calendar: Calendar = .init(identifier: .gregorian)
 ```
 
-We need this variable because an user could use a different calendar in
-his phone, such as Japanese.
+
 
 ## Time Correction Factor
 
-The net Time Correction Factor (in minutes) accounts for the variation
+The Time Correction Factor (in minutes) accounts for the variation
 of the Local Solar Time (LST) within a given time zone due to the
 longitude variations within the time zone and also incorporates the EoT
 above.
@@ -161,7 +163,7 @@ the Local Solar Time. Basically here the second row compute the equation.
 We don’t need to divide the TC beacuse we already
 have it in seconds. We then extract the minutes and the hour from the
 date. For computation purpouse, we use a proportion to move the variable
-*localSolarTimeMinute* from 0...59 range to the range 0...100.
+*localSolarTimeMinute* from [0,59] range to [0,100].
 
 ## Hour Angle
 
