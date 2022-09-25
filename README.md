@@ -433,19 +433,17 @@ private func getGoldenHourFinish() throws -> Date {
 }
 ```
 
-To get a date from elevation we need to do three step, the first one
+To get a date from elevation we need to do two steps, the first one
 it’s to compute HRA from the elevation in input.
+That is, 6° to get the get when the golden hour starts.
 
 $$HRA=\arccos \frac{\sin (\alpha) - \sin (decl)\sin (lat)}{\cos (l a t) \cos (d e c l)}$$
 
-After that we need now to compute the local solar time (LST) with the
+After that we need now to compute the local time (LT) with the
 following equation:
 
-$$LST = 12 + (\frac{HRA}{15°})$$
+$$LT = 12 + (\frac{HRA}{15°}) - TC$$
 
-The last step it’s to compute the local time (LT).
-
-$$LT = LST - TC$$
 
 ``` swift
 private func getDateFrom(elevation : Angle) -> Date? {
@@ -472,19 +470,18 @@ private func getDateFrom(elevation : Angle) -> Date? {
    return newDate
 }
 ```
+The variable *hraAngle* will store the result of the first equation.
 
-In this function we compute the equations
-at row 9. The tenth row simply compute,
-where 43200 it’s simple 12 hour in seconds, and we multiply
-$\((\frac{HRA}{15°})\)$ by 3600 to convert this factor also in
+Then we simply compute the second equation, and stores the value inside *secondsForSunToReachElevation*; where 43200 it’s simple 12 hour in seconds, and we multiply $\((\frac{HRA}{15°})\)$ by 3600 to convert this factor also in
 seconds.
 
-The if at row 13 is used beacuse near the poles could happen that the
+The *if secondsForSunToReachElevation > secondsInOneDay* is used beacuse near the poles could happen that the
 sun will never reach that elevation, for example in summer in the north
-pole is always day. The code in row 20 is needed because
-*calendar.date(byAdding)* will add one hour more the day where the time
-zone goes from +1 to +2. For example in Italy this happen 27 March. Also
-the viceversa will happen of course.
+pole is always day. 
+After added *secondsForSunToReachElevation* to *startOfTheDay* (i.e midnight of *date*), we extract hours, minutes and seconds from *secondsForSunToReachElevation*.
+
+Then setting the hour, minute and seconds could seem redunant, but we need to do it because *calendar.date(byAdding)* will add one hour more the day where the timezone goes from +1 to +2. For example in Italy this happen 27 March.
+Also the viceversa will happen of course.
 
 ## References
 
