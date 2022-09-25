@@ -88,8 +88,8 @@ private func getDaysPassedFromStartOfTheYear() throws -> Int {
 
 The *calendar* variable it’s a private variable inside the *Sun* struct,
 it’s initialised with the gregorian identifier.
-We need this to compute the days passed from the start of the year, using a gregorian calendar.
-It could happen that the user uses a Japanese or a Buddhist calendar.
+We need this to compute the days passed from the start of the year by using a gregorian calendar, 
+it could in fact happen that the user uses a Japanese or a Buddhist calendar.
 
 
 ``` swift
