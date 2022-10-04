@@ -2,17 +2,14 @@
 
 <img height="110" alt="sunkit" src="https://user-images.githubusercontent.com/55358113/192140073-de19a887-b6e8-49b8-bba2-142df171df3e.png">
 
-SunKit is a Swift package which uses advanced math and trigonometry to compute several information about the Sun. This package has
-been developed by a team of students not yet very familiar with the
-Swift programming language, which means that there could be a lot of
-space for improvements. Every contribution is welcome.
+SunKit is a Swift package which uses math and trigonometry to compute several information about the Sun. This package has been developed by a team of learners relatively new to the Swift programming language, which means that there could be a lot of space for improvements. Every contribution is welcome.
 
 <img height="50" alt="sunkit" src="https://user-images.githubusercontent.com/55358113/174021100-c2c410f1-30e0-433c-b8ee-a7152545aa87.png"> [<img src="https://user-images.githubusercontent.com/55358113/174020637-ca23803f-341c-48ce-b896-1fd4b7423310.svg" height="50">](https://apps.apple.com/app/litt/id1628751457)
 
-SunKit was first developed as part of a bigger project: Litt (https://github.com/seldon1000/Litt-AppStore). Even though Litt is not meant to be released as Open Source, me and the rest of the team behind it decided to wrap the fundamental logic of the app and make a library out of it.
+SunKit was first developed as part of a bigger project: Sunlitt (https://github.com/Sunlitt/Sunlitt-AppStore). Even though Sunlitt is not meant to be released as Open Source we decided to wrap the fundamental logic of the app and make an open source library out of it.
 
 To compute Sunrise, Sunset, Golden Hour and so on we only need a
-CLLocation and the time zone of that location. CoreLocation and SwiftUI framework are required for SunKit to work.
+CLLocation and the time zone of that location. **CoreLocation and SwiftUI framework are required for SunKit to work**.
 
 ## Local Solar Time Meridian
 
