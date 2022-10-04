@@ -4,25 +4,19 @@
 
 SunKit is a Swift package which uses math and trigonometry to compute several information about the Sun. This package has been developed by a team of learners relatively new to the Swift programming language, which means that there could be a lot of space for improvements. Every contribution is welcome.
 
-<img height="50" alt="sunkit" src="https://user-images.githubusercontent.com/55358113/174021100-c2c410f1-30e0-433c-b8ee-a7152545aa87.png"> [<img src="https://user-images.githubusercontent.com/55358113/174020637-ca23803f-341c-48ce-b896-1fd4b7423310.svg" height="50">](https://apps.apple.com/app/litt/id1628751457)
+<img height="50" alt="sunkit" src="https://user-images.githubusercontent.com/55358113/174021100-c2c410f1-30e0-433c-b8ee-a7152545aa87.png"> [<img src="https://user-images.githubusercontent.com/55358113/174020637-ca23803f-341c-48ce-b896-1fd4b7423310.svg" height="50">](https://apps.apple.com/app/sunlitt/id1628751457)
 
 SunKit was first developed as part of a bigger project: Sunlitt (https://github.com/Sunlitt/Sunlitt-AppStore). Even though Sunlitt is not meant to be released as Open Source we decided to wrap the fundamental logic of the app and make an open source library out of it.
 
-To compute Sunrise, Sunset, Golden Hour and so on we only need a
-CLLocation and the time zone of that location. **CoreLocation and SwiftUI framework are required for SunKit to work**.
+To compute Sunrise, Sunset, Golden Hour and so on we only need a CLLocation and the time zone of that location. **CoreLocation and SwiftUI framework are required for SunKit to work**.
 
 ## Local Solar Time Meridian
 
-The Local Standard Time Meridian is a reference meridian used for a
-particular time zone and is similar to the Prime Meridian, which is used
-for Greenwich Mean Time. The LSTM is calculated according to the
-equation:
+The Local Standard Time Meridian is a reference meridian used for a particular time zone and is similar to the Prime Meridian, which is used for Greenwich Mean Time. The LSTM is calculated according to the equation:
 
 $$LSTM= 15°  \Delta T_{U T C}$$
 
-where $\Delta T_{U T C}$ is the difference of the Local Time (LT) from
-Universal Coordinated Time (UTC) in hours. For instance, Rome Italy is
-UTC \(+2\) so the Local Standard Time Meridian is $30°$.
+where $\Delta T_{U T C}$ is the difference of the Local Time (LT) from Universal Coordinated Time (UTC) in hours. For instance, Rome Italy is UTC \(+2\) so the Local Standard Time Meridian is $30°$.
 
 ``` swift
 private var localStandardTimeMeridian: Double {
@@ -32,9 +26,7 @@ private var localStandardTimeMeridian: Double {
 
 ## The Equation Of Time
 
-The equation of time (EoT) (in minutes) is an empirical equation that
-corrects for the eccentricity of the Earth’s orbit and the Earth’s axial
-tilt. An approximation 2 accurate to within $\frac{1}{2}$ minute is:
+The equation of time (EoT) (in minutes) is an empirical equation that corrects for the eccentricity of the Earth’s orbit and the Earth’s axial tilt. An approximation 2 accurate to within $\frac{1}{2}$ minute is:
 
 $$E o T=9.87 \sin (2 B)-7.53 \cos (B)-1.5 \sin (B)$$
 
@@ -83,10 +75,8 @@ private func getDaysPassedFromStartOfTheYear() throws -> Int {
 }
 ```
 
-The *calendar* variable it’s a private variable inside the *Sun* struct,
-it’s initialised with the gregorian identifier.
-We need this to compute the days passed from the start of the year by using a gregorian calendar, 
-it could in fact happen that the user uses a Japanese or a Buddhist calendar.
+The *calendar* variable it’s a private variable inside the *Sun* struct, it’s initialised with the gregorian identifier. 
+We need this to compute the days passed from the start of the year by using a gregorian calendar, it could in fact happen that the user uses a Japanese or a Buddhist calendar.
 
 
 ``` swift
@@ -97,15 +87,11 @@ private var calendar: Calendar = .init(identifier: .gregorian)
 
 ## Time Correction Factor
 
-The Time Correction Factor (in minutes) accounts for the variation
-of the Local Solar Time (LST) within a given time zone due to the
-longitude variations within the time zone and also incorporates the EoT
-above.
+The Time Correction Factor (in minutes) accounts for the variation of the Local Solar Time (LST) within a given time zone due to the longitude variations within the time zone and also incorporates the EoT above.
 
 $$T C=4(\text { Longitude }-L S T M)+E o T$$
 
-The factor of 4 minutes comes from the fact that the Earth rotates $1°$
-every 4 minutes.
+The factor of 4 minutes comes from the fact that the Earth rotates $1°$ every 4 minutes.
 
 ``` swift
 private var timeCorrectionFactorInSeconds: Double {
@@ -118,19 +104,13 @@ private var timeCorrectionFactorInSeconds: Double {
 }
 ```
 
-The *timeCorrectionFactor* variable it’s in the form mm:ss, that’s why
-we extract first the minutes and then the seconds to compute
-*timeCorrectionFactorInSeconds* variable that we need.
+The *timeCorrectionFactor* variable it’s in the form mm:ss, that’s why we extract first the minutes and then the seconds to compute *timeCorrectionFactorInSeconds* variable that we need.
 
 ## Local Solar Time
 
-Twelve noon local solar time (LST) is defined as when the sun is highest
-in the sky. Local time (LT) usually varies from LST because of the
-eccentricity of the Earth’s orbit, and because of human adjustments such
-as time zones and daylight saving.
+Twelve noon local solar time (LST) is defined as when the sun is highest in the sky. Local time (LT) usually varies from LST because of the eccentricity of the Earth’s orbit, and because of human adjustments such as time zones and daylight saving.
 
-The Local Solar Time (LST) can be found by using the previous two
-corrections to adjust the local time (LT).
+The Local Solar Time (LST) can be found by using the previous two corrections to adjust the local time (LT).
 
 $$LST= LT + \frac{TC}{60}$$
 
@@ -154,22 +134,12 @@ private func getLocalSolarTime() throws -> Double {
 }
 ```
 
-The *date* variable inside the *Sun* struct gives us the time at which
-we have to compute the azimuth. But before compute it we need to compute
-the Local Solar Time. Basically here the second row compute the equation.
-We don’t need to divide the TC beacuse we already
-have it in seconds. We then extract the minutes and the hour from the
-date. For computation purpouse, we use a proportion to move the variable
-*localSolarTimeMinute* from [0,59] range to [0,100].
+The *date* variable inside the *Sun* struct gives us the time at which we have to compute the azimuth. But before compute it we need to compute the Local Solar Time. Basically here the second row compute the equation.
+We don’t need to divide the TC beacuse we already have it in seconds. We then extract the minutes and the hour from the date. For computation purpouse, we use a proportion to move the variable *localSolarTimeMinute* from [0,59] range to [0,100].
 
 ## Hour Angle
 
-The Hour Angle converts the local solar time (LST) into the number of
-degrees which the sun moves across the sky. By definition, the Hour
-Angle is $0°$ at solar noon. Since the Earth rotates $15°$ per hour, each
-hour away from solar noon corresponds to an angular motion of the sun in
-the sky of $15°$. In the morning the hour angle is negative, in the
-afternoon the hour angle is positive.
+The Hour Angle converts the local solar time (LST) into the number of degrees which the sun moves across the sky. By definition, the Hour Angle is $0°$ at solar noon. Since the Earth rotates $15°$ per hour, each hour away from solar noon corresponds to an angular motion of the sun in the sky of $15°$. In the morning the hour angle is negative, in the afternoon the hour angle is positive.
 
 $$HRA= 15° + (LST - 12)$$
 
@@ -183,15 +153,7 @@ private var hourAngle: Angle {
 
 ## Declination Angle
 
-The declination angle, denoted by $\(\delta\)$, varies seasonally due to
-the tilt of the Earth on its axis of rotation and the rotation of the
-Earth around the sun. If the Earth were not tilted on its axis of
-rotation, the declination would always be $0°$. However, the Earth is
-tilted by $23.45°$ and the declination angle varies plus or minus this
-amount. Only at the spring and fall equinoxes is the declination angle
-equal to $0°$. The rotation of the Earth around the sun and the change in
-the declination angle is shown in the animation below. To compute the
-declinaiton angle of the Earth: 
+The declination angle, denoted by $\(\delta\)$, varies seasonally due to the tilt of the Earth on its axis of rotation and the rotation of the Earth around the sun. If the Earth were not tilted on its axis of rotation, the declination would always be $0°$. However, the Earth is tilted by $23.45°$ and the declination angle varies plus or minus this amount. Only at the spring and fall equinoxes is the declination angle equal to $0°$. The rotation of the Earth around the sun and the change in the declination angle is shown in the animation below. To compute the declinaiton angle of the Earth: 
 
 $$\delta=23.45^{\circ} \times \sin \left(\frac{360}{365} \times(d-81)\right)$$
 
@@ -206,18 +168,11 @@ private var declination: Angle {
 
 ## Elevation Angle
 
-The elevation angle (used interchangeably with altitude angle) is the
-angular height of the sun in the sky measured from the horizontal.
-Confusingly, both altitude and elevation are also used to describe the
-height in meters above sea level. The elevation is $0°$ at sunrise and 90°
-when the sun is directly overhead (which occurs for example at the
-equator on the spring and fall equinoxes).It can be computed as follow.
+The elevation angle (used interchangeably with altitude angle) is the angular height of the sun in the sky measured from the horizontal. Confusingly, both altitude and elevation are also used to describe the height in meters above sea level. The elevation is $0°$ at sunrise and 90° when the sun is directly overhead (which occurs for example at the equator on the spring and fall equinoxes).It can be computed as follow.
 
 $$\alpha=\sin ^{-1}[\sin \delta \sin \varphi+\cos \delta \cos \varphi \cos (H R A)]$$
 
-Here $HRA$ is the hour angle that we already have computed, $\(\phi\)$ is
-the latitude, and $\(\delta\)$ is the declination angle that we evaluated
-already in the previous chapter.
+Here $HRA$ is the hour angle that we already have computed, $\(\phi\)$ is the latitude, and $\(\delta\)$ is the declination angle that we evaluated already in the previous chapter.
 
 ``` swift
 public var elevation: Angle {
@@ -237,15 +192,7 @@ public var elevation: Angle {
 
 ## Azimuth Angle
 
-The azimuth angle is the compass direction from which the sunlight is
-coming. At solar noon, the sun is always directly south in the northern
-hemisphere and directly north in the southern hemisphere. The azimuth
-angle varies throughout the day as shown in the animation below. At the
-equinoxes, the sun rises directly east and sets directly west regardless
-of the latitude, thus making the azimuth angles 90° at sunrise and 270°
-at sunset. In general however, the azimuth angle varies with the
-latitude and time of year and the full equations to calculate the sun’s
-position throughout the day are given on the following page.
+The azimuth angle is the compass direction from which the sunlight is coming. At solar noon, the sun is always directly south in the northern hemisphere and directly north in the southern hemisphere. The azimuth angle varies throughout the day as shown in the animation below. At the equinoxes, the sun rises directly east and sets directly west regardless of the latitude, thus making the azimuth angles 90° at sunrise and 270° at sunset. In general however, the azimuth angle varies with the latitude and time of year and the full equations to calculate the sun’s position throughout the day are given on the following page.
 
 It can be calculated as follow:
 
@@ -277,19 +224,13 @@ private func getAzimuth() throws -> Double {
 }
 ```
 
-The above equation only gives the correct azimuth in the solar morning
-so that:
+The above equation only gives the correct azimuth in the solar morning so that:
 
   - $$\(Azimuth = A_{zi}, for LST <12\)$$
 
   - $$\(Azimuth = 360° - A_{zi}, for LST > 12\)$$
 
-The *checkDomainForArcSinCosineFunction* simply check if the argument
-that will go inside the asin function or acos it’s inside the domain,
-that is betweent -1 and 1. It’s necessary beacuse with al these
-computations, it could happen that we could have as argument for acos
-function or asin function 1,003 instead of 1. This could happen if you
-pin yourself near one of the two poles.
+The *checkDomainForArcSinCosineFunction* simply check if the argument that will go inside the asin function or acos it’s inside the domain, that is betweent -1 and 1. It’s necessary beacuse with al these computations, it could happen that we could have as argument for acos function or asin function 1,003 instead of 1. This could happen if you pin yourself near one of the two poles.
 
 ``` swift
 private func checkDomainForArcSinCosineFunction(argument: Double) -> Double {
@@ -309,9 +250,7 @@ private func checkDomainForArcSinCosineFunction(argument: Double) -> Double {
 
 ## Sunrise, Sunset and Solar Noon
 
-For the special case of sunrise or sunset, the zenith is set to (the
-approximate correction for atmospheric refraction at sunrise and sunset,
-and the size of the solar disk), and the hour angle becomes:
+For the special case of sunrise or sunset, the zenith is set to (the approximate correction for atmospheric refraction at sunrise and sunset, and the size of the solar disk), and the hour angle becomes:
 
 $$ha=\pm \arccos \frac{\cos (90.833)}{\cos (l a t) \cos (d e c l)}-\tan (l a t) \tan (\text { decl })$$
 
@@ -323,8 +262,7 @@ For UTC solar noon:
 
 $$snoon = 720 - 4 * longitude - EoT$$
 
-Please note that this is for UTC Sunrise, Sunset and Solar Noon.We have
-to convert it in your local time based on your time zone.
+Please note that this is for UTC Sunrise, Sunset and Solar Noon. We have to convert it in your local time based on your time zone.
 
 ``` swift
 private func getSunrise() throws -> Date {
@@ -397,16 +335,11 @@ private func getSolarNoon() throws -> Date {
 
 ## Golden Hour
 
-In photography, the golden hour is the period of daytime shortly after
-sunrise or before sunset, during which daylight is redder and softer
-than when the sun is higher in the sky.
+In photography, the golden hour is the period of daytime shortly after sunrise or before sunset, during which daylight is redder and softer than when the sun is higher in the sky.
 
-By definition, golden hour starts when the sun it’s at $6°$ elevation  and
-ends when it is at $-4°$ elevation.
+By definition, golden hour starts when the sun it’s at $6°$ elevation and ends when it is at $-4°$ elevation.
 
-Do compute it we have the function *getDateFrom(elevation : Angle)* ,
-where we pass in it the angle and it outputs the time at which the sun
-will reach that elevation.
+Do compute it we have the function *getDateFrom(elevation : Angle)*, where we pass in it the angle and it outputs the time at which the sun will reach that elevation.
 
 ``` swift
 private func getGoldenHourStart() throws -> Date {
@@ -430,14 +363,12 @@ private func getGoldenHourFinish() throws -> Date {
 }
 ```
 
-To get a date from elevation we need to do two steps, the first one
-it’s to compute HRA from the elevation in input.
+To get a date from elevation we need to do two steps, the first one it’s to compute HRA from the elevation in input.
 That is, 6° to get the get when the golden hour starts.
 
 $$HRA=\arccos \frac{\sin (\alpha) - \sin (decl)\sin (lat)}{\cos (l a t) \cos (d e c l)}$$
 
-After that we need now to compute the local time (LT) with the
-following equation:
+After that we need now to compute the local time (LT) with the following equation:
 
 $$LT = 12 + (\frac{HRA}{15°}) - TC$$
 
@@ -469,22 +400,18 @@ private func getDateFrom(elevation : Angle) -> Date? {
 ```
 The variable *hraAngle* will store the result of the first equation.
 
-Then we simply compute the second equation, and stores the value inside *secondsForSunToReachElevation*; where 43200 it’s simple 12 hour in seconds, and we multiply $\((\frac{HRA}{15°})\)$ by 3600 to convert this factor also in
-seconds.
+Then we simply compute the second equation, and stores the value inside *secondsForSunToReachElevation*; where 43200 it’s simple 12 hour in seconds, and we multiply $\((\frac{HRA}{15°})\)$ by 3600 to convert this factor also in seconds.
 
-The *if secondsForSunToReachElevation > secondsInOneDay* is used beacuse near the poles could happen that the
-sun will never reach that elevation, for example in summer in the north
-pole is always day. 
+The *if secondsForSunToReachElevation > secondsInOneDay* is used beacuse near the poles could happen that the sun will never reach that elevation, for example in summer in the north pole is always day. 
 After added *secondsForSunToReachElevation* to *startOfTheDay* (i.e midnight of *date*), we extract hours, minutes and seconds from *secondsForSunToReachElevation*.
 
-Then setting the hour, minute and seconds could seem redunant, but we need to do it because *calendar.date(byAdding)* will add one hour more the day where the timezone goes from +1 to +2. For example in Italy this happen 27 March.
-Also the viceversa will happen of course.
+Then setting the hour, minute and seconds could seem redunant, but we need to do it because *calendar.date(byAdding)* will add one hour more the day where the timezone goes from +1 to +2. For example in Italy this happen 27 March. Also the viceversa will happen of course.
 
 ## References
 
-- NOAA Global Monitoring Division. General Solar Position Calculations. url: https://gml.noaa.gov/grad/solcalc/solareqns.PDF.
-- PV Education. url: https://www.pveducation.org.
+* NOAA Global Monitoring Division. General Solar Position Calculations. url: https://gml.noaa.gov/grad/solcalc/solareqns.PDF.
+* PV Education. url: https://www.pveducation.org.
 
 ## Special thanks
 
-- Davide Biancardi (https://github.com/davideilmito): main developer of SunKit.
+* Davide Biancardi (https://github.com/davideilmito): main developer of SunKit.
