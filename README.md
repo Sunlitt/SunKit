@@ -141,7 +141,7 @@ We don’t need to divide the TC beacuse we already have it in seconds. We then 
 
 The Hour Angle converts the local solar time (LST) into the number of degrees which the sun moves across the sky. By definition, the Hour Angle is $0°$ at solar noon. Since the Earth rotates $15°$ per hour, each hour away from solar noon corresponds to an angular motion of the sun in the sky of $15°$. In the morning the hour angle is negative, in the afternoon the hour angle is positive.
 
-$$HRA= 15° + (LST - 12)$$
+$$HRA= 15°(LST - 12)$$
 
 ``` swift
 private var hourAngle: Angle {
