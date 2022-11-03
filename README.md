@@ -6,7 +6,7 @@ SunKit is a Swift package which uses math and trigonometry to compute several in
 
 <img height="50" alt="sunkit" src="https://user-images.githubusercontent.com/55358113/174021100-c2c410f1-30e0-433c-b8ee-a7152545aa87.png"> [<img src="https://user-images.githubusercontent.com/55358113/174020637-ca23803f-341c-48ce-b896-1fd4b7423310.svg" height="50">](https://apps.apple.com/app/sunlitt/id1628751457)
 
-SunKit was first developed as part of a bigger project: Sunlitt (https://github.com/Sunlitt/Sunlitt-AppStore). Even though Sunlitt is not meant to be released as Open Source we decided to wrap the fundamental logic of the app and make an open source library out of it.
+SunKit was first developed as part of a bigger project: [Sunlitt](https://github.com/Sunlitt/Sunlitt-AppStore). Even though Sunlitt is not meant to be released as Open Source we decided to wrap the fundamental logic of the app and make an open source library out of it.
 
 To compute Sunrise, Sunset, Golden Hour and so on we only need a CLLocation and the time zone of that location. **CoreLocation and SwiftUI framework are required for SunKit to work**.
 
@@ -409,9 +409,9 @@ Then setting the hour, minute and seconds could seem redunant, but we need to do
 
 ## References
 
-* NOAA Global Monitoring Division. General Solar Position Calculations. url: https://gml.noaa.gov/grad/solcalc/solareqns.PDF.
-* PV Education. url: https://www.pveducation.org.
+* NOAA Global Monitoring Division. General Solar Position Calculations. [Link](https://gml.noaa.gov/grad/solcalc/solareqns.PDF).
+* PV Education. [Link](https://www.pveducation.org).
 
 ## Special thanks
 
-* Davide Biancardi (https://github.com/davideilmito): main developer of SunKit.
+* [Davide Biancardi](https://github.com/davideilmito): main developer of SunKit.
