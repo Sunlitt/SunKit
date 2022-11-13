@@ -9,6 +9,9 @@ import CoreLocation
 import SwiftUI
 
 public class Sun {
+    private let calendar: Calendar = Calendar(identifier: .gregorian)
+    private let dateFormatter: DateFormatter = DateFormatter()
+    
     public private(set) var location: CLLocation
     public private(set) var timeZone: Double
     public private(set) var date: Date = Date()
@@ -20,11 +23,10 @@ public class Sun {
     public private(set) var goldenHourEnd: Date = Date()
     public private(set) var sunriseAzimuth: Double = 0
     public private(set) var sunsetAzimuth: Double = 0
-    private var calendar: Calendar = .init(identifier: .gregorian)
     
     public static let common: Sun = {
         return Sun(location: CLLocation(latitude: 37.334886, longitude: -122.008988), timeZone: -7)
-    } ()
+    }()
     
     public var isNight: Bool {
         if !isCircumPolar {
@@ -55,13 +57,13 @@ public class Sun {
         let startOfTheDay = calendar.startOfDay(for: date)
         let almostNextDay = startOfTheDay + twentyThreeHoursAndFiftyNineMinutes
         
-        return  sunset == almostNextDay || sunrise < startOfTheDay + 600
+        return sunset == almostNextDay || sunrise < startOfTheDay + 600
     }
     
     public var isAlwaysNight: Bool {
         let twoHoursInSeconds: Double = 7200
         
-        return  sunset - twoHoursInSeconds < sunrise
+        return sunset - twoHoursInSeconds < sunrise
     }
     
     public func getAzimuthFrom(date: Date) throws -> Double {
@@ -80,14 +82,14 @@ public class Sun {
         localSolarTimeMinute *= 0.5084745763 / 0.299
         
         let lst =  localSolarTimeHour + localSolarTimeMinute
-        let hra: Angle = .init(degrees: 15 * (lst - 12))
+        let hra: Angle = .degrees(15 * (lst - 12))
         let declinationRad = declination.radians
         let latitude: Angle = .degrees(location.coordinate.latitude)
         let latitudeRad = latitude.radians
         var elevationArg = sin(declinationRad) * sin(latitudeRad) + cos(declinationRad) * cos(latitudeRad) * cos(hra.radians)
         elevationArg = checkDomainForArcSinCosineFunction(argument: elevationArg)
         let elevationInRadians: Double = asin(elevationArg)
-        let elevation: Angle = .init(radians: elevationInRadians)
+        let elevation: Angle = .radians(elevationInRadians)
         let hourAngleRad = hra.radians
         let elevationRad = elevation.radians
         var azimuthArg = (sin(declinationRad) * cos(latitudeRad) - cos(declinationRad) * sin(latitudeRad) * cos(hourAngleRad)) / cos(elevationRad)
@@ -98,7 +100,7 @@ public class Sun {
             throw SunError.azimuthIsInfinite
         }
         
-        let azimuthAngle: Angle = .init(radians: azimuthRad)
+        let azimuthAngle: Angle = .radians(azimuthRad)
         var azimuth = azimuthAngle.degrees
         
         if lst > 12 {
@@ -111,23 +113,21 @@ public class Sun {
     //Variables To Compute Azimuth
     
     public var elevation: Angle {
-        get {
-            let declinationRad = declination.radians
-            let hourAngleRad = hourAngle.radians
-            let latitude: Angle = .degrees(location.coordinate.latitude)
-            let latitudeRad = latitude.radians
-            var elevationArg = sin(declinationRad) * sin(latitudeRad) + cos(declinationRad) * cos(latitudeRad) * cos(hourAngleRad)
-            elevationArg = checkDomainForArcSinCosineFunction(argument: elevationArg)
-            let elevationInRadians: Double = asin(elevationArg)
-            
-            return .init(radians: elevationInRadians)
-        }
+        let declinationRad = declination.radians
+        let hourAngleRad = hourAngle.radians
+        let latitude: Angle = .degrees(location.coordinate.latitude)
+        let latitudeRad = latitude.radians
+        var elevationArg = sin(declinationRad) * sin(latitudeRad) + cos(declinationRad) * cos(latitudeRad) * cos(hourAngleRad)
+        elevationArg = checkDomainForArcSinCosineFunction(argument: elevationArg)
+        let elevationInRadians: Double = asin(elevationArg)
+        
+        return .radians(elevationInRadians)
     }
     
     private var hourAngle: Angle {
         let angleInDegrees: Double = (localSolarTime - 12.0) * 15
         
-        return .init(degrees: angleInDegrees)
+        return .degrees(angleInDegrees)
     }
     
     private var b: Angle {
@@ -150,10 +150,9 @@ public class Sun {
         let bRad = b.radians
         let declinationInDegree: Double = 23.45 * sin(bRad)
         
-        return .init(degrees: declinationInDegree)
+        return .degrees(declinationInDegree)
     }
     
-    private let dateFormatter: DateFormatter = DateFormatter()
     private var localSolarTime: Double = 0
     private var daysPassedFromStartOfYear: Int = 0
     
@@ -179,7 +178,7 @@ public class Sun {
         self.solarNoon = (try? getSolarNoon()) ?? Date()
         self.sunriseAzimuth = (try? getAzimuthFrom(date:sunrise)) ?? 0
         self.sunsetAzimuth = (try? getAzimuthFrom(date:sunset)) ?? 0
-        self.dateFormatter.calendar = .init(identifier: .gregorian)
+        self.dateFormatter.calendar = Calendar(identifier: .gregorian)
     }
     
     private func checkDomainForArcSinCosineFunction(argument: Double) -> Double {
@@ -340,7 +339,7 @@ public class Sun {
         elevationArg = checkDomainForArcSinCosineFunction(argument: elevationArg)
         let elevationInRadians: Double = asin(elevationArg)
         
-        return .init(radians: elevationInRadians)
+        return .radians(elevationInRadians)
     }
     
     private func getAzimuth() throws -> Double {
@@ -357,7 +356,7 @@ public class Sun {
             throw SunError.azimuthIsInfinite
         }
         
-        let azimuthAngle: Angle = .init(radians: azimuthRad)
+        let azimuthAngle: Angle = .radians(azimuthRad)
         var azimuth = azimuthAngle.degrees
         
         if localSolarTime > 12 {
@@ -373,13 +372,13 @@ public class Sun {
         try generateVariables()
     }
     
-    public func setLocation(_ newLocation: CLLocation) throws{
+    public func setLocation(_ newLocation: CLLocation) throws {
         location = newLocation
         
         try generateVariables()
     }
     
-    public func setTimeZone(_ newTimeZone: Double) throws{
+    public func setTimeZone(_ newTimeZone: Double) throws {
         timeZone = newTimeZone
         
         try generateVariables()
@@ -391,7 +390,7 @@ public class Sun {
         let declinationRad = declination.radians
         var haArg = (cos(Angle.degrees(90.833).radians)) / (cos(latitudeRad) * cos(declinationRad)) - tan(latitudeRad) * tan(declinationRad)
         haArg = checkDomainForArcSinCosineFunction(argument: haArg)
-        let ha: Angle = .init(radians: acos(haArg))
+        let ha: Angle = .radians(acos(haArg))
         let sunriseUTCMinutes = 720 - 4 * (location.coordinate.longitude + ha.degrees) - equationOfTime
         let sunriseSeconds = (sunriseUTCMinutes + timeZone * 60 ) * 60
         let startOfDay = calendar.startOfDay(for: date)
@@ -399,9 +398,9 @@ public class Sun {
             throw SunError.unableToGenerateSunriseDate(from: date)
         }
         
-        let hoursMinutesSeconds: (Int,Int,Int) = secondsToHoursMinutesSeconds(Int(sunriseSeconds))
+        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(sunriseSeconds))
         
-        sunriseDate = calendar.date(bySettingHour: hoursMinutesSeconds.0 , minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: sunriseDate) ?? startOfDay
+        sunriseDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: sunriseDate) ?? startOfDay
         
         return sunriseDate
     }
@@ -417,7 +416,7 @@ public class Sun {
         let declinationRad = declination.radians
         var haArg = (cos(Angle.degrees(90.833).radians)) / (cos(latitudeRad) * cos(declinationRad)) - tan(latitudeRad) * tan(declinationRad)
         haArg = checkDomainForArcSinCosineFunction(argument: haArg)
-        let ha: Angle = .init(radians: -acos(haArg))
+        let ha: Angle = .radians(-acos(haArg))
         let sunsetUTCMinutes = 720 - 4 * (location.coordinate.longitude + ha.degrees) - equationOfTime
         var sunsetSeconds = (sunsetUTCMinutes + timeZone * 60 ) * 60
         let startOfDay = calendar.startOfDay(for: date)
@@ -430,7 +429,7 @@ public class Sun {
             throw SunError.unableToGenerateSunsetDate(from: date)
         }
         
-        let hoursMinutesSeconds: (Int,Int,Int) = secondsToHoursMinutesSeconds(Int(sunsetSeconds))
+        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(sunsetSeconds))
         
         sunsetDate = calendar.date(bySettingHour: hoursMinutesSeconds.0 , minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: sunsetDate) ?? Date()
         
@@ -452,17 +451,17 @@ public class Sun {
         if secondsForSunToReachElevation > secondsInOneDay {
             secondsForSunToReachElevation = 86399
         }
-        let hoursMinutesSeconds: (Int,Int,Int) = secondsToHoursMinutesSeconds(Int(secondsForSunToReachElevation))
+        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSunToReachElevation))
         
         var newDate = calendar.date(byAdding: .second, value: Int(secondsForSunToReachElevation), to: startOfTheDay)
         
-        newDate = calendar.date(bySettingHour: hoursMinutesSeconds.0 , minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of:newDate  ?? Date())
+        newDate = calendar.date(bySettingHour: hoursMinutesSeconds.0 , minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: newDate ?? Date())
         
         return newDate
     }
     
     private func getGoldenHourStart() throws -> Date {
-        let elevationSunGoldenHourStart: Angle = .init(degrees: 6.0)
+        let elevationSunGoldenHourStart: Angle = .degrees(6.0)
         guard let goldenHourStart = getDateFrom(elevation: elevationSunGoldenHourStart) else {
             throw SunError.unableToGenerateGoldenHourStart(from: date)
         }
@@ -471,7 +470,7 @@ public class Sun {
     }
     
     private func getGoldenHourFinish() throws -> Date {
-        let elevationSunGoldenHourFinish: Angle = .init(degrees: -4.0)
+        let elevationSunGoldenHourFinish: Angle = .degrees(-4.0)
         guard let goldenHourFinish = getDateFrom(elevation: elevationSunGoldenHourFinish) else {
             throw SunError.unableToGenerateGoldenHourFinish(from: date)
         }
@@ -487,7 +486,7 @@ public class Sun {
             throw SunError.unableToGenerateSolarNoon(from: date)
         }
         
-        let hoursMinutesSeconds: (Int,Int,Int) = secondsToHoursMinutesSeconds(Int(secondsForSolarNoon))
+        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSolarNoon))
         
         solarNoon = calendar.date(bySettingHour: hoursMinutesSeconds.0 , minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: solarNoon) ?? Date()
         
