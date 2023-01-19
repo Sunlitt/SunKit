@@ -21,6 +21,8 @@ public class Sun {
     public private(set) var sunset: Date = Date()
     public private(set) var goldenHourStart: Date = Date()
     public private(set) var goldenHourEnd: Date = Date()
+    public private(set) var firstLight: Date = Date()
+    public private(set) var lastLight: Date = Date()
     public private(set) var sunriseAzimuth: Double = 0
     public private(set) var sunsetAzimuth: Double = 0
     
@@ -266,6 +268,23 @@ public class Sun {
         }
         
         do {
+            try firstLight = getFirstLight()
+        } catch SunError.unableToGenerateFirstLight(let date) {
+            let errorOccurred: SunError = .unableToGenerateFirstLight(from: date)
+            throw SunError.readableError(description: errorOccurred.description())
+        } catch {
+            throw SunError.readableError(description: error.localizedDescription)
+        }
+        
+        do {
+            try lastLight = getLastLight()
+        } catch SunError.unableToGenerateLastLight(let date) {
+            let errorOccurred: SunError = .unableToGenerateLastLight(from: date)
+            throw SunError.readableError(description: errorOccurred.description())
+        } catch {
+            throw SunError.readableError(description: error.localizedDescription)
+        }
+        do {
             try solarNoon = getSolarNoon()
         } catch SunError.unableToGenerateSolarNoon(let date) {
             let errorOccurred: SunError = .unableToGenerateSolarNoon(from: date)
@@ -436,7 +455,7 @@ public class Sun {
         return sunsetDate
     }
     
-    private func getDateFrom(elevation : Angle) -> Date? {
+    private func getDateFrom(elevation : Angle, morning: Bool = false) -> Date? {
         let secondsInOneDay: Double = 86399
         let elevationRad = elevation.radians
         let latitude: Angle = .degrees(location.coordinate.latitude)
@@ -445,7 +464,7 @@ public class Sun {
         var cosHra = (sin(elevationRad) - sin(declinationRad) * sin(latitudeRad)) / (cos(declinationRad) * cos(latitudeRad))
         cosHra = checkDomainForArcSinCosineFunction(argument: cosHra)
         let hraAngle: Angle = .radians(acos(cosHra))
-        var secondsForSunToReachElevation = (hraAngle.degrees / 15) * 3600  + 43200 - timeCorrectionFactorInSeconds
+        var secondsForSunToReachElevation = (morning ? -1 : 1) * (hraAngle.degrees / 15) * 3600  + 43200 - timeCorrectionFactorInSeconds
         let startOfTheDay = calendar.startOfDay(for: date)
         
         if secondsForSunToReachElevation > secondsInOneDay {
@@ -477,6 +496,24 @@ public class Sun {
         
         return goldenHourFinish
     }
+    
+    private func getLastLight() throws -> Date {
+        let elevationSunLastLight: Angle = .degrees(-6.0)
+        guard let lastLight = getDateFrom(elevation: elevationSunLastLight) else {
+            throw SunError.unableToGenerateLastLight(from: date)
+        }
+        return lastLight
+    }
+    
+    private func getFirstLight() throws -> Date {
+        let elevationSunFirstLight: Angle = .degrees(-6.0)
+        guard let firstLight = getDateFrom(elevation: elevationSunFirstLight,morning: true) else {
+            throw SunError.unableToGenerateFirstLight(from: date)
+        }
+        return firstLight
+    }
+    
+
     
     private func getSolarNoon() throws -> Date {
         let secondsForUTCSolarNoon = (720 - 4 * location.coordinate.longitude - equationOfTime) * 60

@@ -19,6 +19,8 @@ public enum SunError: Error {
     case unableToGenerateGoldenHourStart(from: Date)
     case unableToGenerateGoldenHourFinish(from: Date)
     case unableToGenerateSolarNoon(from: Date)
+    case unableToGenerateLastLight(from: Date)
+    case unableToGenerateFirstLight(from: Date)
     case readableError(description : String)
     case noError
     
@@ -56,6 +58,12 @@ public enum SunError: Error {
             
         case .unableToGenerateSolarNoon(let date):
             return "Unable to generate solar noon from \(date)"
+            
+        case .unableToGenerateLastLight(let date):
+            return "Unable to generate last light from \(date)"
+        
+        case .unableToGenerateFirstLight(let date):
+            return "Unable to generate first light from \(date)"
             
         case .readableError(let description):
             return description
