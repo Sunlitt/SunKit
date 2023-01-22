@@ -16,6 +16,20 @@ SunKit was first developed as part of a bigger project: [Sunlitt](https://github
 
 To compute Sunrise, Sunset, Golden Hour and so on we only need a CLLocation and the time zone of that location. **CoreLocation framework is required for SunKit to work**.
 
+## Features
+  * Sun Azimuth
+  * Sun Altitude
+  * First Light Time
+  * Last Light Time
+  * Sunrise Time
+  * Solar Noon Time
+  * Golden Hour Time
+  * Sunset Time
+  * Sun Azimuth at Sunrise
+  * Sun Azimuth at Sunset
+  * Total Daylight Duration
+  * Total Night Duration
+
 
 ## References
 
