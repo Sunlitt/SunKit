@@ -83,7 +83,7 @@ public class Sun {
     }
     
     public var isSunrise: Bool {
-        date >= firstLight && date <= lastLight
+        date >= firstLight && date <= sunrise
     }
     
     public var isSunset: Bool {
