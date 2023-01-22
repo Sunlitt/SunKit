@@ -41,12 +41,12 @@ public class Sun {
         return Sun(location: CLLocation(latitude: 37.334886, longitude: -122.008988), timeZone: -7)
     }()
     
-    public var azimuth: Double {
-        return self.sunHorizonCoordinates.azimuth.degrees
+    public var azimuth: Angle {
+        return self.sunHorizonCoordinates.azimuth
     }
     
-    public var altitude: Double {
-        return self.sunHorizonCoordinates.altitude.degrees
+    public var altitude: Angle {
+        return self.sunHorizonCoordinates.altitude
     }
     
     public var longitude: Angle {

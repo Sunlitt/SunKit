@@ -80,8 +80,8 @@ final class UT_Sun: XCTestCase {
 
         //Step4: Check if the output are close to the expected ones
         
-        XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth) <  UT_Sun.sunAzimuthThreshold)
-        XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude) <  UT_Sun.sunAltitudeThreshold)
+        XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth.degrees) <  UT_Sun.sunAzimuthThreshold)
+        XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude.degrees) <  UT_Sun.sunAltitudeThreshold)
        
         XCTAssertTrue(abs(expectedSunRise.timeIntervalSince1970 - sunUnderTest.sunrise.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSunset.timeIntervalSince1970 - sunUnderTest.sunset.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
@@ -121,8 +121,8 @@ final class UT_Sun: XCTestCase {
 
         //Step4: Check if the output are close to the expected ones
         
-        XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth) <  UT_Sun.sunAzimuthThreshold)
-        XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude) <  UT_Sun.sunAltitudeThreshold)
+        XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth.degrees) <  UT_Sun.sunAzimuthThreshold)
+        XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude.degrees) <  UT_Sun.sunAltitudeThreshold)
        
         XCTAssertTrue(abs(expectedSunRise.timeIntervalSince1970 - sunUnderTest.sunrise.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSunset.timeIntervalSince1970 - sunUnderTest.sunset.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
@@ -166,8 +166,8 @@ final class UT_Sun: XCTestCase {
 
         //Step4: Check if the output are close to the expected ones
         
-        XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth) <  UT_Sun.sunAzimuthThreshold)
-        XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude) <  UT_Sun.sunAltitudeThreshold)
+        XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth.degrees) <  UT_Sun.sunAzimuthThreshold)
+        XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude.degrees) <  UT_Sun.sunAltitudeThreshold)
        
         XCTAssertTrue(abs(expectedSunRise.timeIntervalSince1970 - sunUnderTest.sunrise.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSunset.timeIntervalSince1970 - sunUnderTest.sunset.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
@@ -210,8 +210,8 @@ final class UT_Sun: XCTestCase {
 
         //Step4: Check if the output are close to the expected ones
         
-        XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth) <  UT_Sun.sunAzimuthThreshold)
-        XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude) <  UT_Sun.sunAltitudeThreshold)
+        XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth.degrees) <  UT_Sun.sunAzimuthThreshold)
+        XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude.degrees) <  UT_Sun.sunAltitudeThreshold)
        
         XCTAssertTrue(abs(expectedSunRise.timeIntervalSince1970 - sunUnderTest.sunrise.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSunset.timeIntervalSince1970 - sunUnderTest.sunset.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
@@ -250,8 +250,8 @@ final class UT_Sun: XCTestCase {
 
         //Step4: Check if the output are close to the expected ones
         
-        XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth) <  UT_Sun.sunAzimuthThreshold)
-        XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude) <  UT_Sun.sunAltitudeThreshold)
+        XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth.degrees) <  UT_Sun.sunAzimuthThreshold)
+        XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude.degrees) <  UT_Sun.sunAltitudeThreshold)
        
         XCTAssertTrue(abs(expectedSunRise.timeIntervalSince1970 - sunUnderTest.sunrise.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSunset.timeIntervalSince1970 - sunUnderTest.sunset.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
