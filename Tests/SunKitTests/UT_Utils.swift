@@ -99,6 +99,51 @@ final class UT_Utils: XCTestCase {
         XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - UT2LCT(dateUnderTest, timeZoneInSeconds: timeZoneInSecondsUnderTest).timeIntervalSince1970) <= 2)
     }
     
+    /// Test of extendMod
+    func testOfExtendedMod() throws {
+
+    //Test4: -270.8 % 180 shall be equal to 89.2
+        var a: Double = -270.8
+        var n = 180
+
+        XCTAssertTrue(abs(89.2 - extendedMod(a,n)) < 0.1)
+
+    //Test2: -0.8 % 1  shall be equal to 0.2
+        a = -0.8
+        n = 1
+
+        XCTAssertTrue(abs(0.2 - extendedMod(a,n)) < 0.1)
+
+    //Test3: 390.5 % 360  shall be equal to 30.5
+        a = 390.5
+        n = 360
+
+        XCTAssertTrue(30.5 == extendedMod(a,n))
+
+    //Test4: 0.3 % 1  shall be equal to 0.3
+        a = 0.3
+        n = 1
+
+        XCTAssertTrue(0.3 == extendedMod(a,n))
+
+    //Test1: -100 % 4 shall be equal to 4
+        //Step1: call function under test and check that it returns 4
+        a = -100
+        n = 8
+        
+        XCTAssertTrue(4 == extendedMod(a, n))
+    //Test2: -400 % 360 shall be equal to 320
+        //Step1: call function under test and check that it returns 320
+        a = -400
+        n = 360
+        XCTAssertTrue(320 == extendedMod(a, n))
+    //Test3: 270 % 180 shall be equal to 90
+        //Step1: call function under test and check that it returns 90
+        a = 270
+        n = 180
+        XCTAssertTrue(90 == extendedMod(a, n))
+    }
+    
     /// Test of uT2GST
     func testOfuT2GST() throws{
         
