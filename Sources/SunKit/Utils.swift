@@ -12,15 +12,36 @@ let TWELVE_HOUR_IN_SECONDS: Double = 43200
 let TWO_HOURS_IN_SECONDS: Double = 7200
 let SECONDS_IN_TEN_MINUTES: Double = 600
 
-/// This function returns a % n also if a is negative. The standard % function provided by swift doesn't do that
+
 /// - Parameters:
 ///   - a: first operand
 ///   - n: second operand
-/// - Returns: a % n if a is positive. If a isn't positive, it will add to the result of the modulo operation the value of the n operand.Please note that this function only works when both operands are integers. 
-public func mod(_ a: Int, _ n: Int) -> Int {
-    let r = a % n
-    return r >= 0 ? r : r + n
-}
+/// - Returns: a % n if a is positive. If a isn't positive, it will add to the result of the modulo operation the value of the n operand until the result is positive.Please note that this function only works when both operands are integers.
+ public func mod(_ a: Int, _ n: Int) -> Int {
+     let r = a % n
+     return r >= 0 ? r : r + n
+ }
+
+
+ /// Same as mod function described above, but this function can accept as first operand a Double and it handle the edge case where a is included between -1 and 0.
+ /// - Parameters:
+ ///   - a: first operand
+ ///   - n: second operand
+ /// - Returns: a % n if a is positive. If a isn't positive, it will add to the result of the modulo operation the value of the n operand until the result is positive.
+ public func extendedMod(_ a: Double, _ n: Int) -> Double {
+
+     let remainder: Double = a.truncatingRemainder(dividingBy: 1)
+
+     if (a < 0 && a > -1){
+
+         return Double(n) + remainder
+     }
+
+     let x = Double(mod(Int(a),n))
+
+     return x + remainder
+ }
+
 
 
 public func clamp(lower: Double, upper: Double, number: Double) -> Double {

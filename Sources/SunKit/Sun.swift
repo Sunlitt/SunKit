@@ -230,7 +230,7 @@ public class Sun {
     private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
         //Compute mean anomaly sun
         var sunMeanAnomaly: Angle  = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunEclipticLongitudePerigee.degrees))
-        sunMeanAnomaly = .init(degrees: Double(Int(sunMeanAnomaly.degrees) % 360) + sunMeanAnomaly.degrees.truncatingRemainder(dividingBy: 1))
+        sunMeanAnomaly = .init(degrees: extendedMod(sunMeanAnomaly.degrees, 360))
         
         return sunMeanAnomaly
     }
@@ -282,7 +282,7 @@ public class Sun {
         var sunTrueAnomaly = sunMeanAnomaly.degrees + equationOfCenter
         
         //Step9:
-        sunTrueAnomaly = Double(mod(Int(sunTrueAnomaly), 360)) + sunTrueAnomaly.truncatingRemainder(dividingBy: 1)
+        sunTrueAnomaly = extendedMod(sunTrueAnomaly, 360)
         
         //Step10:
         var sunEclipticLongitude: Angle = .init(degrees: sunTrueAnomaly + sunEclipticLongitudePerigee.degrees)
@@ -334,7 +334,7 @@ public class Sun {
         var sunTrueAnomaly = sunMeanAnomaly.degrees + equationOfCenter
         
         //Step9: Add or subtract multiples of 360° to adjust sun true anomaly to the range of 0° to 360°
-        sunTrueAnomaly = Double(mod(Int(sunTrueAnomaly), 360)) + sunTrueAnomaly.truncatingRemainder(dividingBy: 1)
+        sunTrueAnomaly = extendedMod(sunTrueAnomaly, 360)
         
         
         //Step10: Getting ecliptic longitude.
