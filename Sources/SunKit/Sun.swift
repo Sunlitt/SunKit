@@ -31,11 +31,20 @@ public class Sun {
     public private(set) var firstLight: Date = Date()
     ///Date at which there is the last light  in local timezone
     public private(set) var lastLight: Date = Date()
-    
     ///Azimuth of Sunrise
     public private(set) var sunriseAzimuth: Double = 0
     ///Azimuth of Sunset
     public private(set) var sunsetAzimuth: Double = 0
+
+    ///Date at which  there will be march equinox in local timezone
+    public private(set) var marchEquinox: Date = Date()
+    ///Date at which  there will be june solstice in locla timezone
+    public private(set) var juneSolstice: Date = Date()
+    ///Date at which  there will be september solstice in local timezone
+    public private(set) var septemberEquinox: Date = Date()
+    ///Date at which  there will be december solstice in local timezone
+    public private(set) var decemberSolstice: Date = Date()
+    
     
     public static let common: Sun = {
         return Sun(location: CLLocation(latitude: 37.334886, longitude: -122.008988), timeZone: -7)
@@ -225,6 +234,10 @@ public class Sun {
         self.goldenHourEnd = getGoldenHourFinish() ?? Date()
         self.firstLight = getFirstLight() ?? Date()
         self.lastLight = getLastLight() ?? Date()
+        self.marchEquinox = getMarchEquinox()
+        self.juneSolstice = getJuneSolstice()
+        self.septemberEquinox = getSeptemberEquinox()
+        self.decemberSolstice = getDecemberSolstice()
     }
     
     private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
@@ -482,4 +495,49 @@ public class Sun {
         }
         return firstLight
     }
+    
+    private func getMarchEquinox() -> Date {
+        
+        let year = Double(calendar.component(.year, from: self.date))
+        let t: Double = year / 1000
+        let julianDayMarchEquinox: Double = 1721139.2855 + 365.2421376 * year + 0.0679190 * pow(t, 2) - 0.0027879 * pow(t, 3)
+        
+        let marchEquinoxUTC = dateFromJd(jd: julianDayMarchEquinox)
+        
+        return UT2LCT(marchEquinoxUTC, timeZoneInSeconds: 0)
+    }
+    
+    private func getJuneSolstice() -> Date {
+        
+        let year = Double(calendar.component(.year, from: self.date))
+        let t: Double = year / 1000
+        let julianDayJuneSolstice: Double = 1721233.2486 + 365.2417284 * year - 0.0530180 * pow(t, 2) + 0.0093320 * pow(t, 3)
+        
+        let juneSolsticeUTC = dateFromJd(jd: julianDayJuneSolstice)
+        
+        return UT2LCT(juneSolsticeUTC, timeZoneInSeconds: 0)
+    }
+    
+    private func getSeptemberEquinox() -> Date {
+        
+        let year = Double(calendar.component(.year, from: self.date))
+        let t: Double = year / 1000
+        let julianDaySeptemberEquinox: Double = 1721325.6978 + 365.2425055 * year - 0.126689 * pow(t, 2) + 0.0019401 * pow(t, 3)
+        
+        let septemberEquinoxUTC = dateFromJd(jd: julianDaySeptemberEquinox)
+        
+        return UT2LCT(septemberEquinoxUTC, timeZoneInSeconds: 0)
+    }
+    
+    private func getDecemberSolstice() -> Date {
+        
+        let year = Double(calendar.component(.year, from: self.date))
+        let t: Double = year / 1000
+        let julianDayDecemberSolstice: Double = 1721414.3920 + 365.2428898 * year - 0.0109650 * pow(t, 2) - 0.0084885 * pow(t, 3)
+        
+        let decemberSolsticeUTC = dateFromJd(jd: julianDayDecemberSolstice)
+        
+        return UT2LCT(decemberSolsticeUTC, timeZoneInSeconds: 0)
+    }
+
 }

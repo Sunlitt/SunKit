@@ -18,6 +18,7 @@ final class UT_Sun: XCTestCase {
     static let sunAzimuthThreshold: Double = 0.5
     static let sunAltitudeThreshold: Double = 0.5
     static let sunSetRiseThresholdInSeconds: Double = 300 //5 minutes in seconds
+    static let sunEquinoxesAndSolsticesThresholdInSeconds:Double = 1200 //20 minutes in seconds
     
     /*--------------------------------------------------------------------
      Naples timezone and location
@@ -258,6 +259,39 @@ final class UT_Sun: XCTestCase {
         XCTAssertTrue(abs(expectedFirstLight.timeIntervalSince1970 - sunUnderTest.firstLight.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedLastLight.timeIntervalSince1970 - sunUnderTest.lastLight.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSolarNoon.timeIntervalSince1970 - sunUnderTest.solarNoon.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
+        
+    }
+    
+    func testOfEquinoxesAndSolstices() throws {
+        
+        //Test: 19/01/22 17:31. Timezone +1. Naples
+        
+        //Step1: Creating sun instance in Naples and with timezone +1 (No daylight saving)
+        let sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: Double(UT_Sun.timeZoneNaples))
+        
+        //Step2: Setting 19/01/22 17:31 as date. (No daylight saving)
+        let dateUnderTest = createDateCurrentTimeZone(day: 19, month: 1, year: 2022, hour: 17, minute: 31, seconds: 00)
+        sunUnderTest.setDate(dateUnderTest)
+        
+        //Step3: Saving expected outputs
+    
+        var expectedMarchEquinox = createDateCurrentTimeZone(day: 20, month: 3, year: 2022, hour: 16, minute: 33, seconds: 00)
+        var expectedJuneSolstice = createDateCurrentTimeZone(day: 21, month: 6, year: 2022, hour: 11, minute: 13, seconds: 00)
+        var expectedSeptemberEquinox = createDateCurrentTimeZone(day: 23, month: 09, year: 2022, hour: 03, minute: 03, seconds: 00)
+        var expectedDecemberSolstice = createDateCurrentTimeZone(day: 21, month: 12, year: 2022, hour: 22, minute: 47, seconds: 00)
+
+        //Step4: Check if the output are close to the expected ones
+        XCTAssertTrue(abs(expectedMarchEquinox.timeIntervalSince1970 - sunUnderTest.marchEquinox.timeIntervalSince1970)
+                      <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
+        
+        XCTAssertTrue(abs(expectedJuneSolstice.timeIntervalSince1970 - sunUnderTest.juneSolstice.timeIntervalSince1970)
+                      <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
+        
+        XCTAssertTrue(abs(expectedSeptemberEquinox.timeIntervalSince1970 - sunUnderTest.septemberEquinox.timeIntervalSince1970)
+                      <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
+       
+        XCTAssertTrue(abs(expectedDecemberSolstice.timeIntervalSince1970 - sunUnderTest.decemberSolstice.timeIntervalSince1970)
+                      <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
         
     }
     
