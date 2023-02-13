@@ -35,6 +35,8 @@ public class Sun {
     public private(set) var sunriseAzimuth: Double = 0
     ///Azimuth of Sunset
     public private(set) var sunsetAzimuth: Double = 0
+    ///Azimuth of Solar noon
+    public private(set) var solarNoonAzimuth: Double = 0
 
     ///Date at which  there will be march equinox in local timezone
     public private(set) var marchEquinox: Date = Date()
@@ -217,7 +219,7 @@ public class Sun {
      *-------------------------------------------------------------------*/
     
     /// Updates in order all the sun coordinates: horizon, ecliptic and equatorial.
-    /// Then get rise and set times and their relative azimuths.
+    /// Then get rise, set and noon times and their relative azimuths in degrees.
     /// Compute Solar noon.
     /// Compute Golden hour start and end time.
     /// Compute first light and last light time
@@ -230,6 +232,7 @@ public class Sun {
         self.sunset = getSunset() ?? Date()
         self.sunsetAzimuth = getSunHorizonCoordinatesFrom(date: sunset).azimuth.degrees
         self.solarNoon = getSolarNoon() ?? Date()
+        self.solarNoonAzimuth = getSunHorizonCoordinatesFrom(date: solarNoon).azimuth.degrees
         self.goldenHourStart = getGoldenHourStart() ?? Date()
         self.goldenHourEnd = getGoldenHourFinish() ?? Date()
         self.firstLight = getFirstLight() ?? Date()
