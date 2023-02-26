@@ -41,6 +41,9 @@ To compute Sunrise, Sunset, Golden Hour and so on we only need a CLLocation and 
 * PV Education: [Link](https://www.pveducation.org).
 * Celestial Calculations: A Gentle Introduction to Computational Astronomy: [Link](https://www.amazon.it/Celestial-Calculations-Introduction-Computational-Astronomy/dp/0262536633/ref=sr_1_1?__mk_it_IT=ÅMÅŽÕÑ&crid=1U99GMGDZ2CUF&keywords=celestial+calculations&qid=1674408445&sprefix=celestial+calculation%2Caps%2C109&sr=8-1).
 
+## MoonKit
+Take a look to the other Package, this time about the Moon 🌙 : [MoonKit](https://github.com/davideilmito/MoonKit).
+
 ## Special thanks
 
 * [Davide Biancardi](https://github.com/davideilmito): main developer of SunKit.
