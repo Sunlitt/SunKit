@@ -27,6 +27,7 @@ To compute Sunrise, Sunset, Golden Hour and so on we only need a CLLocation and 
   * Sunset Time
   * Sun Azimuth at Sunrise
   * Sun Azimuth at Sunset
+  * Sun Azimuth at Solar Noon
   * Total Daylight Duration
   * Total Night Duration
   * March Equinox
