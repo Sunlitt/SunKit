@@ -329,7 +329,7 @@ public class Sun {
         
     }
     
-    private func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
+    public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
         //Step1:
         //Convert LCT to UT, GST, and LST times and adjust the date if needed
         let utDate = lCT2UT(date, timeZoneInSeconds: self.timeZoneInSeconds)
