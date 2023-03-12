@@ -29,8 +29,6 @@ extension Date: Strideable {
     }
 }
 
-
-//TO DO: UT coverage
 extension Calendar {
     func numberOfDaysSinceStartOfTheYear(for date: Date) -> Int {
         let startOfTheYear: Date = startOfYear(date)

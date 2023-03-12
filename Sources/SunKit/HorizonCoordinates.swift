@@ -18,7 +18,6 @@
 
 import Foundation
 
-
 public struct HorizonCoordinates{
     
     public var altitude: Angle
