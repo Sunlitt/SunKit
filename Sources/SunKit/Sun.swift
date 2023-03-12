@@ -28,19 +28,19 @@ public class Sun {
     public private(set) var timeZone: TimeZone
     public private(set) var date: Date = Date()
     
-    ///Date of Sunrise in local timezone
+    ///Date of Sunrise
     public private(set) var sunrise: Date = Date()
-    ///Date of Sunset in local timezone
+    ///Date of Sunset
     public private(set) var sunset: Date = Date()
-    ///Date of Solar Noon  in local timezone
+    ///Date of Solar Noon  for
     public private(set) var solarNoon: Date = Date()
-    ///Date at which Golden hour starts in local timezone
+    ///Date at which evening  Golden hour starts for instance timezone
     public private(set) var goldenHourStart: Date = Date()
-    ///Date at which Golden hour ends in local timezone
+    ///Date at which evening  Golden hour ends
     public private(set) var goldenHourEnd: Date = Date()
-    ///Date at which there is the first light  in local timezone
+    ///Date at which there is the first light
     public private(set) var firstLight: Date = Date()
-    ///Date at which there is the last light  in local timezone
+    ///Date at which there is the last light
     public private(set) var lastLight: Date = Date()
     ///Azimuth of Sunrise
     public private(set) var sunriseAzimuth: Double = 0
@@ -49,13 +49,13 @@ public class Sun {
     ///Azimuth of Solar noon
     public private(set) var solarNoonAzimuth: Double = 0
 
-    ///Date at which  there will be march equinox in local timezone
+    ///Date at which  there will be march equinox
     public private(set) var marchEquinox: Date = Date()
-    ///Date at which  there will be june solstice in locla timezone
+    ///Date at which  there will be june solstice
     public private(set) var juneSolstice: Date = Date()
-    ///Date at which  there will be september solstice in local timezone
+    ///Date at which  there will be september solstice
     public private(set) var septemberEquinox: Date = Date()
-    ///Date at which  there will be december solstice in local timezone
+    ///Date at which  there will be december solstice
     public private(set) var decemberSolstice: Date = Date()
     
     
@@ -132,6 +132,79 @@ public class Sun {
     }
     
     /*--------------------------------------------------------------------
+     Public methods
+     *-------------------------------------------------------------------*/
+    
+    public init(location: CLLocation,timeZone: Double) {
+        let timeZoneSeconds: Int = Int(timeZone * SECONDS_IN_ONE_HOUR)
+        self.timeZone = TimeZone.init(secondsFromGMT: timeZoneSeconds) ?? .current
+        self.location = location
+        refresh()
+    }
+    
+    public init(location: CLLocation,timeZone: TimeZone) {
+        self.timeZone = timeZone
+        self.location = location
+        refresh()
+    }
+    
+    public func setDate(_ newDate: Date) {
+        date = newDate
+        refresh()
+    }
+    
+    public func setLocation(_ newLocation: CLLocation) {
+        location = newLocation
+        refresh()
+    }
+    
+    public func setLocation(_ newLocation: CLLocation,_ newTimeZone: Double) {
+        let timeZoneSeconds: Int = Int(newTimeZone * SECONDS_IN_ONE_HOUR)
+        timeZone = TimeZone(secondsFromGMT: timeZoneSeconds) ?? .current
+        location = newLocation
+        changeCurrentDate()
+        refresh()
+    }
+    
+    public func setLocation(_ newLocation: CLLocation,_ newTimeZone: TimeZone) {
+        timeZone = newTimeZone
+        location = newLocation
+        changeCurrentDate()
+        refresh()
+    }
+    
+    public func setTimeZone(_ newTimeZone: Double) {
+        let timeZoneSeconds: Int = Int(newTimeZone * SECONDS_IN_ONE_HOUR)
+        timeZone = TimeZone(secondsFromGMT: timeZoneSeconds) ?? .current
+        changeCurrentDate()
+        refresh()
+    }
+    
+    public func setTimeZone(_ newTimeZone: TimeZone) {
+        timeZone = newTimeZone
+        changeCurrentDate()
+        refresh()
+    }
+    
+    /// Usefull function for debug
+    public func dumpDateInfos(){
+        
+        print("Current Date -> \(dateFormatter.string(from: date))")
+        print("Sunrise -> \(dateFormatter.string(from: sunrise))")
+        print("Sunset -> \(dateFormatter.string(from: sunset))")
+        print("Solar Noon -> \(dateFormatter.string(from: solarNoon))")
+        print("Golden Hour Start -> \(dateFormatter.string(from: goldenHourStart))")
+        print("Golden Hour End -> \(dateFormatter.string(from: goldenHourEnd))")
+        print("First Light -> \(dateFormatter.string(from: firstLight))")
+        print("Last Light -> \(dateFormatter.string(from: lastLight))")
+        print("March Equinox -> \(dateFormatter.string(from: marchEquinox))")
+        print("June Solstice -> \(dateFormatter.string(from: juneSolstice))")
+        print("September Equinox -> \(dateFormatter.string(from: septemberEquinox))")
+        print("December Solstice -> \(dateFormatter.string(from: decemberSolstice))")
+    
+    }
+    
+    /*--------------------------------------------------------------------
      Private Variables
      *-------------------------------------------------------------------*/
     
@@ -147,7 +220,7 @@ public class Sun {
         dateFormatter.locale = .current
         dateFormatter.timeZone = TimeZone.init(secondsFromGMT: timeZone.secondsFromGMT())
         dateFormatter.timeStyle = .full
-        //dateFormatter.dateFormat = "yyyy-MM-dd’T’HH:mm:ssZ"
+        dateFormatter.dateStyle = .full
         return dateFormatter
     }
     
@@ -197,7 +270,7 @@ public class Sun {
     }
     
     private var localStandardTimeMeridian: Double {
-        return (Double(timeZone.secondsFromGMT()) / SECONDS_IN_ONE_HOUR) * 15    //TimeZone in hour
+        return (Double(timeZone.secondsFromGMT()) / SECONDS_IN_ONE_HOUR) * 15  //TimeZone in hour
     }
     
     private var timeCorrectionFactorInSeconds: Double {
@@ -209,78 +282,6 @@ public class Sun {
         return timeCorrectionFactorInSeconds
     }
     
-    /*--------------------------------------------------------------------
-     Public methods
-     *-------------------------------------------------------------------*/
-    
-    public init(location: CLLocation,timeZone: Double) {
-        let timeZoneSeconds: Int = Int(timeZone * SECONDS_IN_ONE_HOUR)
-        self.timeZone = TimeZone.init(secondsFromGMT: timeZoneSeconds) ?? .current
-        self.location = location
-        refresh()
-    }
-    
-    public init(location: CLLocation,timeZone: TimeZone) {
-        self.timeZone = timeZone
-        self.location = location
-        refresh()
-    }
-    
-    public func setDate(_ newDate: Date) {
-        date = newDate
-        refresh()
-    }
-    
-    public func setLocation(_ newLocation: CLLocation) {
-        location = newLocation
-        refresh()
-    }
-    
-    // current date needs to be changed before call refresh
-    public func setLocation(_ newLocation: CLLocation,_ newTimeZone: Double) {
-        let timeZoneSeconds: Int = Int(newTimeZone * SECONDS_IN_ONE_HOUR)
-        timeZone = TimeZone(secondsFromGMT: timeZoneSeconds) ?? .current
-        location = newLocation
-        changeCurrentDate()
-        refresh()
-    }
-    
-    public func setLocation(_ newLocation: CLLocation,_ newTimeZone: TimeZone) {
-        timeZone = newTimeZone
-        location = newLocation
-        changeCurrentDate()
-        refresh()
-    }
-    
-    public func setTimeZone(_ newTimeZone: Double) {
-        let timeZoneSeconds: Int = Int(newTimeZone * SECONDS_IN_ONE_HOUR)
-        timeZone = TimeZone(secondsFromGMT: timeZoneSeconds) ?? .current
-        changeCurrentDate()
-        refresh()
-    }
-    
-    public func setTimeZone(_ newTimeZone: TimeZone) {
-        timeZone = newTimeZone
-        changeCurrentDate()
-        refresh()
-    }
-    
-    public func dumpDateInfos(){
-        
-        print("Current Date -> \(dateFormatter.string(from: date))")
-        print("Sunrise -> \(dateFormatter.string(from: sunrise))")
-        print("Sunset -> \(dateFormatter.string(from: sunset))")
-        print("Solar Noon -> \(dateFormatter.string(from: solarNoon))")
-        print("Golden Hour Start -> \(dateFormatter.string(from: goldenHourStart))")
-        print("Golden Hour End -> \(dateFormatter.string(from: goldenHourEnd))")
-        print("First Light -> \(dateFormatter.string(from: firstLight))")
-        print("Last Light -> \(dateFormatter.string(from: lastLight))")
-        print("marchEquinox -> \(dateFormatter.string(from: marchEquinox))")
-        print("juneSolstice -> \(dateFormatter.string(from: juneSolstice))")
-        print("septemberEquinox -> \(dateFormatter.string(from: septemberEquinox))")
-        print("decemberSolstice -> \(dateFormatter.string(from: decemberSolstice))")
-    
-    }
     
     /*--------------------------------------------------------------------
      Private methods
@@ -313,11 +314,8 @@ public class Sun {
     
     /// function called after timezone changes in order to change the date accordingly
     private func changeCurrentDate(){
-
         let components = calendar.dateComponents(in: self.timeZone, from: self.date)
-        
         self.date = calendar.date(from: components) ?? self.date
-        
     }
     
     private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
@@ -583,9 +581,7 @@ public class Sun {
         let julianDayMarchEquinox: Double = 1721139.2855 + 365.2421376 * year + 0.0679190 * pow(t, 2) - 0.0027879 * pow(t, 3)
         
         let marchEquinoxUTC = dateFromJd(jd: julianDayMarchEquinox)
-        
         let components = calendar.dateComponents(in: self.timeZone, from: marchEquinoxUTC)
-        
         return calendar.date(from: components) ?? Date()
     }
     
@@ -596,9 +592,7 @@ public class Sun {
         let julianDayJuneSolstice: Double = 1721233.2486 + 365.2417284 * year - 0.0530180 * pow(t, 2) + 0.0093320 * pow(t, 3)
         
         let juneSolsticeUTC = dateFromJd(jd: julianDayJuneSolstice)
-        
         let components = calendar.dateComponents(in: self.timeZone, from: juneSolsticeUTC)
-        
         return calendar.date(from: components) ?? Date()
         
     }
@@ -610,9 +604,7 @@ public class Sun {
         let julianDaySeptemberEquinox: Double = 1721325.6978 + 365.2425055 * year - 0.126689 * pow(t, 2) + 0.0019401 * pow(t, 3)
         
         let septemberEquinoxUTC = dateFromJd(jd: julianDaySeptemberEquinox)
-        
         let components = calendar.dateComponents(in: self.timeZone, from: septemberEquinoxUTC)
-        
         return calendar.date(from: components) ?? Date()
     }
     
@@ -623,9 +615,7 @@ public class Sun {
         let julianDayDecemberSolstice: Double = 1721414.3920 + 365.2428898 * year - 0.0109650 * pow(t, 2) - 0.0084885 * pow(t, 3)
         
         let decemberSolsticeUTC = dateFromJd(jd: julianDayDecemberSolstice)
-        
         let components = calendar.dateComponents(in: self.timeZone, from: decemberSolsticeUTC)
-        
         return calendar.date(from: components) ?? Date()
     }
 
