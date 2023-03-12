@@ -372,11 +372,12 @@ final class UT_Sun: XCTestCase {
        
         XCTAssertTrue(abs(expectedDecemberSolstice.timeIntervalSince1970 - sunUnderTest.decemberSolstice.timeIntervalSince1970)
                       <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
-        
-    
-        
-        
     }
+    
+    
+    
+    
+    
     
     func testPerformance() throws {
         // Performance of setDate function that will refresh all the sun variables
