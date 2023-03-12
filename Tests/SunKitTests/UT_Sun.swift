@@ -58,6 +58,34 @@ final class UT_Sun: XCTestCase {
     static let timeZoneTromso = 1
     static let timeZoneTromsoDaylightSaving = 2
     
+    
+    /// Test of  a sun ionstance whenm you play with timezones and change location
+    /// Value for expected results have been taken from SunCalc.org
+    func testOfSunWhenTimezoneChanges() throws {
+        
+        //Step1: Creating Sun instance in Naples and with timezone +1
+        var timeZoneNaples: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        var sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneNaples)
+        
+        //Step2: Setting 19/11/22 20:00 as date. (No daylight saving)
+        var dateUnderTest = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 20, minute: 00, seconds: 00,timeZone: timeZoneNaples)
+        sunUnderTest.setDate(dateUnderTest)
+        
+        //Step3: Change location and timezone
+        let timeZoneTokyo: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneTokyo * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        sunUnderTest.setLocation(UT_Sun.tokyoLocation, timeZoneTokyo)
+        
+        //Step4: Saving expected outputs for all the date
+        var expectedDate = createDateCustomTimeZone(day: 20, month: 11, year: 2022, hour: 4, minute: 00, seconds: 00,timeZone: timeZoneTokyo)
+        
+        //Step5: Check if output of sun matches the expected output
+        XCTAssertTrue(expectedDate == sunUnderTest.date)
+        
+    
+        
+    }
+    
+    
     /// Test of  Sun azimuth, sunrise, sunset, afternoon golden hour start and afternoon golden hour end
     /// Value for expected results have been taken from SunCalc.org
     func testOfSun() throws {
@@ -69,26 +97,27 @@ final class UT_Sun: XCTestCase {
         //Test1: 19/11/22 20:00. Timezone +1.
         
         //Step1: Creating Sun instance in Naples and with timezone +1
-        var sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: Double(UT_Sun.timeZoneNaples))
+        var timeZoneUnderTest: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        var sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneUnderTest)
         
         //Step2: Setting 19/11/22 20:00 as date. (No daylight saving)
-        var dateUnderTest = createDateCurrentTimeZone(day: 19, month: 11, year: 2022, hour: 20, minute: 00, seconds: 00)
+        var dateUnderTest = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 20, minute: 00, seconds: 00,timeZone: timeZoneUnderTest)
         sunUnderTest.setDate(dateUnderTest)
         
         //Step3: Saving expected outputs
         var expectedAzimuth = 275.84
         var expectedAltitude = -37.34
         
-        var expectedSunRise = createDateCurrentTimeZone(day: 19, month: 11, year: 2022, hour: 6, minute: 54, seconds: 12)
-        var expectedSunset = createDateCurrentTimeZone(day: 19, month: 11, year: 2022, hour: 16, minute: 42, seconds: 07)
+        var expectedSunRise = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 6, minute: 54, seconds: 12,timeZone: timeZoneUnderTest)
+        var expectedSunset = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 16, minute: 42, seconds: 07,timeZone: timeZoneUnderTest)
         
-        var expectedGoldenHourStart = createDateCurrentTimeZone(day: 19, month: 11, year: 2022, hour: 16, minute: 00, seconds: 00)
-        var expectedGoldenHourEnd = createDateCurrentTimeZone(day: 19, month: 11, year: 2022, hour: 16, minute: 59, seconds: 00)
+        var expectedGoldenHourStart = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 16, minute: 00, seconds: 00,timeZone: timeZoneUnderTest)
+        var expectedGoldenHourEnd = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 16, minute: 59, seconds: 00,timeZone: timeZoneUnderTest)
         
-        var expectedFirstLight = createDateCurrentTimeZone(day: 19, month: 11, year: 2022, hour: 6, minute: 24, seconds: 51)
-        var expectedLastLight = createDateCurrentTimeZone(day: 19, month: 11, year: 2022, hour: 17, minute: 11, seconds: 28)
+        var expectedFirstLight = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 6, minute: 24, seconds: 51,timeZone: timeZoneUnderTest)
+        var expectedLastLight = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 17, minute: 11, seconds: 28,timeZone: timeZoneUnderTest)
         
-        var expectedSolarNoon = createDateCurrentTimeZone(day: 19, month: 11, year: 2022, hour: 11, minute: 48, seconds: 21)
+        var expectedSolarNoon = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 11, minute: 48, seconds: 21,timeZone: timeZoneUnderTest)
 
         //Step4: Check if the output are close to the expected ones
         
@@ -110,26 +139,28 @@ final class UT_Sun: XCTestCase {
         //Test: 31/12/2024 15:32. Timezone +1. Leap Year.
         
         //Step1: Creating Sun instance in Naples and with timezone +1
-        sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: Double(UT_Sun.timeZoneNaples))
+        timeZoneUnderTest = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        
+        sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneUnderTest)
         
         //Step2: Setting 31/12/2024 15:32 as date. (No daylight saving)
-        dateUnderTest = createDateCurrentTimeZone(day: 31, month: 12, year: 2024, hour: 15, minute: 32, seconds: 00)
+        dateUnderTest = createDateCustomTimeZone(day: 31, month: 12, year: 2024, hour: 15, minute: 32, seconds: 00,timeZone: timeZoneUnderTest)
         sunUnderTest.setDate(dateUnderTest)
         
         //Step3: Saving expected outputs
         expectedAzimuth = 226.99
         expectedAltitude = 10.35
         
-        expectedSunRise = createDateCurrentTimeZone(day: 31, month: 12, year: 2024, hour: 7, minute: 26, seconds: 57)
-        expectedSunset = createDateCurrentTimeZone(day: 31, month: 12, year: 2024, hour: 16, minute: 45, seconds: 32)
+        expectedSunRise = createDateCustomTimeZone(day: 31, month: 12, year: 2024, hour: 7, minute: 26, seconds: 57,timeZone: timeZoneUnderTest)
+        expectedSunset = createDateCustomTimeZone(day: 31, month: 12, year: 2024, hour: 16, minute: 45, seconds: 32,timeZone: timeZoneUnderTest)
         
-        expectedGoldenHourStart = createDateCurrentTimeZone(day: 31, month: 12, year: 2024, hour: 16, minute: 02, seconds: 00)
-        expectedGoldenHourEnd = createDateCurrentTimeZone(day: 31, month: 12, year: 2024, hour: 17, minute: 05, seconds: 00)
+        expectedGoldenHourStart = createDateCustomTimeZone(day: 31, month: 12, year: 2024, hour: 16, minute: 02, seconds: 00,timeZone: timeZoneUnderTest)
+        expectedGoldenHourEnd = createDateCustomTimeZone(day: 31, month: 12, year: 2024, hour: 17, minute: 05, seconds: 00,timeZone: timeZoneUnderTest)
         
-        expectedFirstLight = createDateCurrentTimeZone(day: 31, month: 12, year: 2024, hour: 6, minute: 56, seconds: 24)
-        expectedLastLight = createDateCurrentTimeZone(day: 31, month: 12, year: 2024, hour: 17, minute: 16, seconds: 06)
+        expectedFirstLight = createDateCustomTimeZone(day: 31, month: 12, year: 2024, hour: 6, minute: 56, seconds: 24,timeZone: timeZoneUnderTest)
+        expectedLastLight = createDateCustomTimeZone(day: 31, month: 12, year: 2024, hour: 17, minute: 16, seconds: 06,timeZone: timeZoneUnderTest)
         
-        expectedSolarNoon = createDateCurrentTimeZone(day: 31, month: 12, year: 2024, hour: 12, minute: 06, seconds: 11)
+        expectedSolarNoon = createDateCustomTimeZone(day: 31, month: 12, year: 2024, hour: 12, minute: 06, seconds: 11,timeZone: timeZoneUnderTest)
 
         //Step4: Check if the output are close to the expected ones
         
@@ -155,26 +186,27 @@ final class UT_Sun: XCTestCase {
         //Test: 1/08/22 16:50. Timezone +9.
         
         //Step1: Creating sun instance in Tokyo and with timezone +9
-        sunUnderTest = Sun.init(location: UT_Sun.tokyoLocation, timeZone: Double(UT_Sun.timeZoneTokyo))
+        timeZoneUnderTest = .init(secondsFromGMT: UT_Sun.timeZoneTokyo * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        sunUnderTest = Sun.init(location: UT_Sun.tokyoLocation, timeZone: timeZoneUnderTest)
         
         //Step2: Setting 1/08/22 16:50 as date.
-        dateUnderTest = createDateCurrentTimeZone(day: 1, month: 8, year: 2022, hour: 16, minute: 50, seconds: 00)
+        dateUnderTest = createDateCustomTimeZone(day: 1, month: 8, year: 2022, hour: 16, minute: 50, seconds: 00,timeZone: timeZoneUnderTest)
         sunUnderTest.setDate(dateUnderTest)
         
         //Step3: Saving expected outputs
         expectedAzimuth = 276.98
         expectedAltitude = 21.90
         
-        expectedSunRise = createDateCurrentTimeZone(day: 1, month: 8, year: 2022, hour: 4, minute: 48, seconds: 29)
-        expectedSunset = createDateCurrentTimeZone(day: 1, month: 8, year: 2022, hour: 18, minute: 46, seconds: 15)
+        expectedSunRise = createDateCustomTimeZone(day: 1, month: 8, year: 2022, hour: 4, minute: 48, seconds: 29,timeZone: timeZoneUnderTest)
+        expectedSunset = createDateCustomTimeZone(day: 1, month: 8, year: 2022, hour: 18, minute: 46, seconds: 15,timeZone: timeZoneUnderTest)
         
-        expectedGoldenHourStart = createDateCurrentTimeZone(day: 1, month: 8, year: 2022, hour: 18, minute: 11, seconds: 00)
-        expectedGoldenHourEnd = createDateCurrentTimeZone(day: 1, month: 8, year: 2022, hour: 19, minute: 04, seconds: 00)
+        expectedGoldenHourStart = createDateCustomTimeZone(day: 1, month: 8, year: 2022, hour: 18, minute: 11, seconds: 00,timeZone: timeZoneUnderTest)
+        expectedGoldenHourEnd = createDateCustomTimeZone(day: 1, month: 8, year: 2022, hour: 19, minute: 04, seconds: 00,timeZone: timeZoneUnderTest)
         
-        expectedFirstLight = createDateCurrentTimeZone(day: 1, month: 8, year: 2022, hour: 4, minute: 20, seconds: 39)
-        expectedLastLight = createDateCurrentTimeZone(day: 1, month: 8, year: 2022, hour: 19, minute: 14, seconds: 00)
+        expectedFirstLight = createDateCustomTimeZone(day: 1, month: 8, year: 2022, hour: 4, minute: 20, seconds: 39,timeZone: timeZoneUnderTest)
+        expectedLastLight = createDateCustomTimeZone(day: 1, month: 8, year: 2022, hour: 19, minute: 14, seconds: 00,timeZone: timeZoneUnderTest)
         
-        expectedSolarNoon = createDateCurrentTimeZone(day: 1, month: 8, year: 2022, hour: 11, minute: 47, seconds: 36)
+        expectedSolarNoon = createDateCustomTimeZone(day: 1, month: 8, year: 2022, hour: 11, minute: 47, seconds: 36,timeZone: timeZoneUnderTest)
 
         //Step4: Check if the output are close to the expected ones
         
@@ -199,26 +231,27 @@ final class UT_Sun: XCTestCase {
         //Test:  1/01/15 22:00. Timezone -5.
         
         //Step1: Creating sun instance in Louisa and with timezone -5 (No daylight saving)
-        sunUnderTest = Sun.init(location: UT_Sun.louisaLocation, timeZone: Double(UT_Sun.timeZoneLouisa))
+        timeZoneUnderTest = .init(secondsFromGMT: UT_Sun.timeZoneLouisa * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        sunUnderTest = Sun.init(location: UT_Sun.louisaLocation, timeZone: timeZoneUnderTest)
         
         //Step2: Setting 1/01/15 22:00 as date. (No daylight saving)
-        dateUnderTest = createDateCurrentTimeZone(day: 1, month: 1, year: 2015, hour: 22, minute: 00, seconds: 00)
+        dateUnderTest = createDateCustomTimeZone(day: 1, month: 1, year: 2015, hour: 22, minute: 00, seconds: 00,timeZone: timeZoneUnderTest)
         sunUnderTest.setDate(dateUnderTest)
 
         //Step3: Saving expected outputs
         expectedAzimuth = 287.62
         expectedAltitude = -57.41
         
-        expectedSunRise = createDateCurrentTimeZone(day: 1, month: 1, year: 2015, hour: 7, minute: 27, seconds: 29)
-        expectedSunset = createDateCurrentTimeZone(day: 1, month: 1, year: 2015, hour: 17, minute: 03, seconds: 25)
+        expectedSunRise = createDateCustomTimeZone(day: 1, month: 1, year: 2015, hour: 7, minute: 27, seconds: 29,timeZone: timeZoneUnderTest)
+        expectedSunset = createDateCustomTimeZone(day: 1, month: 1, year: 2015, hour: 17, minute: 03, seconds: 25,timeZone: timeZoneUnderTest)
         
-        expectedGoldenHourStart = createDateCurrentTimeZone(day: 1, month: 1, year: 2015, hour: 16, minute: 22, seconds: 00)
-        expectedGoldenHourEnd = createDateCurrentTimeZone(day: 1, month: 1, year: 2015, hour: 17, minute: 22, seconds: 00)
+        expectedGoldenHourStart = createDateCustomTimeZone(day: 1, month: 1, year: 2015, hour: 16, minute: 22, seconds: 00,timeZone: timeZoneUnderTest)
+        expectedGoldenHourEnd = createDateCustomTimeZone(day: 1, month: 1, year: 2015, hour: 17, minute: 22, seconds: 00,timeZone: timeZoneUnderTest)
         
-        expectedFirstLight = createDateCurrentTimeZone(day: 1, month: 1, year: 2015, hour: 6, minute: 58, seconds: 28)
-        expectedLastLight = createDateCurrentTimeZone(day: 1, month: 1, year: 2015, hour: 17, minute: 32, seconds: 27)
+        expectedFirstLight = createDateCustomTimeZone(day: 1, month: 1, year: 2015, hour: 6, minute: 58, seconds: 28,timeZone: timeZoneUnderTest)
+        expectedLastLight = createDateCustomTimeZone(day: 1, month: 1, year: 2015, hour: 17, minute: 32, seconds: 27,timeZone: timeZoneUnderTest)
         
-        expectedSolarNoon = createDateCurrentTimeZone(day: 1, month: 1, year: 2015, hour: 12, minute: 15, seconds: 23)
+        expectedSolarNoon = createDateCustomTimeZone(day: 1, month: 1, year: 2015, hour: 12, minute: 15, seconds: 23,timeZone: timeZoneUnderTest)
 
         //Step4: Check if the output are close to the expected ones
         
@@ -243,22 +276,23 @@ final class UT_Sun: XCTestCase {
         //Test: 19/01/22 17:31. Timezone +1.
         
         //Step1: Creating sun instance in Tromso and with timezone +1 (No daylight saving)
-        sunUnderTest = Sun.init(location: UT_Sun.tromsoLocation, timeZone: Double(UT_Sun.timeZoneTromso))
+        timeZoneUnderTest = .init(secondsFromGMT: UT_Sun.timeZoneTromso * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        sunUnderTest = Sun.init(location: UT_Sun.tromsoLocation, timeZone: timeZoneUnderTest)
         
         //Step2: Setting 19/01/22 17:31 as date. (No daylight saving)
-        dateUnderTest = createDateCurrentTimeZone(day: 19, month: 1, year: 2022, hour: 17, minute: 31, seconds: 00)
+        dateUnderTest = createDateCustomTimeZone(day: 19, month: 1, year: 2022, hour: 17, minute: 31, seconds: 00,timeZone: timeZoneUnderTest)
         sunUnderTest.setDate(dateUnderTest)
         
         //Step3: Saving expected outputs
         expectedAzimuth = 257.20
         expectedAltitude = -16.93
         
-        expectedSunRise = createDateCurrentTimeZone(day: 19, month: 1, year: 2022, hour: 10, minute: 41, seconds: 46)
-        expectedSunset = createDateCurrentTimeZone(day: 19, month: 1, year: 2022, hour: 13, minute: 08, seconds: 48)
-        expectedFirstLight = createDateCurrentTimeZone(day: 19, month: 1, year: 2022, hour: 08, minute: 45, seconds: 30)
-        expectedLastLight = createDateCurrentTimeZone(day: 19, month: 1, year: 2022, hour: 15, minute: 05, seconds: 08)
+        expectedSunRise = createDateCustomTimeZone(day: 19, month: 1, year: 2022, hour: 10, minute: 41, seconds: 46,timeZone: timeZoneUnderTest)
+        expectedSunset = createDateCustomTimeZone(day: 19, month: 1, year: 2022, hour: 13, minute: 08, seconds: 48,timeZone: timeZoneUnderTest)
+        expectedFirstLight = createDateCustomTimeZone(day: 19, month: 1, year: 2022, hour: 08, minute: 45, seconds: 30,timeZone: timeZoneUnderTest)
+        expectedLastLight = createDateCustomTimeZone(day: 19, month: 1, year: 2022, hour: 15, minute: 05, seconds: 08,timeZone: timeZoneUnderTest)
         
-        expectedSolarNoon = createDateCurrentTimeZone(day: 19, month: 1, year: 2022, hour: 11, minute: 54, seconds: 52)
+        expectedSolarNoon = createDateCustomTimeZone(day: 19, month: 1, year: 2022, hour: 11, minute: 54, seconds: 52,timeZone: timeZoneUnderTest)
 
         //Step4: Check if the output are close to the expected ones
         
@@ -278,23 +312,25 @@ final class UT_Sun: XCTestCase {
         //Test: 19/01/22 17:31. Timezone +1. Naples
         
         //Step1: Creating sun instance in Naples and with timezone +1 (No daylight saving)
-        let sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: Double(UT_Sun.timeZoneNaples))
+        let timeZoneUnderTest: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        let timeZoneDaylightSaving: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaplesDaylightSaving * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        let sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneUnderTest)
         
         //Step2: Setting 19/01/22 17:31 as date. (No daylight saving)
-        let dateUnderTest = createDateCurrentTimeZone(day: 19, month: 1, year: 2022, hour: 17, minute: 31, seconds: 00)
+        let dateUnderTest = createDateCustomTimeZone(day: 19, month: 1, year: 2022, hour: 17, minute: 31, seconds: 00,timeZone: timeZoneUnderTest)
         sunUnderTest.setDate(dateUnderTest)
         
         //Step3: Saving expected outputs
     
-        var expectedMarchEquinox = createDateCurrentTimeZone(day: 20, month: 3, year: 2022, hour: 16, minute: 33, seconds: 00)
-        var expectedJuneSolstice = createDateCurrentTimeZone(day: 21, month: 6, year: 2022, hour: 11, minute: 13, seconds: 00)
-        var expectedSeptemberEquinox = createDateCurrentTimeZone(day: 23, month: 09, year: 2022, hour: 03, minute: 03, seconds: 00)
-        var expectedDecemberSolstice = createDateCurrentTimeZone(day: 21, month: 12, year: 2022, hour: 22, minute: 47, seconds: 00)
+        let expectedMarchEquinox = createDateCustomTimeZone(day: 20, month: 3, year: 2022, hour: 16, minute: 33, seconds: 00,timeZone: timeZoneUnderTest)
+        let expectedJuneSolstice = createDateCustomTimeZone(day: 21, month: 6, year: 2022, hour: 11, minute: 13, seconds: 00,timeZone: timeZoneDaylightSaving)
+        let expectedSeptemberEquinox = createDateCustomTimeZone(day: 23, month: 09, year: 2022, hour: 03, minute: 03, seconds: 00,timeZone: timeZoneDaylightSaving)
+        let expectedDecemberSolstice = createDateCustomTimeZone(day: 21, month: 12, year: 2022, hour: 22, minute: 47, seconds: 00,timeZone: timeZoneUnderTest)
 
         //Step4: Check if the output are close to the expected ones
         XCTAssertTrue(abs(expectedMarchEquinox.timeIntervalSince1970 - sunUnderTest.marchEquinox.timeIntervalSince1970)
                       <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
-        
+ 
         XCTAssertTrue(abs(expectedJuneSolstice.timeIntervalSince1970 - sunUnderTest.juneSolstice.timeIntervalSince1970)
                       <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
         
@@ -303,6 +339,10 @@ final class UT_Sun: XCTestCase {
        
         XCTAssertTrue(abs(expectedDecemberSolstice.timeIntervalSince1970 - sunUnderTest.decemberSolstice.timeIntervalSince1970)
                       <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
+        
+        
+        
+        
         
     }
     

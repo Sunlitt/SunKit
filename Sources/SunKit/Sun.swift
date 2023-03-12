@@ -25,7 +25,7 @@ public class Sun {
      *-------------------------------------------------------------------*/
     
     public private(set) var location: CLLocation
-    public private(set) var timeZone: Double
+    public private(set) var timeZone: TimeZone
     public private(set) var date: Date = Date()
     
     ///Date of Sunrise in local timezone
@@ -137,13 +137,22 @@ public class Sun {
     
     private var calendar: Calendar {
         var calendar: Calendar = .init(identifier: .gregorian)
-        calendar.timeZone = .current
+        calendar.timeZone = self.timeZone
         
         return calendar
     }
     
+    private var dateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = .current
+        dateFormatter.timeZone = TimeZone.init(secondsFromGMT: timeZone.secondsFromGMT())
+        dateFormatter.timeStyle = .full
+        //dateFormatter.dateFormat = "yyyy-MM-dd’T’HH:mm:ssZ"
+        return dateFormatter
+    }
+    
     private var timeZoneInSeconds: Int {
-        Int(timeZone * 3600)
+        timeZone.secondsFromGMT()
     }
     
     private var sunHorizonCoordinates: HorizonCoordinates = .init(altitude: .zero, azimuth: .zero)
@@ -188,7 +197,7 @@ public class Sun {
     }
     
     private var localStandardTimeMeridian: Double {
-        return timeZone * 15
+        return (Double(timeZone.secondsFromGMT()) / SECONDS_IN_ONE_HOUR) * 15    //TimeZone in hour
     }
     
     private var timeCorrectionFactorInSeconds: Double {
@@ -205,6 +214,13 @@ public class Sun {
      *-------------------------------------------------------------------*/
     
     public init(location: CLLocation,timeZone: Double) {
+        let timeZoneSeconds: Int = Int(timeZone * SECONDS_IN_ONE_HOUR)
+        self.timeZone = TimeZone.init(secondsFromGMT: timeZoneSeconds) ?? .current
+        self.location = location
+        refresh()
+    }
+    
+    public init(location: CLLocation,timeZone: TimeZone) {
         self.timeZone = timeZone
         self.location = location
         refresh()
@@ -220,9 +236,50 @@ public class Sun {
         refresh()
     }
     
-    public func setTimeZone(_ newTimeZone: Double) {
-        timeZone = newTimeZone
+    // current date needs to be changed before call refresh
+    public func setLocation(_ newLocation: CLLocation,_ newTimeZone: Double) {
+        let timeZoneSeconds: Int = Int(newTimeZone * SECONDS_IN_ONE_HOUR)
+        timeZone = TimeZone(secondsFromGMT: timeZoneSeconds) ?? .current
+        location = newLocation
+        changeCurrentDate()
         refresh()
+    }
+    
+    public func setLocation(_ newLocation: CLLocation,_ newTimeZone: TimeZone) {
+        timeZone = newTimeZone
+        location = newLocation
+        changeCurrentDate()
+        refresh()
+    }
+    
+    public func setTimeZone(_ newTimeZone: Double) {
+        let timeZoneSeconds: Int = Int(newTimeZone * SECONDS_IN_ONE_HOUR)
+        timeZone = TimeZone(secondsFromGMT: timeZoneSeconds) ?? .current
+        changeCurrentDate()
+        refresh()
+    }
+    
+    public func setTimeZone(_ newTimeZone: TimeZone) {
+        timeZone = newTimeZone
+        changeCurrentDate()
+        refresh()
+    }
+    
+    public func dumpDateInfos(){
+        
+        print("Current Date -> \(dateFormatter.string(from: date))")
+        print("Sunrise -> \(dateFormatter.string(from: sunrise))")
+        print("Sunset -> \(dateFormatter.string(from: sunset))")
+        print("Solar Noon -> \(dateFormatter.string(from: solarNoon))")
+        print("Golden Hour Start -> \(dateFormatter.string(from: goldenHourStart))")
+        print("Golden Hour End -> \(dateFormatter.string(from: goldenHourEnd))")
+        print("First Light -> \(dateFormatter.string(from: firstLight))")
+        print("Last Light -> \(dateFormatter.string(from: lastLight))")
+        print("marchEquinox -> \(dateFormatter.string(from: marchEquinox))")
+        print("juneSolstice -> \(dateFormatter.string(from: juneSolstice))")
+        print("septemberEquinox -> \(dateFormatter.string(from: septemberEquinox))")
+        print("decemberSolstice -> \(dateFormatter.string(from: decemberSolstice))")
+    
     }
     
     /*--------------------------------------------------------------------
@@ -254,6 +311,15 @@ public class Sun {
         self.decemberSolstice = getDecemberSolstice()
     }
     
+    /// function called after timezone changes in order to change the date accordingly
+    private func changeCurrentDate(){
+
+        let components = calendar.dateComponents(in: self.timeZone, from: self.date)
+        
+        self.date = calendar.date(from: components) ?? self.date
+        
+    }
+    
     private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
         //Compute mean anomaly sun
         var sunMeanAnomaly: Angle  = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunEclipticLongitudePerigee.degrees))
@@ -281,10 +347,10 @@ public class Sun {
         //Step1:
         //Convert LCT to UT, GST, and LST times and adjust the date if needed
         let utDate = lCT2UT(self.date, timeZoneInSeconds: self.timeZoneInSeconds)
-        let gstDate = uT2GST(utDate)
-        let lstDate = gST2LST(gstDate,longitude: longitude)
+        let gstDate = uT2GST(utDate, timeZoneInSeconds: self.timeZoneInSeconds)
+        let lstDate = gST2LST(gstDate,longitude: longitude,  timeZoneInSeconds: self.timeZoneInSeconds)
         
-        let lstDecimal = HMS.init(from: lstDate).hMS2Decimal()
+        let lstDecimal = HMS.init(from: lstDate, timeZoneInSeconds: self.timeZoneInSeconds).hMS2Decimal()
         
         //Step2:
         //Julian number for standard epoch 2000
@@ -333,10 +399,10 @@ public class Sun {
         //Step1:
         //Convert LCT to UT, GST, and LST times and adjust the date if needed
         let utDate = lCT2UT(date, timeZoneInSeconds: self.timeZoneInSeconds)
-        let gstDate = uT2GST(utDate)
-        let lstDate = gST2LST(gstDate,longitude: longitude)
+        let gstDate = uT2GST(utDate, timeZoneInSeconds: self.timeZoneInSeconds)
+        let lstDate = gST2LST(gstDate,longitude: longitude, timeZoneInSeconds: self.timeZoneInSeconds)
         
-        let lstDecimal = HMS.init(from: lstDate).hMS2Decimal()
+        let lstDecimal = HMS.init(from: lstDate,timeZoneInSeconds: self.timeZoneInSeconds).hMS2Decimal()
         
         //Step2:
         //Julian number for standard epoch 2000
@@ -450,7 +516,7 @@ public class Sun {
         var cosHra = (sin(elevation.radians) - sin(sunEquatorialCoordinates.declination.radians) * sin(latitude.radians)) / (cos(sunEquatorialCoordinates.declination.radians) * cos(latitude.radians))
         cosHra = clamp(lower: -1, upper: 1, number: cosHra)
         let hraAngle: Angle = .radians(acos(cosHra))
-        var secondsForSunToReachElevation = (morning ? -1 : 1) * (hraAngle.degrees / 15) * 3600  + TWELVE_HOUR_IN_SECONDS - timeCorrectionFactorInSeconds
+        var secondsForSunToReachElevation = (morning ? -1 : 1) * (hraAngle.degrees / 15) * SECONDS_IN_ONE_HOUR  + TWELVE_HOUR_IN_SECONDS - timeCorrectionFactorInSeconds
         let startOfTheDay = calendar.startOfDay(for: date)
         
         if (Int(secondsForSunToReachElevation) > SECONDS_IN_ONE_DAY){
@@ -518,7 +584,9 @@ public class Sun {
         
         let marchEquinoxUTC = dateFromJd(jd: julianDayMarchEquinox)
         
-        return UT2LCT(marchEquinoxUTC, timeZoneInSeconds: 0)
+        let components = calendar.dateComponents(in: self.timeZone, from: marchEquinoxUTC)
+        
+        return calendar.date(from: components) ?? Date()
     }
     
     private func getJuneSolstice() -> Date {
@@ -529,7 +597,10 @@ public class Sun {
         
         let juneSolsticeUTC = dateFromJd(jd: julianDayJuneSolstice)
         
-        return UT2LCT(juneSolsticeUTC, timeZoneInSeconds: 0)
+        let components = calendar.dateComponents(in: self.timeZone, from: juneSolsticeUTC)
+        
+        return calendar.date(from: components) ?? Date()
+        
     }
     
     private func getSeptemberEquinox() -> Date {
@@ -540,7 +611,9 @@ public class Sun {
         
         let septemberEquinoxUTC = dateFromJd(jd: julianDaySeptemberEquinox)
         
-        return UT2LCT(septemberEquinoxUTC, timeZoneInSeconds: 0)
+        let components = calendar.dateComponents(in: self.timeZone, from: septemberEquinoxUTC)
+        
+        return calendar.date(from: components) ?? Date()
     }
     
     private func getDecemberSolstice() -> Date {
@@ -551,7 +624,9 @@ public class Sun {
         
         let decemberSolsticeUTC = dateFromJd(jd: julianDayDecemberSolstice)
         
-        return UT2LCT(decemberSolsticeUTC, timeZoneInSeconds: 0)
+        let components = calendar.dateComponents(in: self.timeZone, from: decemberSolsticeUTC)
+        
+        return calendar.date(from: components) ?? Date()
     }
 
 }
