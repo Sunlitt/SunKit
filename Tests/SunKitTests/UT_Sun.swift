@@ -58,9 +58,14 @@ final class UT_Sun: XCTestCase {
     static let timeZoneTromso = 1
     static let timeZoneTromsoDaylightSaving = 2
     
+    /*--------------------------------------------------------------------
+     Mumbai  timezone and location
+     *-------------------------------------------------------------------*/
+    static let mumbaiLocation: CLLocation = .init(latitude: 18.94017, longitude: 72.83489)
+    static let timeZoneMumbai = 5.5
+    
     
     /// Test of  a sun ionstance whenm you play with timezones and change location
-    /// Value for expected results have been taken from SunCalc.org
     func testOfSunWhenTimezoneChanges() throws {
         
         //Step1: Creating Sun instance in Naples and with timezone +1
@@ -78,7 +83,7 @@ final class UT_Sun: XCTestCase {
         //Step4: Saving expected outputs for all the date
         var expectedDate = createDateCustomTimeZone(day: 20, month: 11, year: 2022, hour: 4, minute: 00, seconds: 00,timeZone: timeZoneTokyo)
         
-        //Step5: Check if output of sun matches the expected output
+        //Step5: Check if output of sunUnderTest.date matches the expected output
         XCTAssertTrue(expectedDate == sunUnderTest.date)
         
     
@@ -305,6 +310,34 @@ final class UT_Sun: XCTestCase {
         XCTAssertTrue(abs(expectedLastLight.timeIntervalSince1970 - sunUnderTest.lastLight.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSolarNoon.timeIntervalSince1970 - sunUnderTest.solarNoon.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         
+        
+        /*--------------------------------------------------------------------
+         Mumbai
+         *-------------------------------------------------------------------*/
+        
+        //Test: 12/03/23 14:46. Timezone +5.5.
+        
+        //Step1: Creating Sun instance in Mumbai and with timezone +5.5
+        timeZoneUnderTest = .init(secondsFromGMT: Int(UT_Sun.timeZoneMumbai * SECONDS_IN_ONE_HOUR)) ?? .current
+        sunUnderTest = Sun.init(location: UT_Sun.mumbaiLocation, timeZone: timeZoneUnderTest)
+        
+        //Step2: Setting 12/03/23 14:46 as date.
+        dateUnderTest = createDateCustomTimeZone(day: 12, month: 3, year: 2023, hour: 14, minute: 46, seconds: 00,timeZone: timeZoneUnderTest)
+        sunUnderTest.setDate(dateUnderTest)
+        
+        //Step3: Saving expected outputs
+        expectedAzimuth = 235.41
+        expectedAltitude = 53.51
+        
+        expectedSunRise = createDateCustomTimeZone(day: 12, month: 3, year: 2023, hour: 6, minute: 49, seconds: 35,timeZone: timeZoneUnderTest)
+        expectedSunset = createDateCustomTimeZone(day: 12, month: 3, year: 2023, hour: 18, minute: 47, seconds: 42,timeZone: timeZoneUnderTest)
+        expectedFirstLight = createDateCustomTimeZone(day: 12, month: 3, year: 2023, hour: 6, minute: 27, seconds: 59,timeZone: timeZoneUnderTest)
+        expectedLastLight = createDateCustomTimeZone(day: 12, month: 3, year: 2023, hour: 19, minute: 09, seconds: 19,timeZone: timeZoneUnderTest)
+        
+        expectedSolarNoon = createDateCustomTimeZone(day: 12, month: 3, year: 2023, hour: 12, minute: 48, seconds: 31,timeZone: timeZoneUnderTest)
+
+        //Step4: Check if the output are close to the expected ones
+        
     }
     
     func testOfEquinoxesAndSolstices() throws {
@@ -340,8 +373,7 @@ final class UT_Sun: XCTestCase {
         XCTAssertTrue(abs(expectedDecemberSolstice.timeIntervalSince1970 - sunUnderTest.decemberSolstice.timeIntervalSince1970)
                       <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
         
-        
-        
+    
         
         
     }
