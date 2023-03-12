@@ -65,18 +65,6 @@ final class UT_Utils: XCTestCase {
         XCTAssertTrue(expectedOutput == dateFromJd(jd: jdNumberTest))
     }
 
-    /// Test of decimal2Date
-    func testOfdecimal2Date() throws{
-        
-      //Test1: 20.352h of 1 january 2015 shall returns date 01/01/2015 20:21:07
-        //Step1: Creating decimalNumberUnderTest
-        let decimalNumberUnderTest = 20.352
-        
-        //Step2: Call function under test and check that it returns a value which differs from expected output up to 2 seconds
-        let expectedOutput = createDateCurrentTimeZone(day: 1, month: 1, year: 2015, hour: 20, minute: 21, seconds: 7)
-    
-        XCTAssertTrue((expectedOutput.timeIntervalSince1970 - decimal2Date(decimalNumberUnderTest, day: 1, month: 1, year: 2015).timeIntervalSince1970) <= 2)
-    }
     
     /// Test of lCT2UT
     func testOflCT2UT() throws{
@@ -167,7 +155,7 @@ final class UT_Utils: XCTestCase {
         let expectedOutput: Date = createDateCurrentTimeZone(day: 7, month: 2, year: 2010, hour: 8, minute: 41, seconds: 53)
         
         //Step3: Call function under test and check that it returns a value which differs from expected output up to 2 seconds
-        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - uT2GST(dateUnderTest).timeIntervalSince1970) <= 2)
+        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - uT2GST(dateUnderTest,timeZoneInSeconds: TimeZone.current.secondsFromGMT()).timeIntervalSince1970) <= 2)
     }
     
     /// Test of gST2UT
@@ -182,7 +170,7 @@ final class UT_Utils: XCTestCase {
         let expectedOutput: Date = createDateCurrentTimeZone(day: 7, month: 2, year: 2010, hour: 23, minute: 30, seconds: 00)
         
         //Step3: Call function under test and check that it returns a value which differs from expected output up to 2 seconds
-        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - gST2UT(dateUnderTest).timeIntervalSince1970) <= 2)
+        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - gST2UT(dateUnderTest,timeZoneInSeconds: TimeZone.current.secondsFromGMT()).timeIntervalSince1970) <= 2)
     }
     
     /// Test of gST2LST
@@ -198,7 +186,7 @@ final class UT_Utils: XCTestCase {
         let expectedOutput: Date = createDateCurrentTimeZone(day: 6, month: 2, year: 2010, hour: 23, minute: 23, seconds: 41)
         
         //Step3: Call function under test and check that it returns a value which differs from expected output up to 2 seconds
-        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - gST2LST(dateUnderTest, longitude: longitudeUnderTest).timeIntervalSince1970) <= 2)
+        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - gST2LST(dateUnderTest, longitude: longitudeUnderTest,timeZoneInSeconds: TimeZone.current.secondsFromGMT()).timeIntervalSince1970) <= 2)
     }
     
     /// Test of lST2GST
@@ -214,7 +202,7 @@ final class UT_Utils: XCTestCase {
         let expectedOutput: Date = createDateCurrentTimeZone(day: 7, month: 2, year: 2010, hour: 20, minute: 3, seconds: 41)
         
         //Step3: Call function under test and check that it returns a value which differs from expected output up to 2 seconds
-        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - lST2GST(dateUnderTest, longitude: longitudeUnderTest).timeIntervalSince1970) <= 2)
+        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - lST2GST(dateUnderTest, longitude: longitudeUnderTest,timeZoneInSeconds: TimeZone.current.secondsFromGMT()).timeIntervalSince1970) <= 2)
     }
     
 }

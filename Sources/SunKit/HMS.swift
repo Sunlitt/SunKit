@@ -26,10 +26,10 @@ public struct HMS: Equatable{
     public var minutes: Double
     public var seconds: Double
     
-    public init(from date: Date){
+    public init(from date: Date, timeZoneInSeconds: Int){
         
         var calendar: Calendar = .init(identifier: .gregorian)
-        calendar = .current
+        calendar.timeZone = .init(secondsFromGMT: timeZoneInSeconds) ?? .current
         
         self.hours = Double(calendar.component(.hour, from: date))
         self.minutes = Double(calendar.component(.minute, from: date))
