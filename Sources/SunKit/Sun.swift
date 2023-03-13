@@ -26,6 +26,7 @@ public class Sun {
     
     public private(set) var location: CLLocation
     public private(set) var timeZone: TimeZone
+    public private(set) var useSameTimeZone: Bool
     public private(set) var date: Date = Date()
     
     ///Date of Sunrise
@@ -135,16 +136,18 @@ public class Sun {
      Public methods
      *-------------------------------------------------------------------*/
     
-    public init(location: CLLocation,timeZone: Double) {
+    public init(location: CLLocation,timeZone: Double,useSameTimeZone: Bool = false) {
         let timeZoneSeconds: Int = Int(timeZone * SECONDS_IN_ONE_HOUR)
         self.timeZone = TimeZone.init(secondsFromGMT: timeZoneSeconds) ?? .current
         self.location = location
+        self.useSameTimeZone = useSameTimeZone
         refresh()
     }
     
-    public init(location: CLLocation,timeZone: TimeZone) {
+    public init(location: CLLocation,timeZone: TimeZone,useSameTimeZone: Bool = false) {
         self.timeZone = timeZone
         self.location = location
+        self.useSameTimeZone = useSameTimeZone
         refresh()
     }
     
@@ -210,7 +213,7 @@ public class Sun {
     
     private var calendar: Calendar {
         var calendar: Calendar = .init(identifier: .gregorian)
-        calendar.timeZone = self.timeZone
+        calendar.timeZone =  useSameTimeZone ?  .current : self.timeZone
         
         return calendar
     }
@@ -344,11 +347,11 @@ public class Sun {
     private func updateSunCoordinates() {
         //Step1:
         //Convert LCT to UT, GST, and LST times and adjust the date if needed
-        let utDate = lCT2UT(self.date, timeZoneInSeconds: self.timeZoneInSeconds)
-        let gstDate = uT2GST(utDate, timeZoneInSeconds: self.timeZoneInSeconds)
-        let lstDate = gST2LST(gstDate,longitude: longitude,  timeZoneInSeconds: self.timeZoneInSeconds)
+        let utDate = lCT2UT(self.date, timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone)
+        let gstDate = uT2GST(utDate, timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone)
+        let lstDate = gST2LST(gstDate,longitude: longitude,  timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone)
         
-        let lstDecimal = HMS.init(from: lstDate, timeZoneInSeconds: self.timeZoneInSeconds).hMS2Decimal()
+        let lstDecimal = HMS.init(from: lstDate, timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone).hMS2Decimal()
         
         //Step2:
         //Julian number for standard epoch 2000
@@ -396,11 +399,11 @@ public class Sun {
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
         //Step1:
         //Convert LCT to UT, GST, and LST times and adjust the date if needed
-        let utDate = lCT2UT(date, timeZoneInSeconds: self.timeZoneInSeconds)
-        let gstDate = uT2GST(utDate, timeZoneInSeconds: self.timeZoneInSeconds)
-        let lstDate = gST2LST(gstDate,longitude: longitude, timeZoneInSeconds: self.timeZoneInSeconds)
+        let utDate = lCT2UT(date, timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone)
+        let gstDate = uT2GST(utDate, timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone)
+        let lstDate = gST2LST(gstDate,longitude: longitude, timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone)
         
-        let lstDecimal = HMS.init(from: lstDate,timeZoneInSeconds: self.timeZoneInSeconds).hMS2Decimal()
+        let lstDecimal = HMS.init(from: lstDate,timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone).hMS2Decimal()
         
         //Step2:
         //Julian number for standard epoch 2000
