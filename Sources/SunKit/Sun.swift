@@ -207,6 +207,33 @@ public class Sun {
     
     }
     
+    ///  Computes the time at which the sun will reach the elevation given in input for self.date
+    /// - Parameters:
+    ///   - elevation: Elevation
+    ///   - morning: Sun reaches a specific elevation twice, this boolean variable is needed to find out which one need to be considered. The one reached in the morning or not.
+    /// - Returns: Time at which the Sun reaches that elevation. Nil if it didn't find it.
+    public func getDateFrom(elevation : Angle, morning: Bool = false) -> Date? {
+        var cosHra = (sin(elevation.radians) - sin(sunEquatorialCoordinates.declination.radians) * sin(latitude.radians)) / (cos(sunEquatorialCoordinates.declination.radians) * cos(latitude.radians))
+        cosHra = clamp(lower: -1, upper: 1, number: cosHra)
+        let hraAngle: Angle = .radians(acos(cosHra))
+        var secondsForSunToReachElevation = (morning ? -1 : 1) * (hraAngle.degrees / 15) * SECONDS_IN_ONE_HOUR  + TWELVE_HOUR_IN_SECONDS - timeCorrectionFactorInSeconds
+        let startOfTheDay = calendar.startOfDay(for: date)
+        
+        if (Int(secondsForSunToReachElevation) > SECONDS_IN_ONE_DAY){
+            
+            secondsForSunToReachElevation = Double(SECONDS_IN_ONE_DAY)
+        }
+        else if (secondsForSunToReachElevation < 0){
+            
+            secondsForSunToReachElevation = 0
+        }
+        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSunToReachElevation))
+        
+        let newDate = calendar.date(bySettingHour: hoursMinutesSeconds.0 , minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfTheDay)
+        
+        return newDate
+    }
+    
     /*--------------------------------------------------------------------
      Private Variables
      *-------------------------------------------------------------------*/
@@ -508,32 +535,6 @@ public class Sun {
         return sunsetDate
     }
     
-    ///  Computes the time at which the sun will reach the elevation given in input
-    /// - Parameters:
-    ///   - elevation: Elevation
-    ///   - morning: Sun reaches a specific elevation twice, this bolean variable is needed to find out which one need to be considered. The one reached in the morning or not.
-    /// - Returns: Time at which the Sun reaches that elevation. Nil if it didn't find it.
-    private func getDateFrom(elevation : Angle, morning: Bool = false) -> Date? {
-        var cosHra = (sin(elevation.radians) - sin(sunEquatorialCoordinates.declination.radians) * sin(latitude.radians)) / (cos(sunEquatorialCoordinates.declination.radians) * cos(latitude.radians))
-        cosHra = clamp(lower: -1, upper: 1, number: cosHra)
-        let hraAngle: Angle = .radians(acos(cosHra))
-        var secondsForSunToReachElevation = (morning ? -1 : 1) * (hraAngle.degrees / 15) * SECONDS_IN_ONE_HOUR  + TWELVE_HOUR_IN_SECONDS - timeCorrectionFactorInSeconds
-        let startOfTheDay = calendar.startOfDay(for: date)
-        
-        if (Int(secondsForSunToReachElevation) > SECONDS_IN_ONE_DAY){
-            
-            secondsForSunToReachElevation = Double(SECONDS_IN_ONE_DAY)
-        }
-        else if (secondsForSunToReachElevation < 0){
-            
-            secondsForSunToReachElevation = 0
-        }
-        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSunToReachElevation))
-        
-        let newDate = calendar.date(bySettingHour: hoursMinutesSeconds.0 , minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfTheDay)
-        
-        return newDate
-    }
     
     /// Golden Hour in the afternoon begins when the sun reaches elevation equals to 6 degrees
     /// - Returns: Time at which the GoldenHour starts
