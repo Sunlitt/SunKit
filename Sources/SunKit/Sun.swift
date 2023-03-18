@@ -61,7 +61,7 @@ public class Sun {
     
     
     public static let common: Sun = {
-        return Sun(location: CLLocation(latitude: 37.334886, longitude: -122.008988), timeZone: -7)
+        return Sun(location: CLLocation(latitude: 37.334886, longitude: -122.008988), timeZone: -7, useSameTimeZone: true)
     }()
     
     public var azimuth: Angle {
