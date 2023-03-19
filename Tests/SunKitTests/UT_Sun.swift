@@ -69,11 +69,11 @@ final class UT_Sun: XCTestCase {
     func testOfSunWhenTimezoneChanges() throws {
         
         //Step1: Creating Sun instance in Naples and with timezone +1
-        var timeZoneNaples: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        let timeZoneNaples: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
         var sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneNaples)
         
         //Step2: Setting 19/11/22 20:00 as date. (No daylight saving)
-        var dateUnderTest = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 20, minute: 00, seconds: 00,timeZone: timeZoneNaples)
+        let dateUnderTest = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 20, minute: 00, seconds: 00,timeZone: timeZoneNaples)
         sunUnderTest.setDate(dateUnderTest)
         
         //Step3: Change location and timezone
@@ -81,7 +81,7 @@ final class UT_Sun: XCTestCase {
         sunUnderTest.setLocation(UT_Sun.tokyoLocation, timeZoneTokyo)
         
         //Step4: Saving expected outputs for all the date
-        var expectedDate = createDateCustomTimeZone(day: 20, month: 11, year: 2022, hour: 4, minute: 00, seconds: 00,timeZone: timeZoneTokyo)
+        let expectedDate = createDateCustomTimeZone(day: 20, month: 11, year: 2022, hour: 4, minute: 00, seconds: 00,timeZone: timeZoneTokyo)
         
         //Step5: Check if output of sunUnderTest.date matches the expected output
         XCTAssertTrue(expectedDate == sunUnderTest.date)

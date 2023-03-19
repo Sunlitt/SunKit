@@ -152,8 +152,11 @@ public class Sun {
     }
     
     public func setDate(_ newDate: Date) {
+        let newDay = calendar.dateComponents([.day,.month,.year], from: newDate)
+        let oldDay = calendar.dateComponents([.day,.month,.year], from: date)
+        let isSameDay: Bool = (newDay == oldDay)
         date = newDate
-        refresh()
+        refresh(needToComputeSunEvents: !isSameDay)
     }
     
     public func setLocation(_ newLocation: CLLocation) {
@@ -248,7 +251,7 @@ public class Sun {
     private var dateFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = .current
-        dateFormatter.timeZone = TimeZone.init(secondsFromGMT: timeZone.secondsFromGMT())
+        dateFormatter.timeZone = timeZone
         dateFormatter.timeStyle = .full
         dateFormatter.dateStyle = .full
         return dateFormatter
@@ -323,19 +326,23 @@ public class Sun {
     /// Compute Golden hour start and end time.
     /// Compute first light and last light time
     ///
-    private func refresh() {
+    /// - Parameter needToComputeAgainSunEvents: True if Sunrise,Sunset and all the others sun events have to be computed.
+    private func refresh(needToComputeSunEvents: Bool = true) {
         updateSunCoordinates()
         
-        self.sunrise = getSunrise() ?? Date()
-        self.sunriseAzimuth = getSunHorizonCoordinatesFrom(date: sunrise).azimuth.degrees
-        self.sunset = getSunset() ?? Date()
-        self.sunsetAzimuth = getSunHorizonCoordinatesFrom(date: sunset).azimuth.degrees
-        self.solarNoon = getSolarNoon() ?? Date()
-        self.solarNoonAzimuth = getSunHorizonCoordinatesFrom(date: solarNoon).azimuth.degrees
-        self.goldenHourStart = getGoldenHourStart() ?? Date()
-        self.goldenHourEnd = getGoldenHourFinish() ?? Date()
-        self.firstLight = getFirstLight() ?? Date()
-        self.lastLight = getLastLight() ?? Date()
+        if(needToComputeSunEvents){
+            self.sunrise = getSunrise() ?? Date()
+            self.sunriseAzimuth = getSunHorizonCoordinatesFrom(date: sunrise).azimuth.degrees
+            self.sunset = getSunset() ?? Date()
+            self.sunsetAzimuth = getSunHorizonCoordinatesFrom(date: sunset).azimuth.degrees
+            self.solarNoon = getSolarNoon() ?? Date()
+            self.solarNoonAzimuth = getSunHorizonCoordinatesFrom(date: solarNoon).azimuth.degrees
+            self.goldenHourStart = getGoldenHourStart() ?? Date()
+            self.goldenHourEnd = getGoldenHourFinish() ?? Date()
+            self.firstLight = getFirstLight() ?? Date()
+            self.lastLight = getLastLight() ?? Date()
+        }
+
         self.marchEquinox = getMarchEquinox()
         self.juneSolstice = getJuneSolstice()
         self.septemberEquinox = getSeptemberEquinox()
