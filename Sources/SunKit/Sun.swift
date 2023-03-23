@@ -20,6 +20,7 @@ import Foundation
 import CoreLocation
 
 public class Sun {
+    
     /*--------------------------------------------------------------------
      Public get Variables
      *-------------------------------------------------------------------*/
@@ -59,10 +60,6 @@ public class Sun {
     ///Date at which  there will be december solstice
     public private(set) var decemberSolstice: Date = Date()
     
-    
-    public static let common: Sun = {
-        return Sun(location: CLLocation(latitude: 37.334886, longitude: -122.008988), timeZone: -7, useSameTimeZone: true)
-    }()
     
     public var azimuth: Angle {
         return self.sunHorizonCoordinates.azimuth
@@ -168,27 +165,23 @@ public class Sun {
         let timeZoneSeconds: Int = Int(newTimeZone * SECONDS_IN_ONE_HOUR)
         timeZone = TimeZone(secondsFromGMT: timeZoneSeconds) ?? .current
         location = newLocation
-        changeCurrentDate()
         refresh()
     }
     
     public func setLocation(_ newLocation: CLLocation,_ newTimeZone: TimeZone) {
         timeZone = newTimeZone
         location = newLocation
-        changeCurrentDate()
         refresh()
     }
     
     public func setTimeZone(_ newTimeZone: Double) {
         let timeZoneSeconds: Int = Int(newTimeZone * SECONDS_IN_ONE_HOUR)
         timeZone = TimeZone(secondsFromGMT: timeZoneSeconds) ?? .current
-        changeCurrentDate()
         refresh()
     }
     
     public func setTimeZone(_ newTimeZone: TimeZone) {
         timeZone = newTimeZone
-        changeCurrentDate()
         refresh()
     }
     
@@ -251,8 +244,8 @@ public class Sun {
     private var dateFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = .current
-        dateFormatter.timeZone = timeZone
-        dateFormatter.timeStyle = .full
+        dateFormatter.timeZone = useSameTimeZone ?  .current : self.timeZone
+        dateFormatter.timeStyle = useSameTimeZone ?  .short : .full
         dateFormatter.dateStyle = .full
         return dateFormatter
     }
@@ -343,16 +336,10 @@ public class Sun {
             self.lastLight = getLastLight() ?? Date()
         }
 
-        self.marchEquinox = getMarchEquinox()
-        self.juneSolstice = getJuneSolstice()
-        self.septemberEquinox = getSeptemberEquinox()
-        self.decemberSolstice = getDecemberSolstice()
-    }
-    
-    /// function called after timezone changes in order to change the date accordingly
-    private func changeCurrentDate(){
-        let components = calendar.dateComponents(in: self.timeZone, from: self.date)
-        self.date = calendar.date(from: components) ?? self.date
+        self.marchEquinox = getMarchEquinox() ?? Date()
+        self.juneSolstice = getJuneSolstice() ?? Date()
+        self.septemberEquinox = getSeptemberEquinox() ?? Date()
+        self.decemberSolstice = getDecemberSolstice() ?? Date()
     }
     
     private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
@@ -585,49 +572,88 @@ public class Sun {
         return firstLight
     }
     
-    private func getMarchEquinox() -> Date {
+    private func convertComponentsInCurrentTimeZoneDate(_ components: DateComponents) -> Date?{
+        
+       var dateCurrentTimeZone = calendar.date(from: components)
+        dateCurrentTimeZone = calendar.date(bySetting: .day, value: components.day ?? 23, of: dateCurrentTimeZone ?? Date())
+        dateCurrentTimeZone = calendar.date(bySetting: .month, value: components.month ?? 23, of: dateCurrentTimeZone ?? Date())
+        dateCurrentTimeZone = calendar.date(bySetting: .year, value: components.year ?? 23, of: dateCurrentTimeZone ?? Date())
+        dateCurrentTimeZone = calendar.date(bySettingHour: components.hour ?? 23, minute: components.minute ?? 59, second: components.second ?? 59,of: dateCurrentTimeZone ?? Date())
+        
+        return dateCurrentTimeZone
+        
+    }
+    
+    private func getMarchEquinox() -> Date? {
         
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
         let julianDayMarchEquinox: Double = 1721139.2855 + 365.2421376 * year + 0.0679190 * pow(t, 2) - 0.0027879 * pow(t, 3)
         
         let marchEquinoxUTC = dateFromJd(jd: julianDayMarchEquinox)
-        let components = calendar.dateComponents(in: self.timeZone, from: marchEquinoxUTC)
-        return calendar.date(from: components) ?? Date()
+        if(!useSameTimeZone){
+            
+            return marchEquinoxUTC
+        }else{
+            
+            let components = calendar.dateComponents(in: self.timeZone, from: marchEquinoxUTC)
+            return convertComponentsInCurrentTimeZoneDate(components)
+        }
     }
     
-    private func getJuneSolstice() -> Date {
+    private func getJuneSolstice() -> Date? {
         
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
         let julianDayJuneSolstice: Double = 1721233.2486 + 365.2417284 * year - 0.0530180 * pow(t, 2) + 0.0093320 * pow(t, 3)
         
         let juneSolsticeUTC = dateFromJd(jd: julianDayJuneSolstice)
-        let components = calendar.dateComponents(in: self.timeZone, from: juneSolsticeUTC)
-        return calendar.date(from: components) ?? Date()
+        
+        if(!useSameTimeZone){
+            
+            return juneSolsticeUTC
+        }else{
+            
+            let components = calendar.dateComponents(in: self.timeZone, from: juneSolsticeUTC)
+            return convertComponentsInCurrentTimeZoneDate(components)
+        }
         
     }
     
-    private func getSeptemberEquinox() -> Date {
+    private func getSeptemberEquinox() -> Date? {
         
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
         let julianDaySeptemberEquinox: Double = 1721325.6978 + 365.2425055 * year - 0.126689 * pow(t, 2) + 0.0019401 * pow(t, 3)
         
         let septemberEquinoxUTC = dateFromJd(jd: julianDaySeptemberEquinox)
-        let components = calendar.dateComponents(in: self.timeZone, from: septemberEquinoxUTC)
-        return calendar.date(from: components) ?? Date()
+        
+        if(!useSameTimeZone){
+            
+            return septemberEquinoxUTC
+        }else{
+            
+            let components = calendar.dateComponents(in: self.timeZone, from: septemberEquinoxUTC)
+            return convertComponentsInCurrentTimeZoneDate(components)
+        }
     }
     
-    private func getDecemberSolstice() -> Date {
+    private func getDecemberSolstice() -> Date? {
         
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
         let julianDayDecemberSolstice: Double = 1721414.3920 + 365.2428898 * year - 0.0109650 * pow(t, 2) - 0.0084885 * pow(t, 3)
         
         let decemberSolsticeUTC = dateFromJd(jd: julianDayDecemberSolstice)
-        let components = calendar.dateComponents(in: self.timeZone, from: decemberSolsticeUTC)
-        return calendar.date(from: components) ?? Date()
+        
+        if(!useSameTimeZone){
+            
+            return decemberSolsticeUTC
+        }else{
+            
+            let components = calendar.dateComponents(in: self.timeZone, from: decemberSolsticeUTC)
+            return convertComponentsInCurrentTimeZoneDate(components)
+        }
     }
 
 }

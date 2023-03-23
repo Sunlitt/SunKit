@@ -65,32 +65,6 @@ final class UT_Sun: XCTestCase {
     static let timeZoneMumbai = 5.5
     
     
-    /// Test of  a sun ionstance whenm you play with timezones and change location
-    func testOfSunWhenTimezoneChanges() throws {
-        
-        //Step1: Creating Sun instance in Naples and with timezone +1
-        let timeZoneNaples: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
-        var sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneNaples)
-        
-        //Step2: Setting 19/11/22 20:00 as date. (No daylight saving)
-        let dateUnderTest = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 20, minute: 00, seconds: 00,timeZone: timeZoneNaples)
-        sunUnderTest.setDate(dateUnderTest)
-        
-        //Step3: Change location and timezone
-        let timeZoneTokyo: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneTokyo * Int(SECONDS_IN_ONE_HOUR)) ?? .current
-        sunUnderTest.setLocation(UT_Sun.tokyoLocation, timeZoneTokyo)
-        
-        //Step4: Saving expected outputs for all the date
-        let expectedDate = createDateCustomTimeZone(day: 20, month: 11, year: 2022, hour: 4, minute: 00, seconds: 00,timeZone: timeZoneTokyo)
-        
-        //Step5: Check if output of sunUnderTest.date matches the expected output
-        XCTAssertTrue(expectedDate == sunUnderTest.date)
-        
-    
-        
-    }
-    
-    
     /// Test of  Sun azimuth, sunrise, sunset, afternoon golden hour start and afternoon golden hour end
     /// Value for expected results have been taken from SunCalc.org
     func testOfSun() throws {
@@ -338,6 +312,15 @@ final class UT_Sun: XCTestCase {
 
         //Step4: Check if the output are close to the expected ones
         
+        XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth.degrees) <  UT_Sun.sunAzimuthThreshold)
+        XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude.degrees) <  UT_Sun.sunAltitudeThreshold)
+       
+        XCTAssertTrue(abs(expectedSunRise.timeIntervalSince1970 - sunUnderTest.sunrise.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
+        XCTAssertTrue(abs(expectedSunset.timeIntervalSince1970 - sunUnderTest.sunset.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
+        XCTAssertTrue(abs(expectedFirstLight.timeIntervalSince1970 - sunUnderTest.firstLight.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
+        XCTAssertTrue(abs(expectedLastLight.timeIntervalSince1970 - sunUnderTest.lastLight.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
+        XCTAssertTrue(abs(expectedSolarNoon.timeIntervalSince1970 - sunUnderTest.solarNoon.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
+        
     }
     
     func testOfEquinoxesAndSolstices() throws {
@@ -375,7 +358,28 @@ final class UT_Sun: XCTestCase {
     }
     
     
-    
+    /// Test of  a sun ionstance whenm you play with timezones and change location
+    func testOfSunWhenTimezoneChanges() throws {
+        
+        //Step1: Creating Sun instance in Naples and with timezone +1
+        let timeZoneNaples: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        let sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneNaples)
+        
+        //Step2: Setting 19/11/22 20:00 as date. (No daylight saving)
+        let dateUnderTest = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 20, minute: 00, seconds: 00,timeZone: timeZoneNaples)
+        sunUnderTest.setDate(dateUnderTest)
+        
+        //Step3: Change location and timezone
+        let timeZoneTokyo: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneTokyo * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        sunUnderTest.setLocation(UT_Sun.tokyoLocation, timeZoneTokyo)
+        
+        //Step4: Saving expected outputs for all the date
+        let expectedDate = createDateCustomTimeZone(day: 20, month: 11, year: 2022, hour: 4, minute: 00, seconds: 00,timeZone: timeZoneTokyo)
+        
+        //Step5: Check if output of sunUnderTest.date matches the expected output
+        XCTAssertTrue(expectedDate == sunUnderTest.date)
+        
+    }
     
     
     
