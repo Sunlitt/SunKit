@@ -19,7 +19,7 @@
 import Foundation
 
 public struct Angle : Equatable {
-    
+        
     public static var zero: Angle = .init()
     
     public init() { _radians = 0 }
