@@ -16,6 +16,83 @@ SunKit was first developed as part of a bigger project: [Sunlitt](https://github
 
 To compute Sunrise, Sunset, Golden Hour and so on we only need a CLLocation and the time zone of that location. **CoreLocation framework is required for SunKit to work**.
 
+
+## Usage
+SunKit only needs a location and the relative time zone to compute every information you need about the Sun.  
+Everything is computed locally, no internet connection is needed.
+
+### Creating a Sun 
+
+```swift
+
+// Creating a CLLocation object with the coordinates you are interested in
+let naplesLocation: CLLocation = .init(latitude: 40.84014, longitude: 14.25226)
+
+// Timezone for the location of interest. It's highly recommended to initialize it via identifier
+let timeZoneNaples: Timezone = .init(identifier: "Europe/Rome") ?? .current
+
+// Creating the Sun instance which will store all the information you need about sun events and his position
+var mySun: Sun = .init(location: naplesLocation, timeZone: timeZoneNaples)
+
+```
+
+### Retrieve information
+
+```swift
+// Creating a Date instance
+let myDate: Date = Date() // Your current date
+
+// Setting inside mySun object the date of interest
+mySun.setDate(myDate)
+
+      // All the following informations are related to the given location for the date that has just been set
+
+// Azimuth of the Sun 
+mySun.azimuth.degrees  
+
+// Altitude of the Sun
+mySun.altitude.degrees
+
+// Sunrise Date
+mySun.sunrise
+
+// Sunset Date
+mySun.sunset
+
+// Afternoon Golden Hour Start Date
+mySun.goldenHourStart
+
+// Afternoon Golden Hour End Date
+mySun.goldenHourEnd
+
+// To know all the information you can retrieve go to the **Features** section.
+
+```
+ ### Working with Timezones and Dates
+ 
+ 
+To properly show the Sun Date Events use the following DateFormatter.
+
+```swift
+
+ //Creting a DateFormatter
+ let dateFormatter =  DateFormatter()
+ 
+ //Properly setting his attributes
+ dateFormatter.locale    =  .current
+ dateFormatter.timeZone  =  timeZoneNaples  // It shall be the same as the one used to initilize mySun
+ dateFormatter.timeStyle = .full
+ dateFormatter.dateStyle = .full
+  
+ //Printing Sun Date Events with the correct Timezone
+  
+ print("Sunrise: \(dateFormatter.string(from: mySun.sunrise))")
+    
+```
+
+ 
+
+
 ## Features
   * Sun Azimuth
   * Sun Altitude
