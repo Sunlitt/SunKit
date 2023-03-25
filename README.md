@@ -102,6 +102,10 @@ To properly show the Sun Date Events use the following DateFormatter.
   * Solar Noon Time
   * Golden Hour Time
   * Sunset Time
+  * Astronomical Sunrise
+  * Astronomical Sunset
+  * Nautical Sunrise
+  * Nautical Sunset
   * Sun Azimuth at Sunrise
   * Sun Azimuth at Sunset
   * Sun Azimuth at Solar Noon
