@@ -429,10 +429,10 @@ Private methods
         //Step1:
         //Convert LCT to UT, GST, and LST times and adjust the date if needed
         let utDate  = lCT2UT(self.date, timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone)
-        let gstDate = uT2GST(utDate, timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone)
-        let lstDate = gST2LST(gstDate,longitude: longitude,  timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone)
+        let gstHMS = uT2GST(utDate,useSameTimeZone: self.useSameTimeZone)
+        let lstHMS = gST2LST(gstHMS,longitude: longitude)
         
-        let lstDecimal = HMS.init(from: lstDate, timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone).hMS2Decimal()
+        let lstDecimal = lstHMS.hMS2Decimal()
         
         //Step2:
         //Julian number for standard epoch 2000
@@ -481,10 +481,10 @@ Private methods
         //Step1:
         //Convert LCT to UT, GST, and LST times and adjust the date if needed
         let utDate  = lCT2UT(date, timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone)
-        let gstDate = uT2GST(utDate, timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone)
-        let lstDate = gST2LST(gstDate,longitude: longitude, timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone)
+        let gstHMS = uT2GST(utDate,useSameTimeZone: self.useSameTimeZone)
+        let lstHMS = gST2LST(gstHMS,longitude: longitude)
         
-        let lstDecimal = HMS.init(from: lstDate,timeZoneInSeconds: self.timeZoneInSeconds,useSameTimeZone: self.useSameTimeZone).hMS2Decimal()
+        let lstDecimal = lstHMS.hMS2Decimal()
         
         //Step2:
         //Julian number for standard epoch 2000

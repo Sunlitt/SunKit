@@ -25,5 +25,4 @@ enum SunElevationEvents: Double{
     case astronomical    = -18
     case goldenHourStart =  6
     case goldenHourEnd   = -4
-    
 }

@@ -69,7 +69,7 @@ final class UT_Utils: XCTestCase {
     /// Test of lCT2UT
     func testOflCT2UT() throws{
         
-      //Test1: Convert 18h00m00s LCT to UT for an observer in the Eastern Standard Time zone (-5) shall be equal to the same date at 23h.
+      //Test1: Convert 18h00m00s LCT to UT for an observer in the Eastern Standard Time zone (-5) shall be equal to the same date at 23h. This function needs to be tested only when usaSameTimeZone equals TRUE.
         
         //Step1: Creating 1/01/2015 18h with current time zone(i.e the one set on your device)
         let dateUnderTest = createDateCurrentTimeZone(day: 1, month: 1, year: 2015, hour: 18, minute: 0, seconds: 0)
@@ -79,23 +79,7 @@ final class UT_Utils: XCTestCase {
         let expectedOutput: Date = createDateCurrentTimeZone(day: 1, month: 1, year: 2015, hour: 23, minute: 0, seconds: 0)
         
         //Step3: Call function under test and check that it returns a value which differs from expected output up to 2 seconds
-        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - lCT2UT(dateUnderTest, timeZoneInSeconds: timeZoneInSecondsUnderTest,useSameTimeZone: false).timeIntervalSince1970) <= 2)
-    }
-    
-    /// Test of UT2LCT
-    func testOfUT2LCT() throws{
-        
-      //Test1: Convert 23h30m00s UT to LCT for an observer within the Eastern Standard Time zone, assuming daylight savinng time(-4). Expected output shall be equal to the same date at 19h30m
-        
-        //Step1: Creating 11/06/2015 23h30m  with current time zone(i.e the one set on your device)
-        let dateUnderTest = createDateCurrentTimeZone(day: 11, month: 6, year: 2015, hour: 23, minute: 30, seconds: 0)
-        let timeZoneInSecondsUnderTest = -4 * 3600
-        
-        //Step2: Set variable "expectedOutput" to the date 11/06/2015 19h30m
-        let expectedOutput: Date = createDateCurrentTimeZone(day: 11, month: 06, year: 2015, hour: 19, minute: 30, seconds: 0)
-        
-        //Step3: Call function under test and check that it returns a value which differs from expected output up to 2 seconds
-        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - UT2LCT(dateUnderTest, timeZoneInSeconds: timeZoneInSecondsUnderTest,useSameTimeZone: false).timeIntervalSince1970) <= 2)
+        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - lCT2UT(dateUnderTest, timeZoneInSeconds: timeZoneInSecondsUnderTest,useSameTimeZone: true).timeIntervalSince1970) <= 2)
     }
     
     /// Test of extendMod
@@ -146,63 +130,44 @@ final class UT_Utils: XCTestCase {
     /// Test of uT2GST
     func testOfuT2GST() throws{
         
-      //Test1: Convert 23h30m00s UT to GST for February 7, 2010.
+      //Test1: Convert 23h30m00s current timezone to GST for February 7, 2010. UseSameTimeZone equals TRUE.
         
         //Step1: Creating 7/02/2010 23h30m  with current time zone(i.e the one set on your device)
-        let dateUnderTest = createDateCurrentTimeZone(day: 7, month: 2, year: 2010, hour: 23, minute: 30, seconds: 0)
+        var dateUnderTest = createDateCurrentTimeZone(day: 7, month: 2, year: 2010, hour: 23, minute: 30, seconds: 0)
         
-        //Step2: Set variable "expectedOutput" to the date 7/02/2010 8h41m53s
-        let expectedOutput: Date = createDateCurrentTimeZone(day: 7, month: 2, year: 2010, hour: 8, minute: 41, seconds: 53)
-        
-        //Step3: Call function under test and check that it returns a value which differs from expected output up to 2 seconds
-        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - uT2GST(dateUnderTest,timeZoneInSeconds: TimeZone.current.secondsFromGMT(),useSameTimeZone: false).timeIntervalSince1970) <= 2)
-    }
-    
-    /// Test of gST2UT
-    func testOfgST2UT() throws{
-        
-      //Test1: Calculate the UT for 8h41m53s GST on February 7, 2010. 
-        
-        //Step1: Creating 7/02/2010 8h41m53s with current time zone(i.e the one set on your device)
-        let dateUnderTest = createDateCurrentTimeZone(day: 7, month: 2, year: 2010, hour: 8, minute: 41, seconds: 53)
-        
-        //Step2: Set variable "expectedOutput" to the date 7/02/2010 23h29m59s
-        let expectedOutput: Date = createDateCurrentTimeZone(day: 7, month: 2, year: 2010, hour: 23, minute: 30, seconds: 00)
+        //Step2: Set variable "expectedOutput" to the expect output
+        let expectedOutput: HMS = HMS.init(decimal: 8.698091)
         
         //Step3: Call function under test and check that it returns a value which differs from expected output up to 2 seconds
-        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - gST2UT(dateUnderTest,timeZoneInSeconds: TimeZone.current.secondsFromGMT(),useSameTimeZone: false).timeIntervalSince1970) <= 2)
+        XCTAssert(abs(uT2GST(dateUnderTest, useSameTimeZone: true).hMS2Decimal() - expectedOutput.hMS2Decimal()) < 0.01)
+        
+        //Test2: Convert 23h30m00s UT to GST for February 7, 2010. UseSameTimeZone equals False.
+        
+        //Step1: Creating 7/02/2010 23h30m UTC
+        dateUnderTest = createDateUTC(day: 7, month: 2, year: 2010, hour: 23, minute: 30, seconds: 0)
+        
+        //Step3: Call function under test and check that it returns a value which differs from expected output up to 0.01
+        XCTAssert(abs(uT2GST(dateUnderTest, useSameTimeZone: false).hMS2Decimal() - expectedOutput.hMS2Decimal()) < 0.01)
     }
     
     /// Test of gST2LST
     func testOfgST2LST() throws{
         
-      //Test1: Converting GST to LST requires knowing an observer’s longitude. Assume that the GST is 2h03m41s 7/02/2010 for an observer at 40° W longitude. His corresponding LST time shall be 23h23m41s 6/02/2010.
+      //Test1: Converting GST to LST requires knowing an observer’s longitude. Assume that the GST is 2h03m41s  for an observer at 40° W longitude.
         
         //Step1: Creating 7/02/2010 2h03m41s with current time zone(i.e the one set on your device)
-        let dateUnderTest = createDateCurrentTimeZone(day: 7, month: 2, year: 2010, hour: 2, minute: 3, seconds: 41)
+        let gstHMS: HMS = .init(hours: 2, minutes: 03, seconds: 41)
         let longitudeUnderTest: Angle = .init(degrees: -40)
         
-        //Step2: Set variable "expectedOutput" to the date 6/02/2010 23h23m41s
-        let expectedOutput: Date = createDateCurrentTimeZone(day: 6, month: 2, year: 2010, hour: 23, minute: 23, seconds: 41)
+        //Step2: Set variable "expectedOutput" to the expected output
+        let expectedOutput = 23.3994722
         
-        //Step3: Call function under test and check that it returns a value which differs from expected output up to 2 seconds
-        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - gST2LST(dateUnderTest, longitude: longitudeUnderTest,timeZoneInSeconds: TimeZone.current.secondsFromGMT(),useSameTimeZone: false).timeIntervalSince1970) <= 2)
+        //Step3: Call function under test and check that it returns a value which differs from expected output up to 0.01
+        let output = gST2LST(gstHMS, longitude: longitudeUnderTest).hMS2Decimal()
+        XCTAssert(abs(expectedOutput - output) < 0.01)
+        
     }
     
-    /// Test of lST2GST
-    func testOflST2GST() throws{
-        
-      //Test1: Assume that an observer at 50° E longitude calculates the LST to be 23h23m41s 7/02/2010. Convert this LST to GST.Expected output shall be 20h03m41s 7/02/2010.
-        
-        //Step1: Creating 7/02/2010 23h23m41s with current time zone(i.e the one set on your device)
-        let dateUnderTest = createDateCurrentTimeZone(day: 7, month: 2, year: 2010, hour: 23, minute: 23, seconds: 41)
-        let longitudeUnderTest: Angle = .init(degrees: 50)
-        
-        //Step2: Set variable "expectedOutput" to the date 7/02/2010 20h03m41s
-        let expectedOutput: Date = createDateCurrentTimeZone(day: 7, month: 2, year: 2010, hour: 20, minute: 3, seconds: 41)
-        
-        //Step3: Call function under test and check that it returns a value which differs from expected output up to 2 seconds
-        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - lST2GST(dateUnderTest, longitude: longitudeUnderTest,timeZoneInSeconds: TimeZone.current.secondsFromGMT(),useSameTimeZone: false).timeIntervalSince1970) <= 2)
-    }
+    
     
 }

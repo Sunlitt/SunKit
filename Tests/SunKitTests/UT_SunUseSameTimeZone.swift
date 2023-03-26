@@ -28,10 +28,10 @@ final class UT_SunUseSameTimeZone: XCTestCase {
     /*--------------------------------------------------------------------
      Thresholds. UTs will pass if |output - expectedOutput| < threshold
      *-------------------------------------------------------------------*/
-    static let sunAzimuthThreshold: Double = 0.5
-    static let sunAltitudeThreshold: Double = 0.5
-    static let sunSetRiseThresholdInSeconds: Double = 300 //5 minutes in seconds
-    static let sunEquinoxesAndSolsticesThresholdInSeconds:Double = 1200 //20 minutes in seconds
+    static let sunAzimuthThreshold: Double = 0.1
+    static let sunAltitudeThreshold: Double = 0.15
+    static let sunSetRiseThresholdInSeconds: Double = 120 //2 minutes in seconds
+    static let sunEquinoxesAndSolsticesThresholdInSeconds: Double = 700 // approxametly 11 minutes
     
     /*--------------------------------------------------------------------
      Naples timezone and location
