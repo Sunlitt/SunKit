@@ -28,10 +28,10 @@ final class UT_SunUseSameTimeZone: XCTestCase {
     /*--------------------------------------------------------------------
      Thresholds. UTs will pass if |output - expectedOutput| < threshold
      *-------------------------------------------------------------------*/
-    static let sunAzimuthThreshold: Double = 0.5
-    static let sunAltitudeThreshold: Double = 0.5
-    static let sunSetRiseThresholdInSeconds: Double = 300 //5 minutes in seconds
-    static let sunEquinoxesAndSolsticesThresholdInSeconds:Double = 1200 //20 minutes in seconds
+    static let sunAzimuthThreshold: Double = 0.1
+    static let sunAltitudeThreshold: Double = 0.15
+    static let sunSetRiseThresholdInSeconds: Double = 120 //2 minutes in seconds
+    static let sunEquinoxesAndSolsticesThresholdInSeconds: Double = 700 // approxametly 11 minutes
     
     /*--------------------------------------------------------------------
      Naples timezone and location
@@ -329,19 +329,19 @@ final class UT_SunUseSameTimeZone: XCTestCase {
         //Test: 22/03/23 7:04. Timezone +11. Sydney
         
         //Step1: Creating sun instance in Sydney and with timezone +11
-        let timeZoneUnderTest: TimeZone = .init(secondsFromGMT: UT_SunUseSameTimeZone.timeZoneSydney * Int(SECONDS_IN_ONE_HOUR)) ?? .current
-        let sunUnderTest = Sun.init(location: UT_SunUseSameTimeZone.sydneyLocation, timeZone: timeZoneUnderTest,useSameTimeZone: true)
+        var timeZoneUnderTest: TimeZone = .init(identifier: "Australia/Sydney") ?? .current
+        var sunUnderTest = Sun.init(location: UT_SunUseSameTimeZone.sydneyLocation, timeZone: timeZoneUnderTest,useSameTimeZone: true)
         
         //Step2: Setting  22/03/23 7:04 as date.
-        let dateUnderTest = createDateCurrentTimeZone(day: 22, month: 3, year: 2023, hour: 7, minute: 04, seconds: 00)
+        var dateUnderTest = createDateCurrentTimeZone(day: 22, month: 3, year: 2023, hour: 7, minute: 04, seconds: 00)
         sunUnderTest.setDate(dateUnderTest)
         
         //Step3: Saving expected outputs
     
-        let expectedMarchEquinox = createDateCurrentTimeZone(day: 21, month: 3, year: 2023, hour: 8, minute: 14, seconds: 00)
-        let expectedJuneSolstice = createDateCurrentTimeZone(day: 22, month: 6, year: 2023, hour: 2, minute: 00, seconds: 00)
-        let expectedSeptemberEquinox = createDateCurrentTimeZone(day: 23, month: 09, year: 2023, hour: 17, minute: 48, seconds: 00)
-        let expectedDecemberSolstice = createDateCurrentTimeZone(day: 22, month: 12, year: 2023, hour: 14, minute: 25, seconds: 00)
+        var expectedMarchEquinox = createDateCurrentTimeZone(day: 21, month: 3, year: 2023, hour: 8, minute: 14, seconds: 00)
+        var expectedJuneSolstice = createDateCurrentTimeZone(day: 22, month: 6, year: 2023, hour: 1, minute: 00, seconds: 00)
+        var expectedSeptemberEquinox = createDateCurrentTimeZone(day: 23, month: 09, year: 2023, hour: 16, minute: 48, seconds: 00)
+        var expectedDecemberSolstice = createDateCurrentTimeZone(day: 22, month: 12, year: 2023, hour: 14, minute: 25, seconds: 00)
 
         //Step4: Check if the output are close to the expected ones
         XCTAssertTrue(abs(expectedMarchEquinox.timeIntervalSince1970 - sunUnderTest.marchEquinox.timeIntervalSince1970)
@@ -355,6 +355,39 @@ final class UT_SunUseSameTimeZone: XCTestCase {
        
         XCTAssertTrue(abs(expectedDecemberSolstice.timeIntervalSince1970 - sunUnderTest.decemberSolstice.timeIntervalSince1970)
                       <  UT_SunUseSameTimeZone.sunEquinoxesAndSolsticesThresholdInSeconds)
+        
+        //Test: 19/01/22 17:31. Timezone +1. Naples
+        
+        //Step1: Creating sun instance in Naples and with timezone +1 (No daylight saving)
+        timeZoneUnderTest = TimeZone(identifier: "Europe/Rome") ?? .current
+
+        sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneUnderTest,useSameTimeZone: true)
+        
+        //Step2: Setting 19/01/22 17:31 as date. (No daylight saving)
+        dateUnderTest = createDateCustomTimeZone(day: 19, month: 1, year: 2022, hour: 17, minute: 31, seconds: 00,timeZone: timeZoneUnderTest)
+        sunUnderTest.setDate(dateUnderTest)
+        
+        //Step3: Saving expected outputs
+    
+        expectedMarchEquinox = createDateCurrentTimeZone(day: 20, month: 3, year: 2022, hour: 16, minute: 33, seconds: 00)
+        expectedJuneSolstice = createDateCurrentTimeZone(day: 21, month: 6, year: 2022, hour: 11, minute: 13, seconds: 00)
+        expectedSeptemberEquinox = createDateCurrentTimeZone(day: 23, month: 09, year: 2022, hour: 03, minute: 03, seconds: 00)
+        expectedDecemberSolstice = createDateCurrentTimeZone(day: 21, month: 12, year: 2022, hour: 22, minute: 47, seconds: 00)
+
+        //Step4: Check if the output are close to the expected ones
+        XCTAssertTrue(abs(expectedMarchEquinox.timeIntervalSince1970 - sunUnderTest.marchEquinox.timeIntervalSince1970)
+                      <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
+ 
+        XCTAssertTrue(abs(expectedJuneSolstice.timeIntervalSince1970 - sunUnderTest.juneSolstice.timeIntervalSince1970)
+                      <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
+        
+        XCTAssertTrue(abs(expectedSeptemberEquinox.timeIntervalSince1970 - sunUnderTest.septemberEquinox.timeIntervalSince1970)
+                      <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
+       
+        XCTAssertTrue(abs(expectedDecemberSolstice.timeIntervalSince1970 - sunUnderTest.decemberSolstice.timeIntervalSince1970)
+                      <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
+        
+        
     }
     
     
