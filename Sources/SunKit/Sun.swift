@@ -308,7 +308,7 @@ Private Variables
     }
     
     private var timeZoneInSeconds: Int {
-        timeZone.secondsFromGMT()
+        timeZone.secondsFromGMT(for: self.date)
     }
     
     private var sunHorizonCoordinates: HorizonCoordinates       = .init(altitude: .zero, azimuth: .zero)

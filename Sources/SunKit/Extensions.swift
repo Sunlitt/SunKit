@@ -23,7 +23,17 @@ extension Date: Strideable {
     public func distance(to other: Date) -> TimeInterval {
         return other.timeIntervalSinceReferenceDate - self.timeIntervalSinceReferenceDate
     }
-
+    
+    func toString(_ timeZone: TimeZone) -> String {
+        let df = DateFormatter()
+        df.timeZone = timeZone
+        let custom = DateFormatter.dateFormat(fromTemplate: "MMdd HH:mm",
+                                              options: 0,
+                                              locale: Locale(identifier: "en"))
+        df.dateFormat = custom
+        return df.string(from: self)
+    }
+    
     public func advanced(by n: TimeInterval) -> Date {
         return self + n
     }
@@ -42,4 +52,17 @@ extension Calendar {
         return self.date(from: self.dateComponents([.year], from: date))!
     }
     
+}
+
+extension TimeZone {
+    
+    func offset(_ date: Date) -> Double {
+        let res =
+        Int(self.secondsFromGMT(for: date))
+        + Int(self.daylightSavingTimeOffset(for: date))
+        - Int(Calendar.current.timeZone.secondsFromGMT(for: date))
+        - Int(Calendar.current.timeZone.daylightSavingTimeOffset(for: date))
+        return Double(res)/SECONDS_IN_ONE_HOUR
+        
+    }
 }

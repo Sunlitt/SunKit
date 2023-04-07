@@ -337,6 +337,32 @@ final class UT_Sun: XCTestCase {
         XCTAssertTrue(abs(expectedLastLight.timeIntervalSince1970 - sunUnderTest.lastLight.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSolarNoon.timeIntervalSince1970 - sunUnderTest.solarNoon.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         
+        
+        //Test for issue #26 in github
+        guard let pst = TimeZone(abbreviation: "PST") else {
+                abort()
+            }
+            
+            guard let utc = TimeZone(abbreviation: "UTC") else {
+                abort()
+            }
+            
+            let location: CLLocation = .init(latitude: 34.052235, longitude: -118.243683)
+
+            let sun = Sun.init(location: location, timeZone: pst)
+            
+            sun.setDate(SunKit.createDateCustomTimeZone(day: 11, month: 3, year: 2023, hour: 22, minute: 00, seconds: 00, timeZone: pst))
+            XCTAssertEqual(sun.sunrise.toString(pst), "03/11, 06:08")
+            XCTAssertEqual(sun.sunset.toString(pst), "03/11, 17:58")
+            XCTAssertEqual(sun.sunrise.toString(utc), "03/11, 14:08")
+            XCTAssertEqual(sun.sunset.toString(utc), "03/12, 01:58")
+
+            sun.setDate(SunKit.createDateCustomTimeZone(day: 13, month: 3, year: 2023, hour: 22, minute: 00, seconds: 00, timeZone: pst))
+            XCTAssertEqual(sun.sunrise.toString(pst), "03/13, 07:06")
+            XCTAssertEqual(sun.sunset.toString(pst), "03/13, 18:59")
+            XCTAssertEqual(sun.sunrise.toString(utc), "03/13, 14:06")
+            XCTAssertEqual(sun.sunset.toString(utc), "03/14, 01:59")
+        
     }
     
     func testOfEquinoxesAndSolstices() throws {
@@ -371,6 +397,7 @@ final class UT_Sun: XCTestCase {
        
         XCTAssertTrue(abs(expectedDecemberSolstice.timeIntervalSince1970 - sunUnderTest.decemberSolstice.timeIntervalSince1970)
                       <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
+            
     }
     
     
