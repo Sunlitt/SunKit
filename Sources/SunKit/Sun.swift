@@ -295,6 +295,7 @@ Private Variables
         var calendar: Calendar = .init(identifier: .gregorian)
         calendar.timeZone      =  useSameTimeZone ?  .current : self.timeZone
         
+        
         return calendar
     }
     
@@ -351,7 +352,7 @@ Private Variables
     }
     
     private var localStandardTimeMeridian: Double {
-        return (Double(timeZone.secondsFromGMT()) / SECONDS_IN_ONE_HOUR) * 15  //TimeZone in hour
+        return (Double(self.timeZoneInSeconds) / SECONDS_IN_ONE_HOUR) * 15  //TimeZone in hour
     }
     
     private var timeCorrectionFactorInSeconds: Double {
@@ -614,6 +615,7 @@ Private methods
         let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSunToReachElevation))
         
         let newDate = calendar.date(bySettingHour: hoursMinutesSeconds.0 , minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfTheDay)
+        
         
         return newDate
     }
