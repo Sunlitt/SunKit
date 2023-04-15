@@ -65,7 +65,7 @@ final class UT_Sun: XCTestCase {
     static let timeZoneMumbai = 5.5
     
     
-    /// Test of  Sun azimuth, sunrise, sunset, afternoon golden hour start and afternoon golden hour end
+    /// Test of  Sun azimuth, sunrise, sunset, evening golden hour start and evening golden hour end
     /// Value for expected results have been taken from SunCalc.org
     func testOfSun() throws {
         

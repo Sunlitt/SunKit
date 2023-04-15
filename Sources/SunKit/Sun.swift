@@ -174,7 +174,7 @@ Public get Variables
         date >= sunset && date <= lastLight
     }
     
-    /// Returns True if we are in afternoon golden hour range
+    /// Returns True if we are in evening golden hour range
     public var isGoldenHour: Bool {
         date.timeIntervalSince(goldenHourStart) >= 0 && goldenHourEnd.timeIntervalSince(date) >= 0
     }
@@ -658,7 +658,7 @@ Private methods
     
     
     
-    /// Golden Hour in the afternoon begins when the sun reaches elevation equals to 6 degrees
+    /// Golden Hour in the evening begins when the sun reaches elevation equals to 6 degrees
     /// - Returns: Time at which the GoldenHour starts
     private func getGoldenHourStart() -> Date? {
         guard let goldenHourStart = getDateFrom(sunEvent: .afternoonGoldenHourStart) else {
@@ -668,7 +668,7 @@ Private methods
         return goldenHourStart
     }
     
-    /// Golden Hour in the afternoon ends when the sun reaches elevation equals to -4 degrees
+    /// Golden Hour in the evening ends when the sun reaches elevation equals to -4 degrees
     /// - Returns: Time at which the GoldenHour ends
     private func getGoldenHourFinish() -> Date? {
         guard let goldenHourFinish = getDateFrom(sunEvent: .afternoonGoldenHourEnd) else {
