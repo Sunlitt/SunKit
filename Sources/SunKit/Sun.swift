@@ -40,9 +40,9 @@ public class Sun {
     ///Date of Solar Noon  for
     public private(set) var solarNoon: Date = Date()
     
-    ///Date at which evening  Afternoon Golden hour starts
+    ///Date at which evening  evening Golden hour starts
     public private(set) var goldenHourStart: Date = Date()
-    ///Date at which evening  Afternoon Golden hour ends
+    ///Date at which evening  evening Golden hour ends
     public private(set) var goldenHourEnd: Date = Date()
     
     ///Date at which evening  Morning Golden hour starts
@@ -76,13 +76,13 @@ public class Sun {
         return firstLight
     }
     
-    ///Date at which afternoon Blue Hour starts. Sun at -4 degrees elevation = afternoon golden hour end
-    public var afternoonBlueHourStart: Date{
+    ///Date at which evening Blue Hour starts. Sun at -4 degrees elevation = evening golden hour end
+    public var eveningBlueHourStart: Date{
         return goldenHourEnd
     }
     
     ///Date at which morning Blue Hour ends. Sun at -6 degrees elevation = last light
-    public var afternoonBlueHourEnd: Date {
+    public var eveningBlueHourEnd: Date {
         return lastLight
     }
     
@@ -296,8 +296,8 @@ public class Sun {
         print("Sunrise           -> \(dateFormatter.string(from: sunrise))")
         print("Sunset            -> \(dateFormatter.string(from: sunset))")
         print("Solar Noon        -> \(dateFormatter.string(from: solarNoon))")
-        print("Afternoon Golden Hour Start -> \(dateFormatter.string(from: goldenHourStart))")
-        print("Afternoon Golden Hour End   -> \(dateFormatter.string(from: goldenHourEnd))")
+        print("evening Golden Hour Start -> \(dateFormatter.string(from: goldenHourStart))")
+        print("evening Golden Hour End   -> \(dateFormatter.string(from: goldenHourEnd))")
         print("Morning Golden Hour Start -> \(dateFormatter.string(from: morningGoldenHourStart))")
         print("Morning Golden Hour End   -> \(dateFormatter.string(from: morningGoldenHourEnd))")
         print("First Light          -> \(dateFormatter.string(from: firstLight))")
@@ -308,8 +308,8 @@ public class Sun {
         print("Astronomical Sunset  -> \(dateFormatter.string(from: astronomicalSunset))")
         print("Morning Blue Hour Start -> \(dateFormatter.string(from: morningBlueHourStart))")
         print("Morning Blue Hour End   -> \(dateFormatter.string(from: morningBlueHourEnd))")
-        print("Afternoon Blue Hour Start -> \(dateFormatter.string(from: afternoonBlueHourStart))")
-        print("Afternoon Blue Hour End   -> \(dateFormatter.string(from: afternoonBlueHourEnd))")
+        print("evening Blue Hour Start -> \(dateFormatter.string(from: eveningBlueHourStart))")
+        print("evening Blue Hour End   -> \(dateFormatter.string(from: eveningBlueHourEnd))")
         
         print("March Equinox     -> \(dateFormatter.string(from: marchEquinox))")
         print("June Solstice     -> \(dateFormatter.string(from: juneSolstice))")
@@ -655,7 +655,7 @@ public class Sun {
     /// Golden Hour in the evening begins when the sun reaches elevation equals to 6 degrees
     /// - Returns: Time at which the GoldenHour starts
     private func getGoldenHourStart() -> Date? {
-        guard let goldenHourStart = getDateFrom(sunEvent: .afternoonGoldenHourStart) else {
+        guard let goldenHourStart = getDateFrom(sunEvent: .eveningGoldenHourStart) else {
             return nil
         }
         
@@ -665,7 +665,7 @@ public class Sun {
     /// Golden Hour in the evening ends when the sun reaches elevation equals to -4 degrees
     /// - Returns: Time at which the GoldenHour ends
     private func getGoldenHourFinish() -> Date? {
-        guard let goldenHourFinish = getDateFrom(sunEvent: .afternoonGoldenHourEnd) else {
+        guard let goldenHourFinish = getDateFrom(sunEvent: .eveningGoldenHourEnd) else {
             return nil
         }
         
