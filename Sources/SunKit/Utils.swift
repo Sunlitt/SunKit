@@ -86,7 +86,6 @@ public func createDateUTC(day: Int,month: Int,year: Int,hour: Int,minute: Int,se
     dateComponents.nanosecond = nanosecond
     
     return calendarUTC.date(from: dateComponents) ?? Date()
-    
 }
 
 
@@ -114,7 +113,6 @@ public func createDateCurrentTimeZone(day: Int,month: Int,year: Int,hour: Int,mi
     dateComponents.nanosecond = nanosecond
     
     return calendar.date(from: dateComponents) ?? Date()
-    
 }
 
 /// Creates a date with a custom timezone
@@ -142,7 +140,6 @@ public func createDateCustomTimeZone(day: Int,month: Int,year: Int,hour: Int,min
     dateComponents.nanosecond = nanosecond
     
     return calendar.date(from: dateComponents) ?? Date()
-    
 }
 
 
@@ -164,20 +161,23 @@ public func jdFromDate(date : Date) -> Double {
     / 86400
 }
 
-
 /// It converts local civil time to UT time.
-/// Converting between LCT and UT is independent of the date because it is merely a matter of making a time zone adjustment.
+/// Converting from LCT to UT.
 ///
 /// - Parameter lct: Local civil time date
 /// - Parameter timeZoneInSeconds: time zone expressed in seconds of your local civil time
 /// - Returns: UT equivalent for the LCT given in input.
-public func lCT2UT(_ lct: Date, timeZoneInSeconds: Int,useSameTimeZone: Bool) -> Date{
+public func lCT2UT(_ lct: Date, timeZoneInSeconds: Int, useSameTimeZone: Bool) -> Date{
+    
+    if (!useSameTimeZone){
+        return lct
+    }
     
     var calendar: Calendar = .init(identifier: .gregorian)
-    let timeZone: TimeZone = useSameTimeZone ?  .current : .init(secondsFromGMT: timeZoneInSeconds) ?? .current
+    let timeZone: TimeZone = .current
     calendar.timeZone = timeZone
     
-    var lctDecimal = HMS.init(from: lct,timeZoneInSeconds: timeZoneInSeconds,useSameTimeZone: useSameTimeZone).hMS2Decimal()
+    var lctDecimal = HMS.init(from: lct,useSameTimeZone: true).hMS2Decimal()
     
     lctDecimal = lctDecimal - Double(timeZoneInSeconds) / 3600
    
@@ -206,59 +206,14 @@ public func lCT2UT(_ lct: Date, timeZoneInSeconds: Int,useSameTimeZone: Bool) ->
     return calendar.date(from: dateComponents) ?? Date()
 }
 
-/// It converts UT time to LCT
-///
-/// - Parameter lct: Local civil time date
-/// - Parameter timeZoneInSeconds: time zone expressed in seconds of your local civil time
-/// - Returns: LCT equivalent for the UT given in input.
-public func UT2LCT(_ ut: Date,timeZoneInSeconds: Int,useSameTimeZone: Bool) -> Date{
-    
-    var calendar: Calendar = .init(identifier: .gregorian)
-    let timeZone: TimeZone = useSameTimeZone ?  .current : .init(secondsFromGMT: timeZoneInSeconds) ?? .current
-    calendar.timeZone = timeZone
-    
-    var utDecimal = HMS.init(from: ut, timeZoneInSeconds: timeZoneInSeconds,useSameTimeZone: useSameTimeZone).hMS2Decimal()
-    
-    utDecimal = utDecimal + Double(timeZoneInSeconds) / 3600.0
-    
-    var day = calendar.component(.day,from: ut)
-    if utDecimal < 0 {
-        
-        utDecimal += 24
-        day = calendar.component(.day,from: ut) - 1
-        
-    }else if utDecimal >= 24 {
-        
-        utDecimal -= 24
-        day = calendar.component(.day,from: ut) + 1
-    }
-    
-    let utHMS = HMS.init(decimal: utDecimal)
-    let year = calendar.component(.year, from: ut)
-    var dateComponents = DateComponents()
-    dateComponents.year = year
-    dateComponents.month = calendar.component(.month, from: ut)
-    dateComponents.day = day
-    dateComponents.hour = Int(utHMS.hours)
-    dateComponents.minute = Int(utHMS.minutes)
-    dateComponents.second = Int(utHMS.seconds)
-    
-    return calendar.date(from: dateComponents) ?? Date()
-    
-}
-
 /// Converts UT time to Greenwich Sidereal Time
 /// - Parameter ut: UT time to convert in GST
 /// - Parameter timeZoneInSeconds: time zone expressed in seconds of your local civil time
 /// - Returns: GST equivalent of the UT given in input
-public func uT2GST(_ ut:Date,timeZoneInSeconds: Int,useSameTimeZone: Bool) -> Date{
+public func uT2GST(_ ut:Date, useSameTimeZone: Bool) -> HMS{
     
     var calendarUTC: Calendar = .init(identifier: .gregorian)
-    calendarUTC.timeZone = .init(secondsFromGMT: 0)!
-    
-    var calendar: Calendar = .init(identifier: .gregorian)
-    let timeZone: TimeZone = useSameTimeZone ? .current : .init(secondsFromGMT: timeZoneInSeconds) ?? .current
-    calendar.timeZone = timeZone
+    calendarUTC.timeZone = TimeZone(identifier: "GMT")!
     
     //Step1:
     let jd = jdFromDate(date: calendarUTC.startOfDay(for: ut))
@@ -284,109 +239,24 @@ public func uT2GST(_ ut:Date,timeZoneInSeconds: Int,useSameTimeZone: Bool) -> Da
     let TZero = 0.0657098 * days - B
     
     //Step8:
-    let utDecimal =  HMS.init(from: ut, timeZoneInSeconds: timeZoneInSeconds,useSameTimeZone: useSameTimeZone).hMS2Decimal()
+    let utDecimal =  HMS.init(from: ut,useSameTimeZone: useSameTimeZone).hMS2Decimal()
     
     //Step9:
     var gstDecimal = TZero + 1.002738 * utDecimal
     
-    //Step10:
-    var day = calendar.component(.day,from: ut)
     if gstDecimal < 0 {
         
         gstDecimal += 24
-        day = calendar.component(.day,from: ut) - 1
         
     }else if gstDecimal >= 24 {
         
         gstDecimal -= 24
-        day = calendar.component(.day,from: ut) + 1
     }
     
     let gstHMS = HMS.init(decimal: gstDecimal)
     
-    var dateComponents = DateComponents()
-    dateComponents.year = year
-    dateComponents.month = calendar.component(.month, from: ut)
-    dateComponents.day = day
-    dateComponents.hour = Int(gstHMS.hours)
-    dateComponents.minute = Int(gstHMS.minutes)
-    dateComponents.second = Int(gstHMS.seconds)
-    
-    return calendar.date(from: dateComponents) ?? Date()
+    return gstHMS
 }
-
-/// Converts UT time to Greenwich Sidereal Time
-/// - Parameter gst: GST time to convert in UT
-/// - Parameter timeZoneInSeconds: time zone expressed in seconds of your local civil time
-/// - Returns: UT equivalent of the GST given in input
-public func gST2UT(_ gst:Date,timeZoneInSeconds: Int,useSameTimeZone: Bool) -> Date{
-    
-    var calendarUTC: Calendar = .init(identifier: .gregorian)
-    calendarUTC.timeZone = .init(secondsFromGMT: 0)!
-    
-    var calendar: Calendar = .init(identifier: .gregorian)
-    let timeZone: TimeZone = useSameTimeZone ? .current : .init(secondsFromGMT: timeZoneInSeconds) ?? .current
-    calendar.timeZone = timeZone
-    
-    //Step1:
-    let jd = jdFromDate(date: calendarUTC.startOfDay(for: gst))
-
-    //Step2:
-    let year = calendarUTC.component(.year, from: gst)
-    let firstDayOfTheYear = calendarUTC.date(from: DateComponents(year: year , month: 1, day: 1)) ?? Date()
-    let jdZero = jdFromDate(date: firstDayOfTheYear)
-
-    //Step3:
-    let days = jd - jdZero
-    
-    //Step4:
-    let T = (jdZero - 2415020.0) / 36525.0
-    
-    //Step5:
-    let R = 6.6460656 + 2400.051262 * T + 0.00002581*(T*T)
-    
-    //Step6:
-    let B :Double = 24 - R + Double(24 * (year - 1900))
-    
-    //Step7:
-    var TZero = 0.0657098 * days - B
-    
-    //Step8:
-    if TZero < 0 {
-        TZero += 24
-    }else if TZero >= 24{
-        TZero -= 24
-    }
-    //Step9:
-    let gstDecimal = HMS.init(from: gst, timeZoneInSeconds: timeZoneInSeconds,useSameTimeZone: useSameTimeZone).hMS2Decimal()
-    
-    //Step10:
-    var a = gstDecimal - TZero
-    
-    //Step11:
-    if a < 0 {
-        
-        a += 24
-    }
-    
-    //Step12
-    let utDecimal = 0.997270 * a
-    
-    //Step13
-    let utHMS = HMS.init(decimal: utDecimal)
-    let day = calendar.component(.day,from: gst)
-    var dateComponents = DateComponents()
-    dateComponents.year = year
-    dateComponents.month = calendarUTC.component(.month, from: gst)
-    dateComponents.day = day
-    dateComponents.hour = Int(utHMS.hours)
-    dateComponents.minute = Int(utHMS.minutes)
-    dateComponents.second = Int(utHMS.seconds)
-    
-    return calendar.date(from: dateComponents) ?? Date()
-    
-}
-
 
 /// Converts GST to Local Sidereal Time
 /// - Parameters:
@@ -394,93 +264,30 @@ public func gST2UT(_ gst:Date,timeZoneInSeconds: Int,useSameTimeZone: Bool) -> D
 ///   - longitude: longitude of the observer
 ///   - Parameter timeZoneInSeconds: time zone expressed in seconds of your local civil time
 /// - Returns: LST equivalent for the GST given in input
-public func gST2LST(_ gst: Date, longitude: Angle,timeZoneInSeconds: Int,useSameTimeZone: Bool) -> Date{
-    
-    var calendar: Calendar = .init(identifier: .gregorian)
-    let timeZone: TimeZone = useSameTimeZone ?  .current : .init(secondsFromGMT: timeZoneInSeconds) ?? .current
-    calendar.timeZone = timeZone
-    
+public func gST2LST(_ gst: HMS, longitude: Angle) -> HMS{
+        
     //Step1:
-    let gstDecimal = HMS.init(from: gst, timeZoneInSeconds: timeZoneInSeconds,useSameTimeZone: useSameTimeZone).hMS2Decimal()
+    let gstDecimal = gst.hMS2Decimal()
     
     //Step2:
-    let adjustment:Double = longitude.degrees / 15.0
+    let adjustment: Double = longitude.degrees / 15.0
     
     //Step3:
     var lstDecimal = gstDecimal + adjustment
         
-    var day = calendar.component(.day,from: gst)
     if lstDecimal < 0 {
         
         lstDecimal += 24
-        day = calendar.component(.day,from: gst) - 1
-        
-    }else if gstDecimal >= 24 {
+    }else if lstDecimal >= 24 {
         
         lstDecimal -= 24
-        day = calendar.component(.day,from: gst) + 1
     }
-    
+        
     let lstHMS = HMS.init(decimal: lstDecimal)
-    let year = calendar.component(.year, from: gst)
-    var dateComponents = DateComponents()
-    dateComponents.year = year
-    dateComponents.month = calendar.component(.month, from: gst)
-    dateComponents.day = day
-    dateComponents.hour = Int(lstHMS.hours)
-    dateComponents.minute = Int(lstHMS.minutes)
-    dateComponents.second = Int(lstHMS.seconds)
     
-    return calendar.date(from: dateComponents) ?? Date()
-    
+    return lstHMS
 }
 
-/// Converts LST to Greenwich Sidereal Time
-/// - Parameters:
-///   - gst: LST time to convert in GST
-///   - longitude: longitude of the observer
-///   - Parameter timeZoneInSeconds: time zone expressed in seconds of your local civil time
-/// - Returns: GST equivalent for the LST given in input
-public func lST2GST(_ lst: Date, longitude: Angle,timeZoneInSeconds: Int,useSameTimeZone: Bool) -> Date{
-    
-    var calendar: Calendar = .init(identifier: .gregorian)
-    let timeZone: TimeZone = useSameTimeZone ?  .current : .init(secondsFromGMT: timeZoneInSeconds) ?? .current
-    calendar.timeZone = timeZone
-    
-    //Step1:
-    let lstDecimal = HMS.init(from: lst, timeZoneInSeconds: timeZoneInSeconds,useSameTimeZone: useSameTimeZone).hMS2Decimal()
-    
-    //Step2:
-    let adjustment:Double = longitude.degrees / 15.0
-    
-    //Step3:
-    var gstDecimal = lstDecimal - adjustment
-    
-    //Step4:
-    var day = calendar.component(.day,from: lst)
-    if gstDecimal < 0 {
-        day = day + 1
-        gstDecimal += 24
-    } else if gstDecimal >= 24{
-        day = day - 1
-        gstDecimal -= 24
-    }
-    
-    let gstHMS = HMS.init(decimal: gstDecimal)
-    
-    let year = calendar.component(.year, from: lst)
-    var dateComponents = DateComponents()
-    dateComponents.year = year
-    dateComponents.month = calendar.component(.month, from: lst)
-    dateComponents.day = day
-    dateComponents.hour = Int(gstHMS.hours)
-    dateComponents.minute = Int(gstHMS.minutes)
-    dateComponents.second = Int(gstHMS.seconds)
-    
-    
-    return calendar.date(from: dateComponents) ?? Date()
-    
-}
 
 /// Converts the number of seconds in HH:MM:ss
 /// - Parameter seconds: Number of seconds that have to be converted

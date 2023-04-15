@@ -23,7 +23,6 @@ public struct HorizonCoordinates{
     public var altitude: Angle
     public var azimuth: Angle
      
-
     /// Converts horizon coordinates to equatorial coordinates
     /// - Returns: Equatorial coordinates of the instance.
     public func horizon2Equatorial(latitude: Angle) -> EquatorialCoordinates{
