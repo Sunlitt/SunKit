@@ -161,56 +161,12 @@ public func jdFromDate(date : Date) -> Double {
     / 86400
 }
 
-/// It converts local civil time to UT time.
-/// Converting from LCT to UT.
-///
-/// - Parameter lct: Local civil time date
-/// - Parameter timeZoneInSeconds: time zone expressed in seconds of your local civil time
-/// - Returns: UT equivalent for the LCT given in input.
-public func lCT2UT(_ lct: Date, timeZoneInSeconds: Int, useSameTimeZone: Bool) -> Date{
-    
-    if (!useSameTimeZone){
-        return lct
-    }
-    
-    var calendar: Calendar = .init(identifier: .gregorian)
-    let timeZone: TimeZone = .current
-    calendar.timeZone = timeZone
-    
-    var lctDecimal = HMS.init(from: lct,useSameTimeZone: true).hMS2Decimal()
-    
-    lctDecimal = lctDecimal - Double(timeZoneInSeconds) / 3600
-   
-    var day = calendar.component(.day,from: lct)
-    if lctDecimal < 0 {
-        
-        lctDecimal += 24
-        day = calendar.component(.day,from: lct) - 1
-        
-    }else if lctDecimal >= 24 {
-        
-        lctDecimal -= 24
-        day = calendar.component(.day,from: lct) + 1
-    }
-    
-    let lctHMS = HMS.init(decimal: lctDecimal)
-    let year = calendar.component(.year, from: lct)
-    var dateComponents = DateComponents()
-    dateComponents.year = year
-    dateComponents.month = calendar.component(.month, from: lct)
-    dateComponents.day = day
-    dateComponents.hour = Int(lctHMS.hours)
-    dateComponents.minute = Int(lctHMS.minutes)
-    dateComponents.second = Int(lctHMS.seconds)
-    
-    return calendar.date(from: dateComponents) ?? Date()
-}
 
 /// Converts UT time to Greenwich Sidereal Time
 /// - Parameter ut: UT time to convert in GST
 /// - Parameter timeZoneInSeconds: time zone expressed in seconds of your local civil time
 /// - Returns: GST equivalent of the UT given in input
-public func uT2GST(_ ut:Date, useSameTimeZone: Bool) -> HMS{
+public func uT2GST(_ ut:Date) -> HMS{
     
     var calendarUTC: Calendar = .init(identifier: .gregorian)
     calendarUTC.timeZone = TimeZone(identifier: "GMT")!
@@ -239,7 +195,7 @@ public func uT2GST(_ ut:Date, useSameTimeZone: Bool) -> HMS{
     let TZero = 0.0657098 * days - B
     
     //Step8:
-    let utDecimal =  HMS.init(from: ut,useSameTimeZone: useSameTimeZone).hMS2Decimal()
+    let utDecimal =  HMS.init(from: ut).hMS2Decimal()
     
     //Step9:
     var gstDecimal = TZero + 1.002738 * utDecimal
