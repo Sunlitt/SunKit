@@ -41,10 +41,16 @@ Public get Variables
     ///Date of Solar Noon  for
     public private(set) var solarNoon: Date = Date()
     
-    ///Date at which evening  Golden hour starts for instance timezone
+    ///Date at which evening  Afternoon Golden hour starts
     public private(set) var goldenHourStart: Date = Date()
-    ///Date at which evening  Golden hour ends
+    ///Date at which evening  Afternoon Golden hour ends
     public private(set) var goldenHourEnd: Date = Date()
+    
+    ///Date at which evening  Morning Golden hour starts
+    public private(set) var morningGoldenHourStart: Date = Date()
+    ///Date at which evening  Morning Golden hour ends
+    public private(set) var morningGoldenHourEnd: Date = Date()
+    
     
     ///Date at which there is the first light, also known as Civil Sunrise
     public private(set) var firstLight: Date = Date()
@@ -60,6 +66,27 @@ Public get Variables
     public private(set) var astronomicalSunrise: Date = Date()
     ///Date at which there is the Astronomical Sunset
     public private(set) var astronomicalSunset: Date = Date()
+    
+    ///Date at which morning Blue Hour starts. Sun at -4 degrees elevation = morning golden hour start
+    public var morningBlueHourStart: Date{
+        return morningGoldenHourStart
+    }
+    
+    ///Date at which morning Blue Hour ends. Sun at -6 degrees elevation = first light
+    public var morningBlueHourEnd: Date {
+        return firstLight
+    }
+    
+    ///Date at which afternoon Blue Hour starts. Sun at -4 degrees elevation = afternoon golden hour end
+    public var afternoonBlueHourStart: Date{
+        return goldenHourEnd
+    }
+    
+    ///Date at which morning Blue Hour ends. Sun at -6 degrees elevation = last light
+    public var afternoonBlueHourEnd: Date {
+        return lastLight
+    }
+    
     
     /*--------------------------------------------------------------------
     Sun Azimuths for Self.date and for Sunrise,Sunset and Solar Noon
@@ -272,14 +299,21 @@ Public methods
         print("Sunrise           -> \(dateFormatter.string(from: sunrise))")
         print("Sunset            -> \(dateFormatter.string(from: sunset))")
         print("Solar Noon        -> \(dateFormatter.string(from: solarNoon))")
-        print("Golden Hour Start -> \(dateFormatter.string(from: goldenHourStart))")
-        print("Golden Hour End   -> \(dateFormatter.string(from: goldenHourEnd))")
-        print("First Light       -> \(dateFormatter.string(from: firstLight))")
+        print("Afternoon Golden Hour Start -> \(dateFormatter.string(from: goldenHourStart))")
+        print("Afternoon Golden Hour End   -> \(dateFormatter.string(from: goldenHourEnd))")
+        print("Morning Golden Hour Start -> \(dateFormatter.string(from: morningGoldenHourStart))")
+        print("Morning Golden Hour End   -> \(dateFormatter.string(from: morningGoldenHourEnd))")
+        print("First Light          -> \(dateFormatter.string(from: firstLight))")
         print("Last Light           -> \(dateFormatter.string(from: lastLight))")
         print("Nautical Sunrise     -> \(dateFormatter.string(from: nauticalSunrise))")
         print("Nautical Sunset      -> \(dateFormatter.string(from: nauticalSunset))")
         print("Astronomical Sunrise -> \(dateFormatter.string(from: astronomicalSunrise))")
         print("Astronomical Sunset  -> \(dateFormatter.string(from: astronomicalSunset))")
+        print("Morning Blue Hour Start -> \(dateFormatter.string(from: morningBlueHourStart))")
+        print("Morning Blue Hour End   -> \(dateFormatter.string(from: morningBlueHourEnd))")
+        print("Afternoon Blue Hour Start -> \(dateFormatter.string(from: afternoonBlueHourStart))")
+        print("Afternoon Blue Hour End   -> \(dateFormatter.string(from: afternoonBlueHourEnd))")
+        
         print("March Equinox     -> \(dateFormatter.string(from: marchEquinox))")
         print("June Solstice     -> \(dateFormatter.string(from: juneSolstice))")
         print("September Equinox -> \(dateFormatter.string(from: septemberEquinox))")
@@ -394,6 +428,8 @@ Private methods
             self.nauticalSunset   = getNauticalSunset()  ?? Date()
             self.astronomicalSunrise = getAstronomicalSunrise() ?? Date()
             self.astronomicalSunset  = getAstronomicalSunset()  ?? Date()
+            self.morningGoldenHourStart = getMorningGoldenHourStart() ?? Date()
+            self.morningGoldenHourEnd   = getMorningGoldenHourEnd() ?? Date()
             
         }
 
@@ -625,7 +661,7 @@ Private methods
     /// Golden Hour in the afternoon begins when the sun reaches elevation equals to 6 degrees
     /// - Returns: Time at which the GoldenHour starts
     private func getGoldenHourStart() -> Date? {
-        guard let goldenHourStart = getDateFrom(sunEvent: .goldenHourStart) else {
+        guard let goldenHourStart = getDateFrom(sunEvent: .afternoonGoldenHourStart) else {
             return nil
         }
         
@@ -635,7 +671,7 @@ Private methods
     /// Golden Hour in the afternoon ends when the sun reaches elevation equals to -4 degrees
     /// - Returns: Time at which the GoldenHour ends
     private func getGoldenHourFinish() -> Date? {
-        guard let goldenHourFinish = getDateFrom(sunEvent: .goldenHourEnd) else {
+        guard let goldenHourFinish = getDateFrom(sunEvent: .afternoonGoldenHourEnd) else {
             return nil
         }
         
@@ -694,6 +730,24 @@ Private methods
             return nil
         }
         return nauticalSunset
+    }
+    
+    /// Morning Golden Hour start when Sun reaches -4 degress  of elevation
+    /// - Returns: Morning golden hour start
+    private func getMorningGoldenHourStart() -> Date? {
+        guard let morningGoldenHourStart = getDateFrom(sunEvent: .morningGoldenHourStart , morning: true) else {
+            return nil
+        }
+        return morningGoldenHourStart
+    }
+    
+    /// Morning Golden Hour ends when Sun reaches 6 degress  of elevation
+    /// - Returns: Morning golden hour end
+    private func getMorningGoldenHourEnd() -> Date? {
+        guard let morningGoldenHourEnd = getDateFrom(sunEvent: .morningGoldenHourEnd , morning: true) else {
+            return nil
+        }
+        return morningGoldenHourEnd
     }
     
     
