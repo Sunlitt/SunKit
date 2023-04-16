@@ -23,10 +23,10 @@ enum SunElevationEvents: Double{
     case civil           = -6
     case nautical        = -12
     case astronomical    = -18
-    case afternoonGoldenHourStart =  6
-    case afternoonGoldenHourEnd   = -4
+    case eveningGoldenHourStart =  6
+    case eveningGoldenHourEnd   = -4
     
-    static var morningGoldenHourStart: SunElevationEvents { .afternoonGoldenHourEnd }
-    static var morningGoldenHourEnd: SunElevationEvents { .afternoonGoldenHourStart }
+    static var morningGoldenHourStart: SunElevationEvents { .eveningGoldenHourEnd }
+    static var morningGoldenHourEnd: SunElevationEvents { .eveningGoldenHourStart }
     
 }

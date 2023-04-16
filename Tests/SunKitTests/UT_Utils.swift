@@ -65,23 +65,6 @@ final class UT_Utils: XCTestCase {
         XCTAssertTrue(expectedOutput == dateFromJd(jd: jdNumberTest))
     }
 
-    
-    /// Test of lCT2UT
-    func testOflCT2UT() throws{
-        
-      //Test1: Convert 18h00m00s LCT to UT for an observer in the Eastern Standard Time zone (-5) shall be equal to the same date at 23h. This function needs to be tested only when usaSameTimeZone equals TRUE.
-        
-        //Step1: Creating 1/01/2015 18h with current time zone(i.e the one set on your device)
-        let dateUnderTest = createDateCurrentTimeZone(day: 1, month: 1, year: 2015, hour: 18, minute: 0, seconds: 0)
-        let timeZoneInSecondsUnderTest = -5 * 3600
-        
-        //Step2: Set variable "expectedOutput" to the date 1/01/2015 23h
-        let expectedOutput: Date = createDateCurrentTimeZone(day: 1, month: 1, year: 2015, hour: 23, minute: 0, seconds: 0)
-        
-        //Step3: Call function under test and check that it returns a value which differs from expected output up to 2 seconds
-        XCTAssertTrue(abs(expectedOutput.timeIntervalSince1970 - lCT2UT(dateUnderTest, timeZoneInSeconds: timeZoneInSecondsUnderTest,useSameTimeZone: true).timeIntervalSince1970) <= 2)
-    }
-    
     /// Test of extendMod
     func testOfExtendedMod() throws {
 
@@ -130,24 +113,16 @@ final class UT_Utils: XCTestCase {
     /// Test of uT2GST
     func testOfuT2GST() throws{
         
-      //Test1: Convert 23h30m00s current timezone to GST for February 7, 2010. UseSameTimeZone equals TRUE.
+        //Test2: Convert 23h30m00s UT to GST for February 7, 2010. UseSameTimeZone equals False.
         
-        //Step1: Creating 7/02/2010 23h30m  with current time zone(i.e the one set on your device)
-        var dateUnderTest = createDateCurrentTimeZone(day: 7, month: 2, year: 2010, hour: 23, minute: 30, seconds: 0)
+        //Step1: Creating 7/02/2010 23h30m UTC
+        let dateUnderTest = createDateUTC(day: 7, month: 2, year: 2010, hour: 23, minute: 30, seconds: 0)
         
         //Step2: Set variable "expectedOutput" to the expect output
         let expectedOutput: HMS = HMS.init(decimal: 8.698091)
         
-        //Step3: Call function under test and check that it returns a value which differs from expected output up to 2 seconds
-        XCTAssert(abs(uT2GST(dateUnderTest, useSameTimeZone: true).hMS2Decimal() - expectedOutput.hMS2Decimal()) < 0.01)
-        
-        //Test2: Convert 23h30m00s UT to GST for February 7, 2010. UseSameTimeZone equals False.
-        
-        //Step1: Creating 7/02/2010 23h30m UTC
-        dateUnderTest = createDateUTC(day: 7, month: 2, year: 2010, hour: 23, minute: 30, seconds: 0)
-        
         //Step3: Call function under test and check that it returns a value which differs from expected output up to 0.01
-        XCTAssert(abs(uT2GST(dateUnderTest, useSameTimeZone: false).hMS2Decimal() - expectedOutput.hMS2Decimal()) < 0.01)
+        XCTAssert(abs(uT2GST(dateUnderTest).hMS2Decimal() - expectedOutput.hMS2Decimal()) < 0.01)
     }
     
     /// Test of gST2LST
