@@ -41,9 +41,9 @@ public class Sun {
     public private(set) var solarNoon: Date = Date()
     
     ///Date at which evening  evening Golden hour starts
-    public private(set) var goldenHourStart: Date = Date()
+    public private(set) var eveningGoldenHourStart: Date = Date()
     ///Date at which evening  evening Golden hour ends
-    public private(set) var goldenHourEnd: Date = Date()
+    public private(set) var eveningGoldenHourEnd: Date = Date()
     
     ///Date at which evening  Morning Golden hour starts
     public private(set) var morningGoldenHourStart: Date = Date()
@@ -51,24 +51,24 @@ public class Sun {
     public private(set) var morningGoldenHourEnd: Date = Date()
     
     
-    ///Date at which there is the first light, also known as Civil Sunrise
-    public private(set) var firstLight: Date = Date()
-    ///Date at which there is the last light, also known as Civil Sunset
-    public private(set) var lastLight: Date = Date()
+    ///Date at which there is the Civil Dusk
+    public private(set) var civilDusk: Date = Date()
+    ///Date at which there is the Civil Dawn
+    public private(set) var civilDawn: Date = Date()
     
-    ///Date at which there is the Nautical Sunrise
-    public private(set) var nauticalSunrise: Date = Date()
-    ///Date at which there is the Nautical Sunset
-    public private(set) var nauticalSunset: Date = Date()
+    ///Date at which there is the Nautical Dusk
+    public private(set) var nauticalDusk: Date = Date()
+    ///Date at which there is the Nautical Down
+    public private(set) var nauticalDown: Date = Date()
     
-    ///Date at which there is the Astronomical Sunrise
-    public private(set) var astronomicalSunrise: Date = Date()
-    ///Date at which there is the Astronomical Sunset
-    public private(set) var astronomicalSunset: Date = Date()
+    ///Date at which there is the Astronomical Dusk
+    public private(set) var astronomicalDusk: Date = Date()
+    ///Date at which there is the Astronomical Dawn
+    public private(set) var astronomicalDawn: Date = Date()
     
-    ///Date at which morning Blue Hour starts. Sun at -6 degrees elevation = firstLight
+    ///Date at which morning Blue Hour starts. Sun at -6 degrees elevation = civil dusk
     public var morningBlueHourStart: Date{
-        return firstLight
+        return civilDusk
     }
     
     ///Date at which morning Blue Hour ends. Sun at -4 degrees elevation = morning golden hour start
@@ -78,12 +78,12 @@ public class Sun {
     
     ///Date at which evening Blue Hour starts. Sun at -4 degrees elevation = evening golden hour end
     public var eveningBlueHourStart: Date{
-        return goldenHourEnd
+        return eveningGoldenHourEnd
     }
     
-    ///Date at which morning Blue Hour ends. Sun at -6 degrees elevation = last light
+    ///Date at which morning Blue Hour ends. Sun at -6 degrees elevation = Civil Dawn
     public var eveningBlueHourEnd: Date {
-        return lastLight
+        return civilDawn
     }
     
     
@@ -157,26 +157,47 @@ public class Sun {
     /// Returns True if is night
     public var isNight: Bool {
         if !isCircumPolar {
-            return date < firstLight || date > lastLight
+            return date < civilDusk || date > civilDawn
         } else {
             return isAlwaysNight
         }
     }
     
-    /// Returns True if is sunrise
-    public var isSunrise: Bool {
-        date >= firstLight && date <= sunrise
-    }
-    
-    /// Returns True if is sunset
-    public var isSunset: Bool {
-        date >= sunset && date <= lastLight
+    /// Returns True if is twilight time
+    public var isTwilight: Bool {
+        (astronomicalDusk <= date && date <= sunrise) || (sunset <= date && date <= astronomicalDawn)
     }
     
     /// Returns True if we are in evening golden hour range
-    public var isGoldenHour: Bool {
-        date.timeIntervalSince(goldenHourStart) >= 0 && goldenHourEnd.timeIntervalSince(date) >= 0
+    public var isEveningGoldenHour: Bool {
+        date.timeIntervalSince(eveningGoldenHourStart) >= 0 && eveningGoldenHourEnd.timeIntervalSince(date) >= 0
     }
+    
+    /// Returns True if we are in morning golden hour range
+    public var isMorningGoldenHour: Bool {
+        date.timeIntervalSince(morningBlueHourStart) >= 0 && morningBlueHourEnd.timeIntervalSince(date) >= 0
+    }
+    
+    /// Returns True if we are in  golden hour range
+    public var isGoldenHour: Bool {
+       isMorningGoldenHour || isEveningGoldenHour
+    }
+    
+    /// Returns True if we are in evening blue hour range
+    public var isEveningBlueHour: Bool {
+        date.timeIntervalSince(eveningBlueHourStart) >= 0 && eveningBlueHourEnd.timeIntervalSince(date) >= 0
+    }
+    
+    /// Returns True if we are in morning blue hour range
+    public var isMorningBlueHour: Bool {
+        date.timeIntervalSince(morningBlueHourStart) >= 0 && morningBlueHourEnd.timeIntervalSince(date) >= 0
+    }
+    
+    /// Returns True if we are in  blue hour range
+    public var isBlueHour: Bool {
+       isMorningBlueHour || isEveningBlueHour
+    }
+    
     
     /// Returns true if we are near the pole and we are in a situation in which Sun Events during the day could have no meaning
     public var isCircumPolar: Bool {
@@ -296,16 +317,16 @@ public class Sun {
         print("Sunrise           -> \(dateFormatter.string(from: sunrise))")
         print("Sunset            -> \(dateFormatter.string(from: sunset))")
         print("Solar Noon        -> \(dateFormatter.string(from: solarNoon))")
-        print("evening Golden Hour Start -> \(dateFormatter.string(from: goldenHourStart))")
-        print("evening Golden Hour End   -> \(dateFormatter.string(from: goldenHourEnd))")
+        print("Evening Golden Hour Start -> \(dateFormatter.string(from: eveningGoldenHourStart))")
+        print("Evening Golden Hour End   -> \(dateFormatter.string(from: eveningGoldenHourEnd))")
         print("Morning Golden Hour Start -> \(dateFormatter.string(from: morningGoldenHourStart))")
         print("Morning Golden Hour End   -> \(dateFormatter.string(from: morningGoldenHourEnd))")
-        print("First Light          -> \(dateFormatter.string(from: firstLight))")
-        print("Last Light           -> \(dateFormatter.string(from: lastLight))")
-        print("Nautical Sunrise     -> \(dateFormatter.string(from: nauticalSunrise))")
-        print("Nautical Sunset      -> \(dateFormatter.string(from: nauticalSunset))")
-        print("Astronomical Sunrise -> \(dateFormatter.string(from: astronomicalSunrise))")
-        print("Astronomical Sunset  -> \(dateFormatter.string(from: astronomicalSunset))")
+        print("Civil dusk          -> \(dateFormatter.string(from: civilDusk))")
+        print("Civil Dawn           -> \(dateFormatter.string(from: civilDawn))")
+        print("Nautical Dusk     -> \(dateFormatter.string(from: nauticalDusk))")
+        print("Nautical Down      -> \(dateFormatter.string(from: nauticalDown))")
+        print("Astronomical Dusk -> \(dateFormatter.string(from: astronomicalDusk))")
+        print("Astronomical Dawn  -> \(dateFormatter.string(from: astronomicalDawn))")
         print("Morning Blue Hour Start -> \(dateFormatter.string(from: morningBlueHourStart))")
         print("Morning Blue Hour End   -> \(dateFormatter.string(from: morningBlueHourEnd))")
         print("evening Blue Hour Start -> \(dateFormatter.string(from: eveningBlueHourStart))")
@@ -403,7 +424,7 @@ public class Sun {
     /// Then get rise, set and noon times and their relative azimuths in degrees.
     /// Compute Solar noon.
     /// Compute Golden hour start and end time.
-    /// Compute first light and last light time
+    /// Compute civil dusk and Civil Dawn time
     ///
     /// - Parameter needToComputeAgainSunEvents: True if Sunrise,Sunset and all the others daily sun events have to be computed.
     private func refresh(needToComputeSunEvents: Bool = true) {
@@ -416,14 +437,14 @@ public class Sun {
             self.sunsetAzimuth    = getSunHorizonCoordinatesFrom(date: sunset).azimuth.degrees
             self.solarNoon        = getSolarNoon() ?? Date()
             self.solarNoonAzimuth = getSunHorizonCoordinatesFrom(date: solarNoon).azimuth.degrees
-            self.goldenHourStart  = getGoldenHourStart()  ?? Date()
-            self.goldenHourEnd    = getGoldenHourFinish() ?? Date()
-            self.firstLight       = getFirstLight() ?? Date()
-            self.lastLight        = getLastLight()  ?? Date()
-            self.nauticalSunrise  = getNauticalSunrise() ?? Date()
-            self.nauticalSunset   = getNauticalSunset()  ?? Date()
-            self.astronomicalSunrise = getAstronomicalSunrise() ?? Date()
-            self.astronomicalSunset  = getAstronomicalSunset()  ?? Date()
+            self.eveningGoldenHourStart  = getEveningGoldenHourStart()  ?? Date()
+            self.eveningGoldenHourEnd    = getEveningGoldenHourEnd() ?? Date()
+            self.civilDusk       = getCivilDusk() ?? Date()
+            self.civilDawn        = getCivilDawn()  ?? Date()
+            self.nauticalDusk  = getNauticalDusk() ?? Date()
+            self.nauticalDown   = getNauticalDown()  ?? Date()
+            self.astronomicalDusk = getAstronomicalDusk() ?? Date()
+            self.astronomicalDawn  = getAstronomicalDawn()  ?? Date()
             self.morningGoldenHourStart = getMorningGoldenHourStart() ?? Date()
             self.morningGoldenHourEnd   = getMorningGoldenHourEnd() ?? Date()
             
@@ -627,8 +648,8 @@ public class Sun {
     /// - Returns: Time at which the Sun reaches that elevation. Nil if it didn't find it.
     private func getDateFrom(sunEvent : SunElevationEvents, morning: Bool = false) -> Date? {
         
-        let elevationSunFirstLight: Angle = .degrees(sunEvent.rawValue)
-        var cosHra = (sin(elevationSunFirstLight.radians) - sin(sunEquatorialCoordinates.declination.radians) * sin(latitude.radians)) / (cos(sunEquatorialCoordinates.declination.radians) * cos(latitude.radians))
+        let elevationSun: Angle = .degrees(sunEvent.rawValue)
+        var cosHra = (sin(elevationSun.radians) - sin(sunEquatorialCoordinates.declination.radians) * sin(latitude.radians)) / (cos(sunEquatorialCoordinates.declination.radians) * cos(latitude.radians))
         cosHra = clamp(lower: -1, upper: 1, number: cosHra)
         let hraAngle: Angle = .radians(acos(cosHra))
         var secondsForSunToReachElevation = (morning ? -1 : 1) * (hraAngle.degrees / 15) * SECONDS_IN_ONE_HOUR  + TWELVE_HOUR_IN_SECONDS - timeCorrectionFactorInSeconds
@@ -654,17 +675,17 @@ public class Sun {
     
     /// Golden Hour in the evening begins when the sun reaches elevation equals to 6 degrees
     /// - Returns: Time at which the GoldenHour starts
-    private func getGoldenHourStart() -> Date? {
-        guard let goldenHourStart = getDateFrom(sunEvent: .eveningGoldenHourStart) else {
+    private func getEveningGoldenHourStart() -> Date? {
+        guard let eveningGoldenHourStart = getDateFrom(sunEvent: .eveningGoldenHourStart) else {
             return nil
         }
         
-        return goldenHourStart
+        return eveningGoldenHourStart
     }
     
     /// Golden Hour in the evening ends when the sun reaches elevation equals to -4 degrees
     /// - Returns: Time at which the GoldenHour ends
-    private func getGoldenHourFinish() -> Date? {
+    private func getEveningGoldenHourEnd() -> Date? {
         guard let goldenHourFinish = getDateFrom(sunEvent: .eveningGoldenHourEnd) else {
             return nil
         }
@@ -672,58 +693,58 @@ public class Sun {
         return goldenHourFinish
     }
     
-    /// Last light is when the Sun reaches -6 degrees of elevation. Also known as civil sunset.
-    /// - Returns: Last light time
-    private func getLastLight() -> Date? {
-        guard let lastLight = getDateFrom(sunEvent: .civil) else {
+    /// Civil Dawn is when the Sun reaches -6 degrees of elevation. Also known as civil sunset.
+    /// - Returns: Civil Dawn time
+    private func getCivilDawn() -> Date? {
+        guard let civilDawn = getDateFrom(sunEvent: .civil) else {
             return nil
         }
-        return lastLight
+        return civilDawn
     }
     
-    /// First light is when the Sun reaches -6 degrees of elevation. Also known as civil sunrise.
-    /// - Returns: First light time
-    private func getFirstLight() -> Date? {
-        guard let firstLight = getDateFrom(sunEvent: .civil, morning: true) else {
+    /// civil dusk is when the Sun reaches -6 degrees of elevation. Also known as civil sunrise.
+    /// - Returns: civil dusk time
+    private func getCivilDusk() -> Date? {
+        guard let civilDusk = getDateFrom(sunEvent: .civil, morning: true) else {
             return nil
         }
-        return firstLight
+        return civilDusk
     }
     
-    /// Nautical Sunrise is when the Sun reaches -12 degrees of elevation.
-    /// - Returns: Nautical Sunrise
-    private func getNauticalSunrise() -> Date? {
-        guard let nauticalSunrise = getDateFrom(sunEvent: .nautical, morning: true) else {
+    /// Nautical Dusk is when the Sun reaches -12 degrees of elevation.
+    /// - Returns: Nautical Dusk
+    private func getNauticalDusk() -> Date? {
+        guard let nauticalDusk = getDateFrom(sunEvent: .nautical, morning: true) else {
             return nil
         }
-        return nauticalSunrise
+        return nauticalDusk
     }
     
-    /// Nautical Sunrise is when the Sun reaches -12 degrees of elevation.
-    /// - Returns: Nautical Sunset
-    private func getNauticalSunset() -> Date? {
-        guard let nauticalSunset = getDateFrom(sunEvent: .nautical, morning: false) else {
+    /// Nautical Dusk is when the Sun reaches -12 degrees of elevation.
+    /// - Returns: Nautical Down
+    private func getNauticalDown() -> Date? {
+        guard let nauticalDown = getDateFrom(sunEvent: .nautical, morning: false) else {
             return nil
         }
-        return nauticalSunset
+        return nauticalDown
     }
     
-    /// Astronomical Sunrise is when the Sun reaches -18 degrees of elevation.
-    /// - Returns: Nautical Sunrise
-    private func getAstronomicalSunrise() -> Date? {
-        guard let nauticalSunrise = getDateFrom(sunEvent: .astronomical, morning: true) else {
+    /// Astronomical Dusk is when the Sun reaches -18 degrees of elevation.
+    /// - Returns: Astronomical Dusk
+    private func getAstronomicalDusk() -> Date? {
+        guard let astronomicalDusk = getDateFrom(sunEvent: .astronomical, morning: true) else {
             return nil
         }
-        return nauticalSunrise
+        return astronomicalDusk
     }
     
-    /// Astronomical Sunset is when the Sun reaches -18 degrees of elevation.
-    /// - Returns: Nautical Sunset
-    private func getAstronomicalSunset() -> Date? {
-        guard let nauticalSunset = getDateFrom(sunEvent: .astronomical, morning: false) else {
+    /// Astronomical Dawn is when the Sun reaches -18 degrees of elevation.
+    /// - Returns: Astronomical Dawn
+    private func getAstronomicalDawn() -> Date? {
+        guard let astronomicalDawn = getDateFrom(sunEvent: .astronomical, morning: false) else {
             return nil
         }
-        return nauticalSunset
+        return astronomicalDawn
     }
     
     /// Morning Golden Hour start when Sun reaches -4 degress  of elevation

@@ -60,10 +60,10 @@ mySun.sunrise
 mySun.sunset
 
 // Evening Golden Hour Start Date
-mySun.goldenHourStart
+mySun.eveningGoldenHourStart
 
 // Evening Golden Hour End Date
-mySun.goldenHourEnd
+mySun.eveningGoldenHourEnd
 
 // To know all the information you can retrieve go to the **Features** section.
 
@@ -96,17 +96,17 @@ To properly show the Sun Date Events use the following DateFormatter.
 ## Features
   * Sun Azimuth
   * Sun Altitude
-  * First Light Time
-  * Last Light Time
+  * Civil Dusk  Time
+  * Civil Dawn Time
   * Sunrise Time
   * Solar Noon Time
   * Morning Golden Hour Time
   * Evening Golden Hour Time
   * Sunset Time
-  * Astronomical Sunrise
-  * Astronomical Sunset
-  * Nautical Sunrise
-  * Nautical Sunset
+  * Astronomical Dusk
+  * Astronomical Dawn
+  * Nautical Dusk
+  * Nautical Down
   * Morning Blue Hour Time
   * Evening Blue Hour Time 
   * Sun Azimuth at Sunrise
