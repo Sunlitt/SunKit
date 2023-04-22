@@ -66,14 +66,14 @@ public class Sun {
     ///Date at which there is the Astronomical Sunset
     public private(set) var astronomicalSunset: Date = Date()
     
-    ///Date at which morning Blue Hour starts. Sun at -4 degrees elevation = morning golden hour start
+    ///Date at which morning Blue Hour starts. Sun at -6 degrees elevation = firstLight
     public var morningBlueHourStart: Date{
-        return morningGoldenHourStart
+        return firstLight
     }
     
-    ///Date at which morning Blue Hour ends. Sun at -6 degrees elevation = first light
+    ///Date at which morning Blue Hour ends. Sun at -4 degrees elevation = morning golden hour start
     public var morningBlueHourEnd: Date {
-        return firstLight
+        return morningGoldenHourStart
     }
     
     ///Date at which evening Blue Hour starts. Sun at -4 degrees elevation = evening golden hour end
