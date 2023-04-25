@@ -106,7 +106,7 @@ To properly show the Sun Date Events use the following DateFormatter.
   * Astronomical Dusk
   * Astronomical Dawn
   * Nautical Dusk
-  * Nautical Down
+  * Nautical Dawn
   * Morning Blue Hour Time
   * Evening Blue Hour Time 
   * Sun Azimuth at Sunrise
