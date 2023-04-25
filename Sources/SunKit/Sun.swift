@@ -157,7 +157,7 @@ public class Sun {
     /// Returns True if is night
     public var isNight: Bool {
         if !isCircumPolar {
-            return date < civilDusk || date > civilDawn
+            return date < sunrise || date > sunset
         } else {
             return isAlwaysNight
         }
