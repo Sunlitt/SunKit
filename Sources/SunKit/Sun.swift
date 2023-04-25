@@ -58,8 +58,8 @@ public class Sun {
     
     ///Date at which there is the Nautical Dusk
     public private(set) var nauticalDusk: Date = Date()
-    ///Date at which there is the Nautical Down
-    public private(set) var nauticalDown: Date = Date()
+    ///Date at which there is the Nautical Dawn
+    public private(set) var nauticalDawn: Date = Date()
     
     ///Date at which there is the Astronomical Dusk
     public private(set) var astronomicalDusk: Date = Date()
@@ -324,7 +324,7 @@ public class Sun {
         print("Civil dusk          -> \(dateFormatter.string(from: civilDusk))")
         print("Civil Dawn           -> \(dateFormatter.string(from: civilDawn))")
         print("Nautical Dusk     -> \(dateFormatter.string(from: nauticalDusk))")
-        print("Nautical Down      -> \(dateFormatter.string(from: nauticalDown))")
+        print("Nautical Dawn      -> \(dateFormatter.string(from: nauticalDawn))")
         print("Astronomical Dusk -> \(dateFormatter.string(from: astronomicalDusk))")
         print("Astronomical Dawn  -> \(dateFormatter.string(from: astronomicalDawn))")
         print("Morning Blue Hour Start -> \(dateFormatter.string(from: morningBlueHourStart))")
@@ -442,7 +442,7 @@ public class Sun {
             self.civilDusk       = getCivilDusk() ?? Date()
             self.civilDawn        = getCivilDawn()  ?? Date()
             self.nauticalDusk  = getNauticalDusk() ?? Date()
-            self.nauticalDown   = getNauticalDown()  ?? Date()
+            self.nauticalDawn   = getNauticalDawn()  ?? Date()
             self.astronomicalDusk = getAstronomicalDusk() ?? Date()
             self.astronomicalDawn  = getAstronomicalDawn()  ?? Date()
             self.morningGoldenHourStart = getMorningGoldenHourStart() ?? Date()
@@ -721,12 +721,12 @@ public class Sun {
     }
     
     /// Nautical Dusk is when the Sun reaches -12 degrees of elevation.
-    /// - Returns: Nautical Down
-    private func getNauticalDown() -> Date? {
-        guard let nauticalDown = getDateFrom(sunEvent: .nautical, morning: false) else {
+    /// - Returns: Nautical Dawn
+    private func getNauticalDawn() -> Date? {
+        guard let nauticalDawn = getDateFrom(sunEvent: .nautical, morning: false) else {
             return nil
         }
-        return nauticalDown
+        return nauticalDawn
     }
     
     /// Astronomical Dusk is when the Sun reaches -18 degrees of elevation.

@@ -100,7 +100,7 @@ final class UT_Sun: XCTestCase {
         
         var expectednauticalDusk = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 5, minute: 52, seconds: 21,timeZone: timeZoneUnderTest)
         
-        var expectednauticalDown = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 17, minute: 44, seconds: 45,timeZone: timeZoneUnderTest)
+        var expectednauticalDawn = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 17, minute: 44, seconds: 45,timeZone: timeZoneUnderTest)
         
         var expectedastronomicalDusk = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 5, minute: 19, seconds: 25,timeZone: timeZoneUnderTest)
         
@@ -124,7 +124,7 @@ final class UT_Sun: XCTestCase {
         XCTAssertTrue(abs(expectedSolarNoon.timeIntervalSince1970 - sunUnderTest.solarNoon.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
        
         XCTAssertTrue(abs(expectednauticalDusk.timeIntervalSince1970 - sunUnderTest.nauticalDusk.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-        XCTAssertTrue(abs(expectednauticalDown.timeIntervalSince1970 - sunUnderTest.nauticalDown.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
+        XCTAssertTrue(abs(expectednauticalDawn.timeIntervalSince1970 - sunUnderTest.nauticalDawn.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
        
         XCTAssertTrue(abs(expectedastronomicalDusk.timeIntervalSince1970 - sunUnderTest.astronomicalDusk.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
        
