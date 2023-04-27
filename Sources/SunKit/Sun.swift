@@ -157,7 +157,7 @@ public class Sun {
     /// Returns True if is night
     public var isNight: Bool {
         if !isCircumPolar {
-            return date < civilDusk || date > civilDawn
+            return date < sunrise || date > sunset
         } else {
             return isAlwaysNight
         }
@@ -165,7 +165,7 @@ public class Sun {
     
     /// Returns True if is twilight time
     public var isTwilight: Bool {
-        (astronomicalDusk <= date && date <= sunrise) || (sunset <= date && date <= astronomicalDawn)
+        (astronomicalDusk <= date && date < sunrise) || (sunset < date && date <= astronomicalDawn)
     }
     
     /// Returns True if we are in evening golden hour range
@@ -201,11 +201,11 @@ public class Sun {
     
     /// Returns true if we are near the pole and we are in a situation in which Sun Events during the day could have no meaning
     public var isCircumPolar: Bool {
-        isAlwaysLight || isAlwaysNight
+        isAlwaysDay || isAlwaysNight
     }
     
     /// Returns true if for (Location,Date) is always daylight (e.g Tromso city  in summer)
-    public var isAlwaysLight: Bool {
+    public var isAlwaysDay: Bool {
         let startOfTheDay = calendar.startOfDay(for: date)
         let almostNextDay = startOfTheDay + Double(SECONDS_IN_ONE_DAY)
         
