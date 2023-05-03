@@ -68,7 +68,7 @@ public class Sun {
     
     ///Date at which morning Blue Hour starts. Sun at -6 degrees elevation = civil dusk
     public var morningBlueHourStart: Date{
-        return civilDusk
+        return civilDawn
     }
     
     ///Date at which morning Blue Hour ends. Sun at -4 degrees elevation = morning golden hour start
@@ -83,7 +83,7 @@ public class Sun {
     
     ///Date at which morning Blue Hour ends. Sun at -6 degrees elevation = Civil Dawn
     public var eveningBlueHourEnd: Date {
-        return civilDawn
+        return civilDusk
     }
     
     
@@ -165,7 +165,7 @@ public class Sun {
     
     /// Returns True if is twilight time
     public var isTwilight: Bool {
-        (astronomicalDusk <= date && date < sunrise) || (sunset < date && date <= astronomicalDawn)
+        (astronomicalDawn <= date && date < sunrise) || (sunset < date && date <= astronomicalDusk)
     }
     
     /// Returns True if we are in evening golden hour range
@@ -313,30 +313,29 @@ public class Sun {
     /// Dumps all the Sun Events dates
     public func dumpDateInfos(){
         
-        print("Current Date      -> \(dateFormatter.string(from: date))")
-        print("Sunrise           -> \(dateFormatter.string(from: sunrise))")
-        print("Sunset            -> \(dateFormatter.string(from: sunset))")
-        print("Solar Noon        -> \(dateFormatter.string(from: solarNoon))")
+        print("Current Date              -> \(dateFormatter.string(from: date))")
+        print("Sunrise                   -> \(dateFormatter.string(from: sunrise))")
+        print("Sunset                    -> \(dateFormatter.string(from: sunset))")
+        print("Solar Noon                -> \(dateFormatter.string(from: solarNoon))")
         print("Evening Golden Hour Start -> \(dateFormatter.string(from: eveningGoldenHourStart))")
         print("Evening Golden Hour End   -> \(dateFormatter.string(from: eveningGoldenHourEnd))")
         print("Morning Golden Hour Start -> \(dateFormatter.string(from: morningGoldenHourStart))")
         print("Morning Golden Hour End   -> \(dateFormatter.string(from: morningGoldenHourEnd))")
-        print("Civil dusk          -> \(dateFormatter.string(from: civilDusk))")
-        print("Civil Dawn           -> \(dateFormatter.string(from: civilDawn))")
-        print("Nautical Dusk     -> \(dateFormatter.string(from: nauticalDusk))")
-        print("Nautical Dawn      -> \(dateFormatter.string(from: nauticalDawn))")
-        print("Astronomical Dusk -> \(dateFormatter.string(from: astronomicalDusk))")
-        print("Astronomical Dawn  -> \(dateFormatter.string(from: astronomicalDawn))")
-        print("Morning Blue Hour Start -> \(dateFormatter.string(from: morningBlueHourStart))")
-        print("Morning Blue Hour End   -> \(dateFormatter.string(from: morningBlueHourEnd))")
-        print("evening Blue Hour Start -> \(dateFormatter.string(from: eveningBlueHourStart))")
-        print("evening Blue Hour End   -> \(dateFormatter.string(from: eveningBlueHourEnd))")
+        print("Civil dusk                -> \(dateFormatter.string(from: civilDusk))")
+        print("Civil Dawn                -> \(dateFormatter.string(from: civilDawn))")
+        print("Nautical Dusk             -> \(dateFormatter.string(from: nauticalDusk))")
+        print("Nautical Dawn             -> \(dateFormatter.string(from: nauticalDawn))")
+        print("Astronomical Dusk         -> \(dateFormatter.string(from: astronomicalDusk))")
+        print("Astronomical Dawn         -> \(dateFormatter.string(from: astronomicalDawn))")
+        print("Morning Blue Hour Start   -> \(dateFormatter.string(from: morningBlueHourStart))")
+        print("Morning Blue Hour End     -> \(dateFormatter.string(from: morningBlueHourEnd))")
+        print("evening Blue Hour Start   -> \(dateFormatter.string(from: eveningBlueHourStart))")
+        print("evening Blue Hour End     -> \(dateFormatter.string(from: eveningBlueHourEnd))")
         
-        print("March Equinox     -> \(dateFormatter.string(from: marchEquinox))")
-        print("June Solstice     -> \(dateFormatter.string(from: juneSolstice))")
-        print("September Equinox -> \(dateFormatter.string(from: septemberEquinox))")
-        print("December Solstice -> \(dateFormatter.string(from: decemberSolstice))")
-        
+        print("March Equinox             -> \(dateFormatter.string(from: marchEquinox))")
+        print("June Solstice             -> \(dateFormatter.string(from: juneSolstice))")
+        print("September Equinox         -> \(dateFormatter.string(from: septemberEquinox))")
+        print("December Solstice         -> \(dateFormatter.string(from: decemberSolstice))")
     }
     
     /*--------------------------------------------------------------------
@@ -693,10 +692,10 @@ public class Sun {
         return goldenHourFinish
     }
     
-    /// Civil Dawn is when the Sun reaches -6 degrees of elevation. Also known as civil sunset.
+    /// Civil Dawn is when the Sun reaches -6 degrees of elevation. Also known as civil sunrise
     /// - Returns: Civil Dawn time
     private func getCivilDawn() -> Date? {
-        guard let civilDawn = getDateFrom(sunEvent: .civil) else {
+        guard let civilDawn = getDateFrom(sunEvent: .civil,morning: true) else {
             return nil
         }
         return civilDawn
@@ -705,7 +704,7 @@ public class Sun {
     /// civil dusk is when the Sun reaches -6 degrees of elevation. Also known as civil sunrise.
     /// - Returns: civil dusk time
     private func getCivilDusk() -> Date? {
-        guard let civilDusk = getDateFrom(sunEvent: .civil, morning: true) else {
+        guard let civilDusk = getDateFrom(sunEvent: .civil, morning: false) else {
             return nil
         }
         return civilDusk
@@ -714,7 +713,7 @@ public class Sun {
     /// Nautical Dusk is when the Sun reaches -12 degrees of elevation.
     /// - Returns: Nautical Dusk
     private func getNauticalDusk() -> Date? {
-        guard let nauticalDusk = getDateFrom(sunEvent: .nautical, morning: true) else {
+        guard let nauticalDusk = getDateFrom(sunEvent: .nautical, morning: false) else {
             return nil
         }
         return nauticalDusk
@@ -723,7 +722,7 @@ public class Sun {
     /// Nautical Dusk is when the Sun reaches -12 degrees of elevation.
     /// - Returns: Nautical Dawn
     private func getNauticalDawn() -> Date? {
-        guard let nauticalDawn = getDateFrom(sunEvent: .nautical, morning: false) else {
+        guard let nauticalDawn = getDateFrom(sunEvent: .nautical, morning: true) else {
             return nil
         }
         return nauticalDawn
@@ -732,7 +731,7 @@ public class Sun {
     /// Astronomical Dusk is when the Sun reaches -18 degrees of elevation.
     /// - Returns: Astronomical Dusk
     private func getAstronomicalDusk() -> Date? {
-        guard let astronomicalDusk = getDateFrom(sunEvent: .astronomical, morning: true) else {
+        guard let astronomicalDusk = getDateFrom(sunEvent: .astronomical, morning: false) else {
             return nil
         }
         return astronomicalDusk
@@ -741,7 +740,7 @@ public class Sun {
     /// Astronomical Dawn is when the Sun reaches -18 degrees of elevation.
     /// - Returns: Astronomical Dawn
     private func getAstronomicalDawn() -> Date? {
-        guard let astronomicalDawn = getDateFrom(sunEvent: .astronomical, morning: false) else {
+        guard let astronomicalDawn = getDateFrom(sunEvent: .astronomical, morning: true) else {
             return nil
         }
         return astronomicalDawn
