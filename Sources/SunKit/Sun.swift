@@ -170,12 +170,12 @@ public class Sun {
     
     /// Returns True if we are in evening golden hour range
     public var isEveningGoldenHour: Bool {
-        date.timeIntervalSince(eveningGoldenHourStart) >= 0 && eveningGoldenHourEnd.timeIntervalSince(date) >= 0
+        date >= eveningGoldenHourStart && date <= eveningGoldenHourEnd
     }
     
     /// Returns True if we are in morning golden hour range
     public var isMorningGoldenHour: Bool {
-        date.timeIntervalSince(morningBlueHourStart) >= 0 && morningBlueHourEnd.timeIntervalSince(date) >= 0
+        date >= morningGoldenHourStart && date <= morningGoldenHourEnd
     }
     
     /// Returns True if we are in  golden hour range
@@ -185,12 +185,12 @@ public class Sun {
     
     /// Returns True if we are in evening blue hour range
     public var isEveningBlueHour: Bool {
-        date.timeIntervalSince(eveningBlueHourStart) >= 0 && eveningBlueHourEnd.timeIntervalSince(date) >= 0
+        date >= eveningBlueHourStart && date <= eveningBlueHourEnd
     }
     
     /// Returns True if we are in morning blue hour range
     public var isMorningBlueHour: Bool {
-        date.timeIntervalSince(morningBlueHourStart) >= 0 && morningBlueHourEnd.timeIntervalSince(date) >= 0
+        date >= morningBlueHourStart && date <= morningBlueHourEnd
     }
     
     /// Returns True if we are in  blue hour range
