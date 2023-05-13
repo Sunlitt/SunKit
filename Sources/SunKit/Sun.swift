@@ -607,7 +607,7 @@ public class Sun {
         var sunriseSeconds    = (Int(sunriseUTCMinutes) * 60) + timeZoneInSeconds
         let startOfDay        = calendar.startOfDay(for: date)
         
-        if sunriseSeconds < 0 {
+        if sunriseSeconds < Int(SECONDS_IN_ONE_HOUR) {
             sunriseSeconds = 0
         }
         
@@ -658,7 +658,7 @@ public class Sun {
             
             secondsForSunToReachElevation = Double(SECONDS_IN_ONE_DAY)
         }
-        else if (secondsForSunToReachElevation < 0){
+        else if (secondsForSunToReachElevation < SECONDS_IN_ONE_HOUR){
             
             secondsForSunToReachElevation = 0
         }
