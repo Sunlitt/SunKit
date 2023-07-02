@@ -363,7 +363,7 @@ public class Sun {
     }
     
     private var sunHorizonCoordinates: HorizonCoordinates       = .init(altitude: .zero, azimuth: .zero)
-    private(set) var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
+    public var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
     private var sunEclipticCoordinates: EclipticCoordinates     = .init(eclipticLatitude: .zero, eclipticLongitude: .zero)
     
     //Sun constants
