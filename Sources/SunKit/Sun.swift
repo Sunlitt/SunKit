@@ -39,7 +39,9 @@ public class Sun {
     public private(set) var sunset: Date = Date()
     ///Date of Solar Noon  for
     public private(set) var solarNoon: Date = Date()
-    
+    ///Date of Solar Midnight
+    public private(set) var solarMidnight: Date = Date()
+
     ///Date at which evening  evening Golden hour starts
     public private(set) var eveningGoldenHourStart: Date = Date()
     ///Date at which evening  evening Golden hour ends
@@ -435,6 +437,7 @@ public class Sun {
             self.sunset           = getSunset() ?? Date()
             self.sunsetAzimuth    = getSunHorizonCoordinatesFrom(date: sunset).azimuth.degrees
             self.solarNoon        = getSolarNoon() ?? Date()
+            self.solarMidnight = getSolarMidnight() ?? Date()
             self.solarNoonAzimuth = getSunHorizonCoordinatesFrom(date: solarNoon).azimuth.degrees
             self.eveningGoldenHourStart  = getEveningGoldenHourStart()  ?? Date()
             self.eveningGoldenHourEnd    = getEveningGoldenHourEnd() ?? Date()
@@ -595,6 +598,21 @@ public class Sun {
         
         return solarNoon
     }
+    
+    /// Computes the solar midnight for self.date.
+    /// - Returns: Solar midnight time
+    private func getSolarMidnight() -> Date? {
+        let secondsForUTCSolarMidnight = (0 - 4 * location.coordinate.longitude - equationOfTime) * 60
+        let secondsForSolarMidnight    = secondsForUTCSolarMidnight + Double(timeZoneInSeconds)
+        let startOfTheDay          = calendar.startOfDay(for: date)
+        
+        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSolarMidnight))
+        
+        let solarMidnight = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfTheDay)
+        
+        return solarMidnight
+    }
+    
     
     /// Computes the Sunrise time for self.date
     /// - Returns: Sunrise time
