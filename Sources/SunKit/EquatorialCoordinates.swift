@@ -22,7 +22,7 @@ import Foundation
 
 public struct EquatorialCoordinates{
     
-    private(set) var rightAscension: Angle?  // rightAscension.degrees refers to h format
+    public var rightAscension: Angle?  // rightAscension.degrees refers to h format
     public var declination: Angle     //delta
     private(set) var hourAngle: Angle?
     
