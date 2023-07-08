@@ -110,6 +110,9 @@ public class Sun {
         return self.sunHorizonCoordinates.altitude
     }
     
+    private(set) var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
+    private(set) var sunEclipticCoordinates: EclipticCoordinates     = .init(eclipticLatitude: .zero, eclipticLongitude: .zero)
+    
     /*--------------------------------------------------------------------
      Sun Events during the year
      *-------------------------------------------------------------------*/
@@ -366,8 +369,7 @@ public class Sun {
     }
     
     private var sunHorizonCoordinates: HorizonCoordinates       = .init(altitude: .zero, azimuth: .zero)
-    private var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
-    private var sunEclipticCoordinates: EclipticCoordinates     = .init(eclipticLatitude: .zero, eclipticLongitude: .zero)
+    
     
     //Sun constants
     private let sunEclipticLongitudeAtTheEpoch: Angle = .init(degrees: 280.466069)
