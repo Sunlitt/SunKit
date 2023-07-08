@@ -319,6 +319,7 @@ public class Sun {
         print("Sunrise                   -> \(dateFormatter.string(from: sunrise))")
         print("Sunset                    -> \(dateFormatter.string(from: sunset))")
         print("Solar Noon                -> \(dateFormatter.string(from: solarNoon))")
+        print("Solar Midnight                -> \(dateFormatter.string(from: solarMidnight))")
         print("Evening Golden Hour Start -> \(dateFormatter.string(from: eveningGoldenHourStart))")
         print("Evening Golden Hour End   -> \(dateFormatter.string(from: eveningGoldenHourEnd))")
         print("Morning Golden Hour Start -> \(dateFormatter.string(from: morningGoldenHourStart))")
