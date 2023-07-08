@@ -595,7 +595,7 @@ public class Sun {
         
         let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSolarNoon))
         
-        let solarNoon = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfTheDay)
+        let solarNoon = startOfTheDay.addingTimeInterval(secondsForSolarNoon)
         
         return solarNoon
     }
@@ -604,12 +604,14 @@ public class Sun {
     /// - Returns: Solar midnight time
     private func getSolarMidnight() -> Date? {
         let secondsForUTCSolarMidnight = (0 - 4 * location.coordinate.longitude - equationOfTime) * 60
+        
+
         let secondsForSolarMidnight    = secondsForUTCSolarMidnight + Double(timeZoneInSeconds)
         let startOfTheDay          = calendar.startOfDay(for: date)
         
-        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSolarMidnight))
+      
         
-        let solarMidnight = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfTheDay)
+        let solarMidnight = startOfTheDay.addingTimeInterval(secondsForSolarMidnight)
         
         return solarMidnight
     }
