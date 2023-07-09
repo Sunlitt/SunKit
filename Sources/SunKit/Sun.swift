@@ -39,6 +39,8 @@ public class Sun {
     public private(set) var sunset: Date = Date()
     ///Date of Solar Noon  for
     public private(set) var solarNoon: Date = Date()
+    ///Date of Solar Midnight
+    public private(set) var solarMidnight: Date = Date()
     
     ///Date at which evening  evening Golden hour starts
     public private(set) var eveningGoldenHourStart: Date = Date()
@@ -107,6 +109,9 @@ public class Sun {
     public var altitude: Angle {
         return self.sunHorizonCoordinates.altitude
     }
+    
+    public private(set) var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
+    public private(set) var sunEclipticCoordinates: EclipticCoordinates     = .init(eclipticLatitude: .zero, eclipticLongitude: .zero)
     
     /*--------------------------------------------------------------------
      Sun Events during the year
@@ -180,7 +185,7 @@ public class Sun {
     
     /// Returns True if we are in  golden hour range
     public var isGoldenHour: Bool {
-       isMorningGoldenHour || isEveningGoldenHour
+        isMorningGoldenHour || isEveningGoldenHour
     }
     
     /// Returns True if we are in evening blue hour range
@@ -195,7 +200,7 @@ public class Sun {
     
     /// Returns True if we are in  blue hour range
     public var isBlueHour: Bool {
-       isMorningBlueHour || isEveningBlueHour
+        isMorningBlueHour || isEveningBlueHour
     }
     
     
@@ -317,6 +322,7 @@ public class Sun {
         print("Sunrise                   -> \(dateFormatter.string(from: sunrise))")
         print("Sunset                    -> \(dateFormatter.string(from: sunset))")
         print("Solar Noon                -> \(dateFormatter.string(from: solarNoon))")
+        print("Solar Midnight            -> \(dateFormatter.string(from: solarMidnight))")
         print("Evening Golden Hour Start -> \(dateFormatter.string(from: eveningGoldenHourStart))")
         print("Evening Golden Hour End   -> \(dateFormatter.string(from: eveningGoldenHourEnd))")
         print("Morning Golden Hour Start -> \(dateFormatter.string(from: morningGoldenHourStart))")
@@ -363,8 +369,7 @@ public class Sun {
     }
     
     private var sunHorizonCoordinates: HorizonCoordinates       = .init(altitude: .zero, azimuth: .zero)
-    private var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
-    private var sunEclipticCoordinates: EclipticCoordinates     = .init(eclipticLatitude: .zero, eclipticLongitude: .zero)
+    
     
     //Sun constants
     private let sunEclipticLongitudeAtTheEpoch: Angle = .init(degrees: 280.466069)
@@ -435,6 +440,7 @@ public class Sun {
             self.sunset           = getSunset() ?? Date()
             self.sunsetAzimuth    = getSunHorizonCoordinatesFrom(date: sunset).azimuth.degrees
             self.solarNoon        = getSolarNoon() ?? Date()
+            self.solarMidnight = getSolarMidnight() ?? Date()
             self.solarNoonAzimuth = getSunHorizonCoordinatesFrom(date: solarNoon).azimuth.degrees
             self.eveningGoldenHourStart  = getEveningGoldenHourStart()  ?? Date()
             self.eveningGoldenHourEnd    = getEveningGoldenHourEnd() ?? Date()
@@ -595,6 +601,23 @@ public class Sun {
         
         return solarNoon
     }
+    
+    /// Computes the solar midnight for self.date.
+    /// - Returns: Solar midnight time
+    private func getSolarMidnight() -> Date? {
+        
+        let secondsForUTCSolarMidnight = (-4 * location.coordinate.longitude - equationOfTime) * 60
+    
+        var calendarUTC:Calendar = .init(identifier: .gregorian)
+        calendarUTC.timeZone = .init(secondsFromGMT: 0)!
+        
+        let startOfTheDay = calendarUTC.startOfDay(for: date)
+        
+        let solarMidnight = startOfTheDay.addingTimeInterval(secondsForUTCSolarMidnight)
+        
+        return solarMidnight
+    }
+    
     
     /// Computes the Sunrise time for self.date
     /// - Returns: Sunrise time
