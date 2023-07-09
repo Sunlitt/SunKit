@@ -110,8 +110,8 @@ public class Sun {
         return self.sunHorizonCoordinates.altitude
     }
     
-    private(set) var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
-    private(set) var sunEclipticCoordinates: EclipticCoordinates     = .init(eclipticLatitude: .zero, eclipticLongitude: .zero)
+    public private(set) var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
+    public private(set) var sunEclipticCoordinates: EclipticCoordinates     = .init(eclipticLatitude: .zero, eclipticLongitude: .zero)
     
     /*--------------------------------------------------------------------
      Sun Events during the year
