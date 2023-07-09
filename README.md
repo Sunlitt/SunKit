@@ -100,6 +100,7 @@ To properly show the Sun Date Events use the following DateFormatter.
   * Civil Dawn Time
   * Sunrise Time
   * Solar Noon Time
+  * Solar Midnight Time
   * Morning Golden Hour Time
   * Evening Golden Hour Time
   * Sunset Time
