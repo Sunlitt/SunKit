@@ -17,7 +17,7 @@ SunKit was first developed as part of a bigger project: [Sunlitt](https://github
 To compute Sunrise, Sunset, Golden Hour and so on we only need a CLLocation and the time zone of that location. **CoreLocation framework is required for SunKit to work**.
 
 ## Credit
-For attribution, we prefer that you use an unmodified vector of our logomark, along with our name, both at legible sizes, and that they link back to our website [Sunlitt.app](https://sunlitt.app).
+For attribution, we prefer that you use an unmodified vector of our logomark available in this repository (sunkit.svg), along with our organization name, both at legible sizes, and that they link back to our website [Sunlitt.app](https://sunlitt.app).
 
 
 ## Usage
