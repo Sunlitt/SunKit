@@ -12,7 +12,7 @@
 
 SunKit was first developed as part of a bigger project: [Sunlitt](https://github.com/Sunlitt/Sunlitt-AppStore). Even though Sunlitt is not meant to be released as Open Source we decided to wrap the fundamental logic of the app and make an open source library out of it.
 
-<img height="50" alt="sunkit" src="https://user-images.githubusercontent.com/55358113/235485360-244cb386-00db-4764-8173-b22b8ead2e11.png"> [<img src="https://user-images.githubusercontent.com/55358113/174020637-ca23803f-341c-48ce-b896-1fd4b7423310.svg" height="50">](https://apps.apple.com/app/sunlitt/id1628751457)
+<img height="50" alt="sunkit" src="https://github.com/Sunlitt/SunKit/assets/55358113/a9d0b738-a4b6-49bf-bdfb-b462656cab92"> [<img src="https://user-images.githubusercontent.com/55358113/174020637-ca23803f-341c-48ce-b896-1fd4b7423310.svg" height="50">](https://apps.apple.com/app/sunlitt/id1628751457)
 
 To compute Sunrise, Sunset, Golden Hour and so on we only need a CLLocation and the time zone of that location. **CoreLocation framework is required for SunKit to work**.
 
