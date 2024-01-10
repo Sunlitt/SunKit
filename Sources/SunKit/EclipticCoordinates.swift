@@ -19,7 +19,7 @@
 import Foundation
 
 
-public struct EclipticCoordinates {
+public struct EclipticCoordinates: Equatable, Hashable {
     
     public static let obliquityOfTheEcliptic: Angle = .init(degrees: 23.439292)
     
