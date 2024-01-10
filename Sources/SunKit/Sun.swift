@@ -19,7 +19,7 @@
 import Foundation
 import CoreLocation
 
-public class Sun {
+public struct Sun {
     
     /*--------------------------------------------------------------------
      Public get Variables
@@ -27,7 +27,7 @@ public class Sun {
     
     public private(set) var location: CLLocation
     public private(set) var timeZone: TimeZone
-    public private(set) var date: Date = Date()
+    public private(set) var date: Date
     
     /*--------------------------------------------------------------------
      Sun Events during the day
@@ -70,22 +70,22 @@ public class Sun {
     
     ///Date at which morning Blue Hour starts. Sun at -6 degrees elevation = civil dusk
     public var morningBlueHourStart: Date{
-        return civilDawn
+        civilDawn
     }
     
     ///Date at which morning Blue Hour ends. Sun at -4 degrees elevation = morning golden hour start
     public var morningBlueHourEnd: Date {
-        return morningGoldenHourStart
+        morningGoldenHourStart
     }
     
     ///Date at which evening Blue Hour starts. Sun at -4 degrees elevation = evening golden hour end
     public var eveningBlueHourStart: Date{
-        return eveningGoldenHourEnd
+        eveningGoldenHourEnd
     }
     
     ///Date at which morning Blue Hour ends. Sun at -6 degrees elevation = Civil Dawn
     public var eveningBlueHourEnd: Date {
-        return civilDusk
+        civilDusk
     }
     
     
@@ -102,12 +102,12 @@ public class Sun {
     
     // Sun azimuth for (Location,Date) in Self
     public var azimuth: Angle {
-        return self.sunHorizonCoordinates.azimuth
+        sunHorizonCoordinates.azimuth
     }
     
     // Sun altitude for (Location,Date) in Self
     public var altitude: Angle {
-        return self.sunHorizonCoordinates.altitude
+        sunHorizonCoordinates.altitude
     }
     
     public private(set) var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
@@ -132,12 +132,12 @@ public class Sun {
     
     /// Longitude of location
     public var longitude: Angle {
-        return .init(degrees: self.location.coordinate.longitude)
+        .init(degrees: location.coordinate.longitude)
     }
     
     /// Latitude of Location
     public var latitude: Angle {
-        return .init(degrees: self.location.coordinate.latitude)
+        .init(degrees: location.coordinate.latitude)
     }
     
     /// Returns daylight time in seconds
@@ -162,9 +162,9 @@ public class Sun {
     /// Returns True if is night
     public var isNight: Bool {
         if !isCircumPolar {
-            return date < sunrise || date > sunset
+            date < sunrise || date > sunset
         } else {
-            return isAlwaysNight
+            isAlwaysNight
         }
     }
     
@@ -219,23 +219,27 @@ public class Sun {
     
     /// Returns true if for (Location,Date) is always daylight (e.g Tromso city in Winter)
     public var isAlwaysNight: Bool {
-        return sunset - TWO_HOURS_IN_SECONDS < sunrise
+        sunset - TWO_HOURS_IN_SECONDS < sunrise
     }
     
     /*--------------------------------------------------------------------
      Initializers
      *-------------------------------------------------------------------*/
     
-    public init(location: CLLocation,timeZone: Double) {
-        let timeZoneSeconds: Int = Int(timeZone * SECONDS_IN_ONE_HOUR)
-        self.timeZone = TimeZone.init(secondsFromGMT: timeZoneSeconds) ?? .current
+    public init(location: CLLocation, timeZone: TimeZone, date: Date = Date()) {
+        self.timeZone = timeZone
         self.location = location
+        self.date = date
+        
         refresh()
     }
     
-    public init(location: CLLocation,timeZone: TimeZone) {
-        self.timeZone = timeZone
+    init(location: CLLocation, timeZone: Double, date: Date = Date()) {
+        let timeZoneSeconds: Int = Int(timeZone * SECONDS_IN_ONE_HOUR)
+        self.timeZone = TimeZone.init(secondsFromGMT: timeZoneSeconds) ?? .current
         self.location = location
+        self.date = date
+        
         refresh()
     }
     
@@ -247,7 +251,7 @@ public class Sun {
      Changing date of interest
      *-------------------------------------------------------------------*/
     
-    public func setDate(_ newDate: Date) {
+    public mutating func setDate(_ newDate: Date) {
         let newDay = calendar.dateComponents([.day,.month,.year], from: newDate)
         let oldDay = calendar.dateComponents([.day,.month,.year], from: date)
         
@@ -266,7 +270,7 @@ public class Sun {
     /// - Parameters:
     ///   - newLocation: New location
     ///   - newTimeZone: New timezone for the given location. Is highly recommanded to pass a Timezone initialized via .init(identifier: ) method
-    public func setLocation(_ newLocation: CLLocation,_ newTimeZone: TimeZone) {
+    public mutating func setLocation(_ newLocation: CLLocation,_ newTimeZone: TimeZone) {
         timeZone = newTimeZone
         location = newLocation
         refresh()
@@ -274,7 +278,7 @@ public class Sun {
     
     /// Changing only the location
     /// - Parameter newLocation: New Location
-    public func setLocation(_ newLocation: CLLocation) {
+    public mutating func setLocation(_ newLocation: CLLocation) {
         location = newLocation
         refresh()
     }
@@ -284,7 +288,7 @@ public class Sun {
     /// - Parameters:
     ///   - newLocation: New Location
     ///   - newTimeZone: New Timezone express in Double. For timezones which differs of half an hour add 0.5,
-    public func setLocation(_ newLocation: CLLocation,_ newTimeZone: Double) {
+    public mutating func setLocation(_ newLocation: CLLocation,_ newTimeZone: Double) {
         let timeZoneSeconds: Int = Int(newTimeZone * SECONDS_IN_ONE_HOUR)
         timeZone = TimeZone(secondsFromGMT: timeZoneSeconds) ?? .current
         location = newLocation
@@ -298,14 +302,14 @@ public class Sun {
     
     /// Changing only the timezone.
     /// - Parameter newTimeZone: New Timezone
-    public func setTimeZone(_ newTimeZone: TimeZone) {
+    public mutating func setTimeZone(_ newTimeZone: TimeZone) {
         timeZone = newTimeZone
         refresh()
     }
     
     /// Is highly recommanded to use the other method to change timezone. This will be kept only for backwards retrocompatibility.
     /// - Parameter newTimeZone: New Timezone express in Double. For timezones which differs of half an hour add 0.5,
-    public func setTimeZone(_ newTimeZone: Double) {
+    public mutating func setTimeZone(_ newTimeZone: Double) {
         let timeZoneSeconds: Int = Int(newTimeZone * SECONDS_IN_ONE_HOUR)
         timeZone = TimeZone(secondsFromGMT: timeZoneSeconds) ?? .current
         refresh()
@@ -431,7 +435,7 @@ public class Sun {
     /// Compute civil dusk and Civil Dawn time
     ///
     /// - Parameter needToComputeAgainSunEvents: True if Sunrise,Sunset and all the others daily sun events have to be computed.
-    private func refresh(needToComputeSunEvents: Bool = true) {
+    private mutating func refresh(needToComputeSunEvents: Bool = true) {
         updateSunCoordinates()
         
         if(needToComputeSunEvents){
@@ -484,7 +488,7 @@ public class Sun {
     
     
     /// Updates Horizon coordinates, Ecliptic coordinates and Equatorial coordinates of the Sun
-    private func updateSunCoordinates() {
+    private mutating func updateSunCoordinates() {
         //Step1:
         //Convert LCT to UT, GST, and LST times and adjust the date if needed
         let gstHMS = uT2GST(self.date)
