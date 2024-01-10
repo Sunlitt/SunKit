@@ -19,7 +19,8 @@
 import Foundation
 import CoreLocation
 
-public struct Sun {
+public struct Sun: Identifiable {
+    public let id: UUID = UUID()
     
     /*--------------------------------------------------------------------
      Public get Variables
@@ -835,4 +836,20 @@ public struct Sun {
         return decemberSolsticeUTC
     }
     
+}
+
+extension Sun: Equatable {
+    public static func == (lhs: Sun, rhs: Sun) -> Bool {
+        lhs.location == rhs.location &&
+        lhs.timeZone == rhs.timeZone &&
+        lhs.date == rhs.date
+    }
+}
+
+extension Sun: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(location)
+        hasher.combine(timeZone)
+        hasher.combine(date)
+    }
 }
