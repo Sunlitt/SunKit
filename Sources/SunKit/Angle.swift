@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct Angle {
+public struct Angle: Equatable, Hashable, Codable, Sendable {
         
     public static var zero: Angle = .init()
     
@@ -54,16 +54,4 @@ public struct Angle {
         .init(radians: value)
     }
 
-}
-
-extension Angle: Equatable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs._radians == rhs._radians
-    }
-}
-
-extension Angle: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(_radians)
-    }
 }

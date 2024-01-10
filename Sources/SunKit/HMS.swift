@@ -20,7 +20,7 @@ import Foundation
 
 
 /// Time expressed in HMS format
-public struct HMS: Equatable, Hashable {
+public struct HMS: Equatable, Hashable, Codable, Sendable {
     
     public var hours: Double
     public var minutes: Double

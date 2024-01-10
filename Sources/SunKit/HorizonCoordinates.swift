@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct HorizonCoordinates: Equatable, Hashable {
+public struct HorizonCoordinates: Equatable, Hashable, Codable, Sendable {
     
     public var altitude: Angle
     public var azimuth: Angle

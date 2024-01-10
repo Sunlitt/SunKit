@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct EquatorialCoordinates: Equatable, Hashable {
+public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
     
     public private(set) var rightAscension: Angle?  // rightAscension.degrees refers to h format
     public private(set) var declination: Angle     //delta

@@ -19,7 +19,7 @@
 import Foundation
 import CoreLocation
 
-public struct Sun: Identifiable {
+public struct Sun: Identifiable, Sendable {
     public let id: UUID = UUID()
     
     /*--------------------------------------------------------------------
