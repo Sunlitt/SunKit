@@ -98,13 +98,13 @@ final class UT_Sun: XCTestCase {
         
         var expectedSolarNoon = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 11, minute: 48, seconds: 21,timeZone: timeZoneUnderTest)
         
-        var expectednauticalDawn = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 5, minute: 52, seconds: 21,timeZone: timeZoneUnderTest)
+        let expectednauticalDawn = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 5, minute: 52, seconds: 21,timeZone: timeZoneUnderTest)
         
-        var expectednauticalDusk = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 17, minute: 44, seconds: 45,timeZone: timeZoneUnderTest)
+        let expectednauticalDusk = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 17, minute: 44, seconds: 45,timeZone: timeZoneUnderTest)
         
-        var expectedastronomicalDawn = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 5, minute: 19, seconds: 25,timeZone: timeZoneUnderTest)
+        let expectedastronomicalDawn = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 5, minute: 19, seconds: 25,timeZone: timeZoneUnderTest)
         
-        var expectedastronomicalDusk = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 18, minute: 17, seconds: 20,timeZone: timeZoneUnderTest)
+        let expectedastronomicalDusk = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 18, minute: 17, seconds: 20,timeZone: timeZoneUnderTest)
         
     
         //Step4: Check if the output are close to the expected ones
@@ -349,7 +349,7 @@ final class UT_Sun: XCTestCase {
             
             let location: CLLocation = .init(latitude: 34.052235, longitude: -118.243683)
 
-            let sun = Sun.init(location: location, timeZone: pst)
+            var sun = Sun.init(location: location, timeZone: pst)
             
             sun.setDate(SunKit.createDateCustomTimeZone(day: 11, month: 3, year: 2023, hour: 22, minute: 00, seconds: 00, timeZone: pst))
             XCTAssertEqual(sun.sunrise.toString(pst), "03/11, 06:08")
@@ -372,7 +372,7 @@ final class UT_Sun: XCTestCase {
         //Step1: Creating sun instance in Naples and with timezone +1 (No daylight saving)
         let timeZoneUnderTest: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
         let timeZoneDaylightSaving: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaplesDaylightSaving * Int(SECONDS_IN_ONE_HOUR)) ?? .current
-        let sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneUnderTest)
+        var sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneUnderTest)
         
         //Step2: Setting 19/01/22 17:31 as date. (No daylight saving)
         let dateUnderTest = createDateCustomTimeZone(day: 19, month: 1, year: 2022, hour: 17, minute: 31, seconds: 00,timeZone: timeZoneUnderTest)
@@ -406,7 +406,7 @@ final class UT_Sun: XCTestCase {
         
         //Step1: Creating Sun instance in Naples and with timezone +1
         let timeZoneNaples: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
-        let sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneNaples)
+        var sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneNaples)
         
         //Step2: Setting 19/11/22 20:00 as date. (No daylight saving)
         let dateUnderTest = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 20, minute: 00, seconds: 00,timeZone: timeZoneNaples)
@@ -430,7 +430,7 @@ final class UT_Sun: XCTestCase {
         // Performance of setDate function that will refresh all the sun variables
         
         //Step1: Creating sun instance in Naples with timezone +1
-        let sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: Double(UT_Sun.timeZoneNaples))
+        var sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: Double(UT_Sun.timeZoneNaples))
         
         //Step2: Setting 19/11/22 20:00 as date.
         let dateUnderTest = createDateCurrentTimeZone(day: 19, month: 11, year: 2022, hour: 20, minute: 00, seconds: 00)

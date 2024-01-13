@@ -19,7 +19,7 @@
 import Foundation
 
 /// DMS format to express angles
-public struct DMS: Equatable{
+public struct DMS: Equatable, Hashable, Codable, Sendable {
     
     public var degrees: Double
     public var minutes: Double
