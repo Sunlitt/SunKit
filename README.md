@@ -129,7 +129,7 @@ To properly show the Sun Date Events use the following DateFormatter.
 * Celestial Calculations: A Gentle Introduction to Computational Astronomy: [Link](https://www.amazon.it/Celestial-Calculations-Introduction-Computational-Astronomy/dp/0262536633/ref=sr_1_1?__mk_it_IT=ÅMÅŽÕÑ&crid=1U99GMGDZ2CUF&keywords=celestial+calculations&qid=1674408445&sprefix=celestial+calculation%2Caps%2C109&sr=8-1).
 
 ## MoonKit  🌙
-Take a look at SunKit's spiritual brother, this time about the [Moon](https://github.com/davideilmito/MoonKit).
+Take a look at SunKit's spiritual brother, [MoonKit](https://github.com/davideilmito/MoonKit).
 
 ## Special thanks
 * [Davide Biancardi](https://github.com/davideilmito): Creator of SunKit.
