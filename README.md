@@ -8,21 +8,22 @@
 
 </div>
 
-**SunKit** is a Swift package which uses math and trigonometry to compute several information about the Sun. This package has been developed by a team of learners relatively new to the Swift programming language, which means that there could be a lot of space for improvements. Every contribution is welcome.
+**SunKit** is a Swift package that uses math and trigonometry to compute several pieces of information about the Sun.
 
-SunKit was first developed as part of a bigger project: [Sunlitt](https://github.com/Sunlitt/Sunlitt-AppStore). Even though Sunlitt is not meant to be released as Open Source we decided to wrap the fundamental logic of the app and make an open source library out of it.
+SunKit was first developed as part of a bigger project: [Sunlitt](https://github.com/Sunlitt/Sunlitt-AppStore). Even though Sunlitt is not meant to be open-sourced, we decided to wrap the fundamental logic of the app and build a library out of it, free for anyone to use, embrace and extend.
 
 <img height="50" alt="sunkit" src="https://github.com/Sunlitt/SunKit/assets/55358113/a9d0b738-a4b6-49bf-bdfb-b462656cab92"> [<img src="https://user-images.githubusercontent.com/55358113/174020637-ca23803f-341c-48ce-b896-1fd4b7423310.svg" height="50">](https://apps.apple.com/app/sunlitt/id1628751457)
 
-To compute Sunrise, Sunset, Golden Hour and so on we only need a CLLocation and the time zone of that location. **CoreLocation framework is required for SunKit to work**.
+## Attribution
+SunKit is licensed under the Apache License 2.0. For attribution, we request that you include an unmodified vector of SunKit's logo, available [here](Resources/sunkit.svg), along with our organization name "Sunlitt", both at legible sizes, and that they link back to our [website](https://sunlitt.app). 
 
-## Credit
-For attribution, we prefer that you use an unmodified vector of our logomark available in this repository (sunkit.svg), along with our organization name, both at legible sizes, and that they link back to our website [Sunlitt.app](https://sunlitt.app).
+If you are developing an app for Apple platforms, we additionally request that you include SunKit's license and copyright in the "Acknowledgments" section of your app's Settings.bundle file. We have included a Settings.bundle example [here](Resources/Settings.bundle) for you to download and import as is in your Xcode project.
+
+Attribution is essential to make sure that our hard work is properly recognized and we thank you for complying with our requests.
 
 
 ## Usage
-SunKit only needs a location and the relative time zone to compute every information you need about the Sun.  
-Everything is computed locally, no internet connection is needed.
+**CoreLocation framework is required for SunKit to work**. SunKit only needs a location and the relative time zone. Everything is computed locally, no internet connection is needed.
 
 ### Creating a Sun 
 
@@ -71,9 +72,9 @@ mySun.eveningGoldenHourEnd
 // To know all the information you can retrieve go to the **Features** section.
 
 ```
+
+
  ### Working with Timezones and Dates
- 
- 
 To properly show the Sun Date Events use the following DateFormatter.
 
 ```swift
@@ -92,9 +93,6 @@ To properly show the Sun Date Events use the following DateFormatter.
  print("Sunrise: \(dateFormatter.string(from: mySun.sunrise))")
     
 ```
-
- 
-
 
 ## Features
   * Sun Azimuth
@@ -131,8 +129,7 @@ To properly show the Sun Date Events use the following DateFormatter.
 * Celestial Calculations: A Gentle Introduction to Computational Astronomy: [Link](https://www.amazon.it/Celestial-Calculations-Introduction-Computational-Astronomy/dp/0262536633/ref=sr_1_1?__mk_it_IT=ÅMÅŽÕÑ&crid=1U99GMGDZ2CUF&keywords=celestial+calculations&qid=1674408445&sprefix=celestial+calculation%2Caps%2C109&sr=8-1).
 
 ## MoonKit  🌙
-Take a look to the other Package, this time about the [Moon](https://github.com/davideilmito/MoonKit).
+Take a look at SunKit's spiritual brother, [MoonKit](https://github.com/davideilmito/MoonKit).
 
 ## Special thanks
-
 * [Davide Biancardi](https://github.com/davideilmito): Creator of SunKit.
