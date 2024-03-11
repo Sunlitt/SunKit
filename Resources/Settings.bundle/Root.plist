@@ -7,10 +7,10 @@
 		<dict>
 			<key>File</key>
 			<string>Acknowledgements</string>
+			<key>Title</key>
+			<string>Acknowledgments</string>
 			<key>Type</key>
 			<string>PSChildPaneSpecifier</string>
-			<key>Title</key>
-			<string>Acknowledgements</string>
 		</dict>
 	</array>
 	<key>StringsTable</key>

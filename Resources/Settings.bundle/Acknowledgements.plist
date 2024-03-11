@@ -2,26 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>StringsTable</key>
-	<string>Acknowledgements</string>
 	<key>PreferenceSpecifiers</key>
 	<array>
 		<dict>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>FooterText</key>
-			<string>© Leonardo Bertinelli, Davide Biancardi, Raffaele Fulgente, Clelia Iovine, Nicolas Mariniello, Fabio Pizzano</string>
-			<key>Title</key>
-			<string></string>
-		</dict>
-		<dict>
 			<key>File</key>
+			<string>Packages/SunKit</string>
+			<key>Title</key>
 			<string>SunKit</string>
 			<key>Type</key>
 			<string>PSChildPaneSpecifier</string>
-			<key>Title</key>
-			<string>SunKit</string>
 		</dict>
 	</array>
+	<key>StringsTable</key>
+	<string>Acknowledgments</string>
 </dict>
 </plist>
