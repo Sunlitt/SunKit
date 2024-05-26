@@ -610,15 +610,17 @@ public struct Sun: Identifiable, Sendable {
     /// Computes the solar midnight for self.date.
     /// - Returns: Solar midnight time
     private func getSolarMidnight() -> Date? {
+        let secondsForUTCSolarMidnight = (0 - 4 * location.coordinate.longitude - equationOfTime) * 60
+        let secondsForSolarMidnight    = secondsForUTCSolarMidnight + Double(timeZoneInSeconds)
+        let startOfTheDay          = calendar.startOfDay(for: date)
         
-        let secondsForUTCSolarMidnight = (-4 * location.coordinate.longitude - equationOfTime) * 60
-    
-        var calendarUTC:Calendar = .init(identifier: .gregorian)
-        calendarUTC.timeZone = .init(secondsFromGMT: 0)!
+        //let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSolarMidnight))
         
-        let startOfTheDay = calendarUTC.startOfDay(for: date)
+       // let solarMidnight = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfTheDay)
         
-        let solarMidnight = startOfTheDay.addingTimeInterval(secondsForUTCSolarMidnight)
+        let solarMidnight = calendar.date(byAdding: .second, value: Int(secondsForSolarMidnight) , to: startOfTheDay)
+        
+        //startOfTheDay.addingTimeInterval(secondsForSolarMidnight)
         
         return solarMidnight
     }
