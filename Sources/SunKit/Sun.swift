@@ -321,7 +321,7 @@ public struct Sun: Identifiable, Sendable {
      *-------------------------------------------------------------------*/
     
     /// Dumps all the Sun Events dates
-    public func dumpDateInfos(){
+    public func dumpDateInfos() {
         
         print("Current Date              -> \(dateFormatter.string(from: date))")
         print("Sunrise                   -> \(dateFormatter.string(from: sunrise))")
