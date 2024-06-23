@@ -600,9 +600,7 @@ public struct Sun: Identifiable, Sendable {
         let secondsForSolarNoon    = secondsForUTCSolarNoon + Double(timeZoneInSeconds)
         let startOfTheDay          = calendar.startOfDay(for: date)
         
-        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSolarNoon))
-        
-        let solarNoon = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfTheDay)
+        let solarNoon = calendar.date(byAdding: .second, value: Int(secondsForSolarNoon) , to: startOfTheDay)
         
         return solarNoon
     }
@@ -611,17 +609,15 @@ public struct Sun: Identifiable, Sendable {
     /// - Returns: Solar midnight time
     private func getSolarMidnight() -> Date? {
         
-        let secondsForUTCSolarMidnight = (-4 * location.coordinate.longitude - equationOfTime) * 60
+        let secondsForUTCSolarMidnight = (0 - 4 * location.coordinate.longitude - equationOfTime) * 60
+        let secondsForSolarMidnight    = secondsForUTCSolarMidnight + Double(timeZoneInSeconds)
+        let startOfTheDay          = calendar.startOfDay(for: date)
+        
+        let solarMidnight = calendar.date(byAdding: .second, value: Int(secondsForSolarMidnight) , to: startOfTheDay)
     
-        var calendarUTC:Calendar = .init(identifier: .gregorian)
-        calendarUTC.timeZone = .init(secondsFromGMT: 0)!
-        
-        let startOfTheDay = calendarUTC.startOfDay(for: date)
-        
-        let solarMidnight = startOfTheDay.addingTimeInterval(secondsForUTCSolarMidnight)
-        
         return solarMidnight
     }
+    
     
     
     /// Computes the Sunrise time for self.date
