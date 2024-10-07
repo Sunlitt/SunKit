@@ -31,6 +31,8 @@ final class UT_Sun: XCTestCase {
     static let sunSetRiseThresholdInSeconds: Double = 120 //2 minutes in seconds
     static let sunEquinoxesAndSolsticesThresholdInSeconds: Double = 700 // approxametly 11 minutes
     
+    static let objectShadowThreshold: Double = 0.01 
+    
     /*--------------------------------------------------------------------
      Naples timezone and location
      *-------------------------------------------------------------------*/
@@ -362,6 +364,24 @@ final class UT_Sun: XCTestCase {
             XCTAssertEqual(sun.sunset.toString(pst), "03/13, 18:59")
             XCTAssertEqual(sun.sunrise.toString(utc), "03/13, 14:06")
             XCTAssertEqual(sun.sunset.toString(utc), "03/14, 01:59")
+        
+    }
+    
+    func testOfObjectShadow() throws{
+        
+        //Step1: Creating sun instance in Naples and with timezone +1 (No daylight saving)
+        let timeZoneUnderTest: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        let timeZoneDaylightSaving: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaplesDaylightSaving * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        var sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneUnderTest)
+        
+
+        
+        XCTAssertTrue(abs(Sun.getObjectShadow(sunAltitude: .init(degrees: 43.40), objectHeight: 1.0)! - 1.06 ) <= UT_Sun.objectShadowThreshold)
+        
+        XCTAssertTrue(Sun.getObjectShadow(sunAltitude: .init(degrees: -0.01), objectHeight: 1.0)  == nil)
+        
+        XCTAssertTrue(Sun.getObjectShadow(sunAltitude: .init(degrees: 90), objectHeight: 1.0)  == 0)
+ 
         
     }
     

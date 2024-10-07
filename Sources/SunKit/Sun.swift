@@ -832,6 +832,23 @@ public struct Sun: Identifiable, Sendable {
         return decemberSolsticeUTC
     }
     
+    
+    public static func getObjectShadow(sunAltitude: Angle, objectHeight: Double) -> Double? {
+        
+        var objectShadow: Double? = 0
+        
+        if (sunAltitude.degrees > 0 && sunAltitude.degrees < 90)
+        {
+            objectShadow = (objectHeight/(tan(sunAltitude.radians)))
+        }
+        else if (sunAltitude.degrees <= 0 )
+        {
+            objectShadow = nil
+        }
+   
+        return objectShadow
+    }
+    
 }
 
 extension Sun: Equatable {
