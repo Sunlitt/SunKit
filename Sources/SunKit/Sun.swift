@@ -832,6 +832,19 @@ public struct Sun: Identifiable, Sendable {
         return decemberSolsticeUTC
     }
     
+    
+    /// - Returns: Length in meters of the object's shadow by the provided object height and current sun altitude.
+    public func shadowLength(for objectHeight: Double = 1, with altitude: Angle? = nil) -> Double? {
+        let altitude = altitude ?? self.altitude
+        
+        return if altitude.degrees > 0 && altitude.degrees < 90 {
+            objectHeight / tan(altitude.radians)
+        } else if altitude.degrees <= 0 {
+            nil
+        } else {
+            0
+        }
+    }
 }
 
 extension Sun: Equatable {

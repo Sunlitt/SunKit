@@ -19,7 +19,7 @@
 import Foundation
 
 //It consents us too loop between two dates for n as interval time
-extension Date: Strideable {
+extension Date: @retroactive Strideable {
     public func distance(to other: Date) -> TimeInterval {
         return other.timeIntervalSinceReferenceDate - self.timeIntervalSinceReferenceDate
     }
