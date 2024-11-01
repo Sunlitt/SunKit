@@ -371,16 +371,16 @@ final class UT_Sun: XCTestCase {
         
         //Step1: Creating sun instance in Naples and with timezone +1 (No daylight saving)
         let timeZoneUnderTest: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
-        let timeZoneDaylightSaving: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaplesDaylightSaving * Int(SECONDS_IN_ONE_HOUR)) ?? .current
-        var sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneUnderTest)
+//        let timeZoneDaylightSaving: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaplesDaylightSaving * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        let sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneUnderTest)
         
 
         
-        XCTAssertTrue(abs(Sun.getObjectShadow(sunAltitude: .init(degrees: 43.40), objectHeight: 1.0)! - 1.06 ) <= UT_Sun.objectShadowThreshold)
+        XCTAssertTrue(abs(sunUnderTest.shadowLength(with: .init(degrees: 43.40))! - 1.06 ) <= UT_Sun.objectShadowThreshold)
         
-        XCTAssertTrue(Sun.getObjectShadow(sunAltitude: .init(degrees: -0.01), objectHeight: 1.0)  == nil)
+        XCTAssertTrue(sunUnderTest.shadowLength(with: .init(degrees: -0.01))  == nil)
         
-        XCTAssertTrue(Sun.getObjectShadow(sunAltitude: .init(degrees: 90), objectHeight: 1.0)  == 0)
+        XCTAssertTrue(sunUnderTest.shadowLength(with: .init(degrees: 90))  == 0)
  
         
     }
