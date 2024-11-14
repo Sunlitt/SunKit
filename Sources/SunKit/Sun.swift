@@ -614,7 +614,7 @@ public struct Sun: Identifiable, Sendable {
         let startOfTheDay          = calendar.startOfDay(for: date)
         
         let solarMidnight = calendar.date(byAdding: .second, value: Int(secondsForSolarMidnight) , to: startOfTheDay)
-    
+        
         return solarMidnight
     }
     
@@ -848,17 +848,53 @@ public struct Sun: Identifiable, Sendable {
 }
 
 extension Sun: Equatable {
-    public static func == (lhs: Sun, rhs: Sun) -> Bool {
-        lhs.location == rhs.location &&
-        lhs.timeZone == rhs.timeZone &&
-        lhs.date == rhs.date
+    public static func ==(lhs: Sun, rhs: Sun) -> Bool {
+        lhs.location.coordinate == rhs.location.coordinate && lhs.timeZone == rhs.timeZone && lhs.date == rhs.date
     }
 }
 
 extension Sun: Hashable {
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(location)
+        hasher.combine(location.coordinate)
         hasher.combine(timeZone)
         hasher.combine(date)
+    }
+}
+
+extension Sun: Codable {
+    internal enum Keys: CodingKey {
+        case coordinate
+        case altitude
+        case horizontalAccuracy
+        case verticalAccuracy
+        case timestamp
+        case timeZone
+        case date
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: Keys.self)
+        
+        let coordinate = try container.decode(CLLocationCoordinate2D.self, forKey: .coordinate)
+        let altitude = try container.decode(Double.self, forKey: .altitude)
+        let horizontalAccuracy = try container.decode(Double.self, forKey: .horizontalAccuracy)
+        let verticalAccuracy = try container.decode(Double.self, forKey: .verticalAccuracy)
+        let timestamp = try container.decode(Date.self, forKey: .timestamp)
+        let timeZone = try container.decode(TimeZone.self, forKey: .timeZone)
+        let date = try container.decode(Date.self, forKey: .date)
+        
+        self.init(location: .init(coordinate: coordinate, altitude: altitude, horizontalAccuracy: horizontalAccuracy, verticalAccuracy: verticalAccuracy, timestamp: timestamp), timeZone: timeZone, date: date)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: Keys.self)
+        
+        try container.encode(location.coordinate, forKey: .coordinate)
+        try container.encode(location.altitude, forKey: .altitude)
+        try container.encode(location.horizontalAccuracy, forKey: .horizontalAccuracy)
+        try container.encode(location.verticalAccuracy, forKey: .verticalAccuracy)
+        try container.encode(location.timestamp, forKey: .timestamp)
+        try container.encode(timeZone, forKey: .timeZone)
+        try container.encode(date, forKey: .date)
     }
 }

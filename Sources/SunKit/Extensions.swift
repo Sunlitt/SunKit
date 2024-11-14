@@ -17,6 +17,7 @@
 //   limitations under the License.
 
 import Foundation
+import CoreLocation
 
 //It consents us too loop between two dates for n as interval time
 extension Date: @retroactive Strideable {
@@ -64,5 +65,41 @@ extension TimeZone {
         - Int(Calendar.current.timeZone.daylightSavingTimeOffset(for: date))
         return Double(res)/SECONDS_IN_ONE_HOUR
         
+    }
+}
+
+extension CLLocationCoordinate2D: @retroactive Equatable {
+    public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+        lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    }
+}
+
+extension CLLocationCoordinate2D: @retroactive Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(latitude)
+        hasher.combine(longitude)
+    }
+}
+
+extension CLLocationCoordinate2D: Codable {
+    internal enum Keys: CodingKey {
+        case latitude
+        case longitude
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: Keys.self)
+        
+        let latitude = try container.decode(Double.self, forKey: .latitude)
+        let longitude = try container.decode(Double.self, forKey: .longitude)
+        
+        self.init(latitude: latitude, longitude: longitude)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: Keys.self)
+        
+        try container.encode(latitude, forKey: .latitude)
+        try container.encode(longitude, forKey: .longitude)
     }
 }
