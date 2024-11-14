@@ -223,6 +223,13 @@ public struct Sun: Identifiable, Sendable {
         sunset - TWO_HOURS_IN_SECONDS < sunrise
     }
     
+    public var calendar: Calendar {
+        var calendar: Calendar = .init(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        
+        return calendar
+    }
+    
     /*--------------------------------------------------------------------
      Initializers
      *-------------------------------------------------------------------*/
@@ -352,13 +359,6 @@ public struct Sun: Identifiable, Sendable {
     /*--------------------------------------------------------------------
      Private Variables
      *-------------------------------------------------------------------*/
-    
-    private var calendar: Calendar {
-        var calendar: Calendar = .init(identifier: .gregorian)
-        calendar.timeZone      = self.timeZone
-        
-        return calendar
-    }
     
     private var dateFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
