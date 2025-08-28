@@ -1,6 +1,6 @@
 //
 //  Extensions.swift
-//  
+//
 //
 //   Copyright 2024 Leonardo Bertinelli, Davide Biancardi, Raffaele Fulgente, Clelia Iovine, Nicolas Mariniello, Fabio Pizzano
 //
@@ -18,6 +18,7 @@
 
 import Foundation
 
+
 //It consents us too loop between two dates for n as interval time
 extension Date: @retroactive Strideable {
     public func distance(to other: Date) -> TimeInterval {
@@ -31,6 +32,7 @@ extension Date: @retroactive Strideable {
                                               options: 0,
                                               locale: Locale(identifier: "en"))
         df.dateFormat = custom
+        
         return df.string(from: self)
     }
     
@@ -51,18 +53,16 @@ extension Calendar {
     func startOfYear(_ date: Date) -> Date {
         return self.date(from: self.dateComponents([.year], from: date))!
     }
-    
 }
 
 extension TimeZone {
-    
     func offset(_ date: Date) -> Double {
         let res =
         Int(self.secondsFromGMT(for: date))
         + Int(self.daylightSavingTimeOffset(for: date))
         - Int(Calendar.current.timeZone.secondsFromGMT(for: date))
         - Int(Calendar.current.timeZone.daylightSavingTimeOffset(for: date))
-        return Double(res)/SECONDS_IN_ONE_HOUR
         
+        return Double(res)/SECONDS_IN_ONE_HOUR
     }
 }
