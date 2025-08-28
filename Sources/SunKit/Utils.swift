@@ -75,7 +75,7 @@ public func createDateUTC(
     minute: Int,
     seconds: Int,
     nanosecond: Int = 0
-) -> Date{
+) -> Date {
     var calendarUTC:Calendar = .init(identifier: .gregorian)
     calendarUTC.timeZone = .init(secondsFromGMT: 0)!
     var dateComponents = DateComponents()
@@ -108,7 +108,7 @@ public func createDateCurrentTimeZone(
     minute: Int,
     seconds: Int,
     nanosecond: Int = 0
-) -> Date{
+) -> Date {
     var calendar: Calendar = .init(identifier: .gregorian)
     calendar.timeZone = .current
     var dateComponents = DateComponents()
@@ -143,7 +143,7 @@ public func createDateCustomTimeZone(
     seconds: Int,
     nanosecond: Int = 0,
     timeZone: TimeZone
-) -> Date{
+) -> Date {
     var calendar: Calendar = .init(identifier: .gregorian)
     calendar.timeZone = timeZone
     var dateComponents = DateComponents()
@@ -172,15 +172,14 @@ public func dateFromJd(jd : Double) -> Date {
 public func jdFromDate(date : Date) -> Double {
     let JD_JAN_1_1970_0000GMT = 2440587.5
     
-    return JD_JAN_1_1970_0000GMT + date.timeIntervalSince1970
-    / 86400
+    return JD_JAN_1_1970_0000GMT + date.timeIntervalSince1970 / 86400
 }
 
 /// Converts UT time to Greenwich Sidereal Time
 /// - Parameter ut: UT time to convert in GST
 /// - Parameter timeZoneInSeconds: time zone expressed in seconds of your local civil time
 /// - Returns: GST equivalent of the UT given in input
-public func uT2GST(_ ut:Date) -> HMS{
+public func uT2GST(_ ut:Date) -> HMS {
     var calendarUTC: Calendar = .init(identifier: .gregorian)
     calendarUTC.timeZone = TimeZone(identifier: "GMT")!
     
@@ -216,7 +215,6 @@ public func uT2GST(_ ut:Date) -> HMS{
     if gstDecimal < 0 {
         gstDecimal += 24
     } else if gstDecimal >= 24 {
-        
         gstDecimal -= 24
     }
     
@@ -231,7 +229,7 @@ public func uT2GST(_ ut:Date) -> HMS{
 ///   - longitude: longitude of the observer
 ///   - Parameter timeZoneInSeconds: time zone expressed in seconds of your local civil time
 /// - Returns: LST equivalent for the GST given in input
-public func gST2LST(_ gst: HMS, longitude: Angle) -> HMS{
+public func gST2LST(_ gst: HMS, longitude: Angle) -> HMS {
     //Step1:
     let gstDecimal = gst.hMS2Decimal()
     
@@ -257,6 +255,6 @@ public func gST2LST(_ gst: HMS, longitude: Angle) -> HMS{
 /// Converts the number of seconds in HH:MM:ss
 /// - Parameter seconds: Number of seconds that have to be converted
 /// - Returns: From value in input the equivalent in (hours,minute,seconds)
-public func secondsToHoursMinutesSeconds(_ seconds : Int) -> (Int,Int,Int) {
+public func secondsToHoursMinutesSeconds(_ seconds : Int) -> (Int, Int, Int) {
     return (seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60)
 }

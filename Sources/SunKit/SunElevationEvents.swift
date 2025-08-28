@@ -18,8 +18,8 @@
 
 import Foundation
 
-enum SunElevationEvents: Double{
-        
+
+enum SunElevationEvents: Double {
     case civil           = -6
     case nautical        = -12
     case astronomical    = -18
@@ -28,5 +28,4 @@ enum SunElevationEvents: Double{
     
     static var morningGoldenHourStart: SunElevationEvents { .eveningGoldenHourEnd }
     static var morningGoldenHourEnd: SunElevationEvents { .eveningGoldenHourStart }
-    
 }
