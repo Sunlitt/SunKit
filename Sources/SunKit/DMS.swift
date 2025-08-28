@@ -18,16 +18,20 @@
 
 import Foundation
 
+
 /// DMS format to express angles
 public struct DMS: Equatable, Hashable, Codable, Sendable {
-    
     public var degrees: Double
     public var minutes: Double
     public var seconds: Double
     public var isANegativeZero: Bool
     
-    
-    init(degrees: Double, minutes: Double, seconds: Double, isANegativeZero: Bool = false) {
+    init(
+        degrees: Double,
+        minutes: Double,
+        seconds: Double,
+        isANegativeZero: Bool = false
+    ) {
         self.degrees = degrees
         self.minutes = minutes
         self.seconds = seconds
@@ -36,8 +40,7 @@ public struct DMS: Equatable, Hashable, Codable, Sendable {
     
     ///From decimal it will create the corresponding angle in DMS format
     /// - Parameter decimal: Decimal angle that will be converted in DMS format
-    public init(decimal: Double){
-        
+    public init(decimal: Double) {
         //Step1:
         let sign = decimal < 0 ? -1 : 1
         //Step2:
@@ -50,26 +53,23 @@ public struct DMS: Equatable, Hashable, Codable, Sendable {
         let seconds = 60 * (60 * dec.truncatingRemainder(dividingBy: 1)).truncatingRemainder(dividingBy: 1)
         //Step6:
         degrees *= sign
+        
         if degrees == 0 && sign == -1 {
             self.degrees = Double(degrees)
             self.minutes = Double(minutes)
             self.seconds = seconds
             self.isANegativeZero = true
-        }
-        else{
+        } else {
             self.degrees = Double(degrees)
             self.minutes = Double(minutes)
             self.seconds = seconds
             self.isANegativeZero = false
         }
-       
-        
     }
     
     /// It converts from DMS format to decimal
     /// - Returns: DMS of the instance expressed in decimal format
     public func dMS2Decimal() -> Double {
-        
         //Step1:
         let sign: Double = degrees < 0 ? -1 : 1
         //Step2:
@@ -86,7 +86,6 @@ public struct DMS: Equatable, Hashable, Codable, Sendable {
         decimal *= sign
         
         if isANegativeZero{
-            
             decimal *= -1
         }
         
