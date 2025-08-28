@@ -20,7 +20,6 @@ import Foundation
 
 
 public struct EclipticCoordinates: Equatable, Hashable, Codable, Sendable {
-    
     public static let obliquityOfTheEcliptic: Angle = .init(degrees: 23.439292)
     
     public var eclipticLatitude: Angle //beta
@@ -28,23 +27,17 @@ public struct EclipticCoordinates: Equatable, Hashable, Codable, Sendable {
     
     /// Converts ecliptic coordinatates to equatorial coordinates
     /// - Returns: Equatorial coordinates of the instance
-    public func ecliptic2Equatorial() -> EquatorialCoordinates{
-        
+    public func ecliptic2Equatorial() -> EquatorialCoordinates {
         //Step4:
         let tEclipticToEquatorial: Angle = .init(radians: sin(eclipticLatitude.radians) * cos(EclipticCoordinates.obliquityOfTheEcliptic.radians) + cos(eclipticLatitude.radians) * sin(EclipticCoordinates.obliquityOfTheEcliptic.radians) * sin(eclipticLongitude.radians))
-        
         //Step5:
         let moonDeclination: Angle = .init(radians: asin(tEclipticToEquatorial.radians))
-        
         //Step6:
         let yEclipticToEquatorial = sin(eclipticLongitude.radians) * cos(EclipticCoordinates.obliquityOfTheEcliptic.radians) - tan(eclipticLatitude.radians) * sin(EclipticCoordinates.obliquityOfTheEcliptic.radians)
-        
         //Step7:
         let xEclipticToEquatorial = cos(eclipticLongitude.radians)
-        
         //Step8:
         var r: Angle = .init(radians: atan(yEclipticToEquatorial / xEclipticToEquatorial))
-        
         //Step9:
         switch (yEclipticToEquatorial >= 0,xEclipticToEquatorial >= 0){
             
