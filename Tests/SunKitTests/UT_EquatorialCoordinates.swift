@@ -19,13 +19,12 @@
 import XCTest
 @testable import SunKit
 
-final class UT_EquatorialCoordinates: XCTestCase {
 
+final class UT_EquatorialCoordinates: XCTestCase {
     
     /// Test of EquatorialCoordinates init
     func testOfInitEquatorialCoordinates() throws {
-        
-    //Test1: Consider a star whose right ascension is 3h24m06s and declination = −0°30'30''. Suppose the LST for an observer is 18h.Calculate the corresponding hour angle.
+        //Test1: Consider a star whose right ascension is 3h24m06s and declination = −0°30'30''. Suppose the LST for an observer is 18h.Calculate the corresponding hour angle.
         
         //Step1:
         let declinationUnderTest: Angle = .init(degrees: DMS.init(degrees:0 , minutes: 30, seconds: 30,isANegativeZero: true).dMS2Decimal())
@@ -39,12 +38,9 @@ final class UT_EquatorialCoordinates: XCTestCase {
         
     }
     
-    
     /// Test of equatorial2Horizon
     func testOfequatorial2Horizon() throws {
-        
-        
-    //Test1: Convert equatorial coordinates with declination = 17.248880 and right ascension = 4.257714. Expected horizon coordinates are altitude = 68°52 and Azimuth = 192°11′. For an observer at 38° N and LST is 4.562547h
+        //Test1: Convert equatorial coordinates with declination = 17.248880 and right ascension = 4.257714. Expected horizon coordinates are altitude = 68°52 and Azimuth = 192°11′. For an observer at 38° N and LST is 4.562547h
         
         //Step1:
         var equatorialCoordinatesUnderTest: EquatorialCoordinates = .init(declination: .init(degrees: 17.248880), rightAscension: .init(degrees: 4.257714))
@@ -62,10 +58,9 @@ final class UT_EquatorialCoordinates: XCTestCase {
         XCTAssertTrue(abs(azimuth - expectedAzimuth) < 0.1)
         XCTAssertTrue(abs(altitude - expectedAltitude) < 0.1)
         
+        //Test2: Suppose a star is located at δ = −0°30′30′′, H = 16h29m45s. For an observer at 25° N latitude. Expected output shall be Azimuth = 80°31′31′′ ,and −20°34′40′′.
         
-    //Test2: Suppose a star is located at δ = −0°30′30′′, H = 16h29m45s. For an observer at 25° N latitude. Expected output shall be Azimuth = 80°31′31′′ ,and −20°34′40′′.
-        
-        //Step4: 
+        //Step4:
         let hourAngleDecimal = HMS.init(hours: 16, minutes: 29, seconds: 45).hMS2Decimal()
         let hourAngle: Angle = .init(degrees: hourAngleDecimal * 15)
         latitudeUnderTest = .degrees(25)
@@ -88,8 +83,7 @@ final class UT_EquatorialCoordinates: XCTestCase {
     
     /// Test of equatorial2Ecliptic
     func testOfequatorial2Ecliptic() throws {
-        
-    //Test1: Given Jupiter’s equatorial coordinates of right ascension 12h18m47.5s, declination −0°43′35.5'', and the standard epoch J2000, compute Jupiter’s ecliptic coordinates.Expected output shall be eclipitc latitude = 1°12′00.0′′ and  ecliptic longitude = 184°36′00.0′′
+        //Test1: Given Jupiter’s equatorial coordinates of right ascension 12h18m47.5s, declination −0°43′35.5'', and the standard epoch J2000, compute Jupiter’s ecliptic coordinates.Expected output shall be eclipitc latitude = 1°12′00.0′′ and  ecliptic longitude = 184°36′00.0′′
         
         //Step1:
         let rightAscensionUnderTest = HMS.init(hours: 12, minutes: 18, seconds: 47.5).hMS2Decimal()
@@ -101,9 +95,9 @@ final class UT_EquatorialCoordinates: XCTestCase {
         //Step2: Saving expected values in output for both latitude and longitude
         let expectedLatitude = DMS.init(degrees: 1, minutes: 12, seconds: 0).dMS2Decimal()
         let expectedLongitude = DMS.init(degrees: 184, minutes: 36, seconds: 0).dMS2Decimal()
-       
+        
         //Step3: Check if output of the function under test is close to expected output for both latitude and longitude
         XCTAssertTrue(abs(expectedLatitude - eclipticCoordinates.eclipticLatitude.degrees) < 0.1)
         XCTAssertTrue(abs(expectedLongitude - eclipticCoordinates.eclipticLongitude.degrees) < 0.1)
-    }  
+    }
 }
