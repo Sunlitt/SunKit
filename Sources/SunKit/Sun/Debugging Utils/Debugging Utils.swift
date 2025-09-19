@@ -54,6 +54,7 @@ extension Sun {
         dateFormatter.timeZone = self.timeZone
         dateFormatter.timeStyle = .full
         dateFormatter.dateStyle = .full
+        
         return dateFormatter
     }
 }
