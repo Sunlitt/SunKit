@@ -97,6 +97,8 @@ public struct Sun: Identifiable, Sendable {
         sunHorizonCoordinates.altitude
     }
     
+    private var sunHorizonCoordinates: HorizonCoordinates = .init(altitude: .zero, azimuth: .zero)
+    
     public private(set) var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
     public private(set) var sunEclipticCoordinates: EclipticCoordinates = .init(eclipticLatitude: .zero, eclipticLongitude: .zero)
     
@@ -308,8 +310,6 @@ public struct Sun: Identifiable, Sendable {
         timeZone.secondsFromGMT(for: self.date)
     }
     
-    private var sunHorizonCoordinates: HorizonCoordinates = .init(altitude: .zero, azimuth: .zero)
-    
     // Sun constants
     private let sunEclipticLongitudeAtTheEpoch: Angle = .init(degrees: 280.466069)
     private let sunEclipticLongitudePerigee: Angle = .init(degrees: 282.938346)
@@ -437,7 +437,7 @@ public struct Sun: Identifiable, Sendable {
             sunEclipticLongitude.degrees -= 360
         }
         
-        sunEclipticCoordinates = calculateSunEclipticCoordinates()
+        sunEclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
         // Ecliptic to Equatorial
         sunEquatorialCoordinates = calculateSunEquatorialCoordinates()
         // Equatorial to Horizon
@@ -450,10 +450,10 @@ public struct Sun: Identifiable, Sendable {
         func calculateSunEquatorialCoordinates() -> EquatorialCoordinates  {
             sunEclipticCoordinates.ecliptic2Equatorial()
         }
-        
-        func calculateSunEclipticCoordinates() -> EclipticCoordinates  {
-            .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
-        }
+    }
+    
+    private func calculateSunEclipticCoordinates(using sunEclipticLongitude: Angle) -> EclipticCoordinates  {
+        .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
     }
     
     private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
@@ -681,7 +681,7 @@ public struct Sun: Identifiable, Sendable {
             sunEclipticLongitude.degrees -= 360
         }
         
-        let sunEclipticCoordinates: EclipticCoordinates = calculateSunEclipticCoordinates()
+        let sunEclipticCoordinates: EclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
         // Ecliptic to Equatorial
         var sunEquatorialCoordinates: EquatorialCoordinates = calculateSunEquatorialCoordinates()
         // Equatorial to Horizon
@@ -695,10 +695,6 @@ public struct Sun: Identifiable, Sendable {
         
         func calculateSunEquatorialCoordinates() -> EquatorialCoordinates  {
             sunEclipticCoordinates.ecliptic2Equatorial()
-        }
-        
-        func calculateSunEclipticCoordinates() -> EclipticCoordinates  {
-            .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
         }
     }
     
