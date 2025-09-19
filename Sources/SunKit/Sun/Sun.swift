@@ -316,38 +316,6 @@ public struct Sun: Identifiable, Sendable {
     }
     
     /*--------------------------------------------------------------------
-     Debug functions
-     *-------------------------------------------------------------------*/
-    
-    /// Dumps all the Sun Events dates
-    public func dumpDateInfos(){
-        print("Current Date              -> \(dateFormatter.string(from: date))")
-        print("Sunrise                   -> \(dateFormatter.string(from: sunrise))")
-        print("Sunset                    -> \(dateFormatter.string(from: sunset))")
-        print("Solar Noon                -> \(dateFormatter.string(from: solarNoon))")
-        print("Solar Midnight            -> \(dateFormatter.string(from: solarMidnight))")
-        print("Evening Golden Hour Start -> \(dateFormatter.string(from: eveningGoldenHourStart))")
-        print("Evening Golden Hour End   -> \(dateFormatter.string(from: eveningGoldenHourEnd))")
-        print("Morning Golden Hour Start -> \(dateFormatter.string(from: morningGoldenHourStart))")
-        print("Morning Golden Hour End   -> \(dateFormatter.string(from: morningGoldenHourEnd))")
-        print("Civil dusk                -> \(dateFormatter.string(from: civilDusk))")
-        print("Civil Dawn                -> \(dateFormatter.string(from: civilDawn))")
-        print("Nautical Dusk             -> \(dateFormatter.string(from: nauticalDusk))")
-        print("Nautical Dawn             -> \(dateFormatter.string(from: nauticalDawn))")
-        print("Astronomical Dusk         -> \(dateFormatter.string(from: astronomicalDusk))")
-        print("Astronomical Dawn         -> \(dateFormatter.string(from: astronomicalDawn))")
-        print("Morning Blue Hour Start   -> \(dateFormatter.string(from: morningBlueHourStart))")
-        print("Morning Blue Hour End     -> \(dateFormatter.string(from: morningBlueHourEnd))")
-        print("evening Blue Hour Start   -> \(dateFormatter.string(from: eveningBlueHourStart))")
-        print("evening Blue Hour End     -> \(dateFormatter.string(from: eveningBlueHourEnd))")
-        
-        print("March Equinox             -> \(dateFormatter.string(from: marchEquinox))")
-        print("June Solstice             -> \(dateFormatter.string(from: juneSolstice))")
-        print("September Equinox         -> \(dateFormatter.string(from: septemberEquinox))")
-        print("December Solstice         -> \(dateFormatter.string(from: decemberSolstice))")
-    }
-    
-    /*--------------------------------------------------------------------
      Private Variables
      *-------------------------------------------------------------------*/
     
@@ -356,15 +324,6 @@ public struct Sun: Identifiable, Sendable {
         calendar.timeZone      = self.timeZone
         
         return calendar
-    }
-    
-    private var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = .current
-        dateFormatter.timeZone = self.timeZone
-        dateFormatter.timeStyle = .full
-        dateFormatter.dateStyle = .full
-        return dateFormatter
     }
     
     private var timeZoneInSeconds: Int {
