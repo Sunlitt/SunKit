@@ -84,8 +84,8 @@ public struct Sun: Identifiable, Sendable {
      *-------------------------------------------------------------------*/
     
     public private(set) var sunriseAzimuth: Double = 0
-    public private(set) var sunsetAzimuth: Double = 0
     public private(set) var solarNoonAzimuth: Double = 0
+    public private(set) var sunsetAzimuth: Double = 0
     
     // Sun azimuth for (Location,Date) in Self
     public var azimuth: Angle {
@@ -369,23 +369,26 @@ public struct Sun: Identifiable, Sendable {
         updateSunCoordinates()
         
         if (needToComputeSunEvents) {
+            self.astronomicalDawn = getAstronomicalDawn() ?? Date()
+            self.nauticalDawn = getNauticalDawn() ?? Date()
+            self.civilDawn = getCivilDawn() ?? Date()
+            self.morningGoldenHourStart = getMorningGoldenHourStart() ?? Date()
             self.sunrise = getSunrise() ?? Date()
-            self.sunriseAzimuth = getSunHorizonCoordinatesFrom(date: sunrise).azimuth.degrees
-            self.sunset = getSunset() ?? Date()
-            self.sunsetAzimuth = getSunHorizonCoordinatesFrom(date: sunset).azimuth.degrees
+            self.morningGoldenHourEnd = getMorningGoldenHourEnd() ?? Date()
+            
             self.solarNoon = getSolarNoon() ?? Date()
-            self.solarMidnight = getSolarMidnight() ?? Date()
-            self.solarNoonAzimuth = getSunHorizonCoordinatesFrom(date: solarNoon).azimuth.degrees
+            
             self.eveningGoldenHourStart = getEveningGoldenHourStart() ?? Date()
+            self.sunset = getSunset() ?? Date()
             self.eveningGoldenHourEnd = getEveningGoldenHourEnd() ?? Date()
             self.civilDusk = getCivilDusk() ?? Date()
-            self.civilDawn = getCivilDawn() ?? Date()
             self.nauticalDusk = getNauticalDusk() ?? Date()
-            self.nauticalDawn = getNauticalDawn() ?? Date()
             self.astronomicalDusk = getAstronomicalDusk() ?? Date()
-            self.astronomicalDawn = getAstronomicalDawn() ?? Date()
-            self.morningGoldenHourStart = getMorningGoldenHourStart() ?? Date()
-            self.morningGoldenHourEnd = getMorningGoldenHourEnd() ?? Date()
+            self.solarMidnight = getSolarMidnight() ?? Date()
+            
+            self.sunriseAzimuth = getSunHorizonCoordinatesFrom(date: sunrise).azimuth.degrees
+            self.solarNoonAzimuth = getSunHorizonCoordinatesFrom(date: solarNoon).azimuth.degrees
+            self.sunsetAzimuth = getSunHorizonCoordinatesFrom(date: sunset).azimuth.degrees
         }
         
         self.marchEquinox = getMarchEquinox() ?? Date()
