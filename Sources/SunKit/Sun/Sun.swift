@@ -439,25 +439,26 @@ public struct Sun: Identifiable, Sendable {
         
         sunEclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
         // Ecliptic to Equatorial
-        sunEquatorialCoordinates = calculateSunEquatorialCoordinates(from: sunEclipticCoordinates)
+        sunEquatorialCoordinates = calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
         // Equatorial to Horizon
-        sunHorizonCoordinates = calculateSunHorizonCoordinates()
+        sunHorizonCoordinates = calculateSunHorizonCoordinates(using: lstDecimal)
         
-        func calculateSunHorizonCoordinates() -> HorizonCoordinates {
+        // TODO: Move behavior into EquatorialCoordinates, refactor to Object
+        func calculateSunHorizonCoordinates(using lstDecimal: Double) -> HorizonCoordinates {
             sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
         }
     }
     
-    // TODO: Move behavior into EclipticCoordinates
+    // TODO: Move behavior into EclipticCoordinates, refactor to Object
     private func calculateSunEclipticCoordinates(using sunEclipticLongitude: Angle) -> EclipticCoordinates {
         .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
     }
     
     // TODO: Move behavior into EclipticCoordinates
-    private func calculateSunEquatorialCoordinates(from sunEclipticCoordinates: EclipticCoordinates) -> EquatorialCoordinates {
+    private func calculateSunEquatorialCoordinates(using sunEclipticCoordinates: EclipticCoordinates) -> EquatorialCoordinates {
         sunEclipticCoordinates.ecliptic2Equatorial()
     }
-    
+   
     private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
         var sunMeanAnomaly: Angle = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunEclipticLongitudePerigee.degrees))
         sunMeanAnomaly = .init(degrees: extendedMod(sunMeanAnomaly.degrees, 360))
@@ -685,13 +686,14 @@ public struct Sun: Identifiable, Sendable {
         
         let sunEclipticCoordinates: EclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
         // Ecliptic to Equatorial
-        var sunEquatorialCoordinates: EquatorialCoordinates = calculateSunEquatorialCoordinates(from: sunEclipticCoordinates)
+        var sunEquatorialCoordinates: EquatorialCoordinates = calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
         // Equatorial to Horizon
-        let sunHorizonCoordinates: HorizonCoordinates = calculateSunHorizonCoordinates()
+        let sunHorizonCoordinates: HorizonCoordinates = calculateSunHorizonCoordinates(using: lstDecimal)
         
         return .init(altitude: sunHorizonCoordinates.altitude, azimuth: sunHorizonCoordinates.azimuth)
         
-        func calculateSunHorizonCoordinates() -> HorizonCoordinates {
+        // TODO: Move behavior intoEquatorialCoordinates, refactor to Object
+        func calculateSunHorizonCoordinates(using lstDecimal: Double) -> HorizonCoordinates {
             sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
         }
     }
