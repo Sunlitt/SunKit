@@ -659,6 +659,8 @@ public struct Sun: Identifiable, Sendable {
         return newDate
     }
     
+    // MARK: - Get Horizon Coordinates
+    
     // TODO: Extract functions to collapse into updateSunCoordinates
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
         let lstDecimal = calculateLSTDecimal(using: date)
@@ -677,6 +679,8 @@ public struct Sun: Identifiable, Sendable {
             sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
         }
     }
+    
+    // MARK: - Get Month Events
     
     private func getMarchEquinox() -> Date? {
         let year = Double(calendar.component(.year, from: self.date))
