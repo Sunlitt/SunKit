@@ -521,7 +521,7 @@ public struct Sun: Identifiable, Sendable {
     private func getSunrise() -> Date? {
         let solarHourAngle = calculateSunriseSolarHourAngle()
         let sunriseUTCMinutes = 720 - 4 * (location.coordinate.longitude + solarHourAngle.degrees) - equationOfTime
-        var sunriseSeconds = (Int(sunriseUTCMinutes) * 60) + timeZoneInSeconds
+        var sunriseSeconds = calculateSeconds(using: sunriseUTCMinutes)
         
         if sunriseSeconds < Int(SECONDS_IN_ONE_HOUR) {
             sunriseSeconds = 0
@@ -532,6 +532,12 @@ public struct Sun: Identifiable, Sendable {
         let sunriseDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
         
         return sunriseDate
+    }
+    
+    private func calculateSeconds(using UTCMinutes: Double) -> Int {
+        let UTCSeconds = Int(UTCMinutes) * 60
+        
+        return UTCSeconds + timeZoneInSeconds
     }
     
     private func calculateSunriseSolarHourAngle() -> Angle {
@@ -590,7 +596,7 @@ public struct Sun: Identifiable, Sendable {
     private func getSunset() -> Date? {
         let solarHourAngle = calculateSunsetSolarHourAngle()
         let sunsetUTCMinutes = 720 - 4 * (location.coordinate.longitude + solarHourAngle.degrees) - equationOfTime
-        var sunsetSeconds = (Int(sunsetUTCMinutes) * 60) + timeZoneInSeconds
+        var sunsetSeconds = calculateSeconds(using: sunsetUTCMinutes)
         
         if sunsetSeconds > SECONDS_IN_ONE_DAY {
             sunsetSeconds = SECONDS_IN_ONE_DAY
