@@ -713,11 +713,3 @@ public struct Sun: Identifiable, Sendable {
         return decemberSolsticeUTC
     }
 }
-
-extension Sun: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(location)
-        hasher.combine(timeZone)
-        hasher.combine(date)
-    }
-}
