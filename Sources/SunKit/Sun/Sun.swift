@@ -39,19 +39,14 @@ public struct Sun: Identifiable, Sendable {
     public private(set) var sunset: Date = Date()
     public private(set) var solarNoon: Date = Date()
     public private(set) var solarMidnight: Date = Date()
-    
     public private(set) var eveningGoldenHourStart: Date = Date()
     public private(set) var eveningGoldenHourEnd: Date = Date()
-    
     public private(set) var morningGoldenHourStart: Date = Date()
     public private(set) var morningGoldenHourEnd: Date = Date()
-    
     public private(set) var civilDusk: Date = Date()
     public private(set) var civilDawn: Date = Date()
-    
     public private(set) var nauticalDusk: Date = Date()
     public private(set) var nauticalDawn: Date = Date()
-    
     public private(set) var astronomicalDusk: Date = Date()
     public private(set) var astronomicalDawn: Date = Date()
     
@@ -74,7 +69,6 @@ public struct Sun: Identifiable, Sendable {
     public var eveningBlueHourEnd: Date {
         civilDusk
     }
-    
     
     /*--------------------------------------------------------------------
      Sun Azimuths for Self.date and for Sunrise,Sunset and Solar Noon
@@ -183,7 +177,6 @@ public struct Sun: Identifiable, Sendable {
         isMorningBlueHour || isEveningBlueHour
     }
     
-    
     /// Returns true if we are near the pole and we are in a situation in which Sun Events during the day could have no meaning
     public var isCircumPolar: Bool {
         isAlwaysDay || isAlwaysNight
@@ -234,7 +227,6 @@ public struct Sun: Identifiable, Sendable {
     public mutating func setDate(_ newDate: Date) {
         let newDay = calendar.dateComponents([.day,.month,.year], from: newDate)
         let oldDay = calendar.dateComponents([.day,.month,.year], from: date)
-        
         let isSameDay: Bool = (newDay == oldDay)
         date = newDate
         
@@ -244,7 +236,6 @@ public struct Sun: Identifiable, Sendable {
     /*--------------------------------------------------------------------
      Changing Location
      *-------------------------------------------------------------------*/
-    
     
     /// Changing location and timezone
     /// - Parameters:
@@ -317,16 +308,12 @@ public struct Sun: Identifiable, Sendable {
     /// Number of the days passed since the start of the year for the self.date
     private var daysPassedFromStartOfTheYear: Int {
         let year = calendar.component(.year, from: date)
-        
         let dateFormatter: DateFormatter = DateFormatter()
-        
         dateFormatter.dateFormat = "yyyy/mm/dd"
         dateFormatter.calendar = calendar
         let dataFormatted = dateFormatter.date(from: "\(year)/01/01")
-        
         let startOfYear = calendar.startOfDay(for: dataFormatted!)
         let startOfDay = calendar.startOfDay(for: date)
-        
         var daysPassedFromStartOfTheYear = calendar.dateComponents([.day], from: startOfYear, to: startOfDay).day!
         daysPassedFromStartOfTheYear = daysPassedFromStartOfTheYear + 1
         
@@ -454,10 +441,8 @@ public struct Sun: Identifiable, Sendable {
         let gstHMS = uT2GST(date)
         let lstHMS = gST2LST(gstHMS,longitude: longitude)
         let lstDecimal = lstHMS.hMS2Decimal()
-        
         // Julian number for standard epoch 2000
         let jdEpoch = 2451545.00
-        
         // Compute the Julian day number for the desired date using the Greenwich date and TT
         let jdTT = jdFromDate(date: date)
         // Compute the total number of elapsed days, including fractional days, since the standard epoch (i.e., JD − JDe)
@@ -668,7 +653,6 @@ public struct Sun: Identifiable, Sendable {
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
         let julianDayMarchEquinox: Double = 1721139.2855 + 365.2421376 * year + 0.0679190 * pow(t, 2) - 0.0027879 * pow(t, 3)
-        
         let marchEquinoxUTC = dateFromJd(jd: julianDayMarchEquinox)
         
         return marchEquinoxUTC
@@ -678,7 +662,6 @@ public struct Sun: Identifiable, Sendable {
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
         let julianDayJuneSolstice: Double = 1721233.2486 + 365.2417284 * year - 0.0530180 * pow(t, 2) + 0.0093320 * pow(t, 3)
-        
         let juneSolsticeUTC = dateFromJd(jd: julianDayJuneSolstice)
         
         return juneSolsticeUTC
@@ -688,7 +671,6 @@ public struct Sun: Identifiable, Sendable {
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
         let julianDaySeptemberEquinox: Double = 1721325.6978 + 365.2425055 * year - 0.126689 * pow(t, 2) + 0.0019401 * pow(t, 3)
-        
         let septemberEquinoxUTC = dateFromJd(jd: julianDaySeptemberEquinox)
         
         return septemberEquinoxUTC
@@ -698,7 +680,6 @@ public struct Sun: Identifiable, Sendable {
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
         let julianDayDecemberSolstice: Double = 1721414.3920 + 365.2428898 * year - 0.0109650 * pow(t, 2) - 0.0084885 * pow(t, 3)
-        
         let decemberSolsticeUTC = dateFromJd(jd: julianDayDecemberSolstice)
         
         return decemberSolsticeUTC
