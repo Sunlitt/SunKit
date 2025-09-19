@@ -94,17 +94,7 @@ public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
             return nil
         }
         
-        let tZeroEquatorialToHorizon = sin(declination.radians) * sin(latitude.radians) + cos(declination.radians) * cos(latitude.radians) * cos(hourAngle!.radians)
-        let altitude: Angle = .init(radians: asin(tZeroEquatorialToHorizon))
-        let tOneEquatorialToHorizon = sin(declination.radians) - sin(latitude.radians) * sin(altitude.radians)
-        let tTwoEquatorialToHorizon = tOneEquatorialToHorizon / (cos(latitude.radians) * cos(altitude.radians))
-        var azimuth: Angle = .init(radians: acos(tTwoEquatorialToHorizon))
-        
-        if sin(hourAngle!.radians) >= 0 {
-            azimuth.degrees = 360 - azimuth.degrees
-        }
-        
-        return .init(altitude: altitude, azimuth: azimuth)
+       return calculateHorizonCoordinates(from: latitude)
     }
     
     /// Converts Equatorial coordinates to Horizon coordinates.
@@ -119,6 +109,10 @@ public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
             return nil
         }
         
+        return calculateHorizonCoordinates(from: latitude)
+    }
+    
+    private func calculateHorizonCoordinates(from latitude: Angle) -> HorizonCoordinates {
         let tZeroEquatorialToHorizon = sin(declination.radians) * sin(latitude.radians) + cos(declination.radians) * cos(latitude.radians) * cos(hourAngle!.radians)
         let altitude: Angle = .init(radians: asin(tZeroEquatorialToHorizon))
         let tOneEquatorialToHorizon = sin(declination.radians) - sin(latitude.radians) * sin(altitude.radians)
