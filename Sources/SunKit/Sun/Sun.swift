@@ -87,12 +87,13 @@ public struct Sun: Identifiable, Sendable {
     public private(set) var solarNoonAzimuth: Double = 0
     public private(set) var sunsetAzimuth: Double = 0
     
-    // Sun azimuth for (Location,Date) in Self
+    /// The object backing the public interface for Sun coordinates.
+    private let sunCoordinates: SunCoordinates = .init()
+    
     public var azimuth: Angle {
         sunHorizonCoordinates.azimuth
     }
     
-    // Sun altitude for (Location,Date) in Self
     public var altitude: Angle {
         sunHorizonCoordinates.altitude
     }
