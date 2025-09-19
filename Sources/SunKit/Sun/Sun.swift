@@ -605,9 +605,7 @@ public struct Sun: Identifiable, Sendable {
     
     /// Sunset is when the Sun reaches 0 degrees of elevation, aka the horizon, at the end of the day.
     private func getSunset() -> Date? {
-        let solarHourAngle = calculateSunsetSolarHourAngle()
-        let sunsetUTCMinutes = calculateUTCMinutes(using: solarHourAngle)
-        var sunsetSeconds = calculateSeconds(using: sunsetUTCMinutes)
+        var sunsetSeconds = calculateSunsetSeconds()
         
         if sunsetSeconds > SECONDS_IN_ONE_DAY {
             sunsetSeconds = SECONDS_IN_ONE_DAY
@@ -618,6 +616,14 @@ public struct Sun: Identifiable, Sendable {
         let sunsetDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
         
         return sunsetDate
+    }
+    
+    private func calculateSunsetSeconds() -> Int {
+        let solarHourAngle = calculateSunsetSolarHourAngle()
+        let sunsetUTCMinutes = calculateUTCMinutes(using: solarHourAngle)
+        let sunsetSeconds = calculateSeconds(using: sunsetUTCMinutes)
+        
+        return sunsetSeconds
     }
     
     private func calculateSunsetSolarHourAngle() -> Angle {
