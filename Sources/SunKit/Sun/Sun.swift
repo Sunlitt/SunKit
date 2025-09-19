@@ -519,9 +519,8 @@ public struct Sun: Identifiable, Sendable {
     
     /// Sunrise is when the Sun reaches 0 degrees of elevation, aka the horizon, at the start of the day.
     private func getSunrise() -> Date? {
-        let haArg = clampCosineOfSolarHourAngle()
-        let ha: Angle = .radians(acos(haArg))
-        let sunriseUTCMinutes = 720 - 4 * (location.coordinate.longitude + ha.degrees) - equationOfTime
+        let solarHourAngle: Angle = calculateSunriseSolarHourAngle()
+        let sunriseUTCMinutes = 720 - 4 * (location.coordinate.longitude + solarHourAngle.degrees) - equationOfTime
         var sunriseSeconds = (Int(sunriseUTCMinutes) * 60) + timeZoneInSeconds
         let startOfDay = calendar.startOfDay(for: date)
         
@@ -533,6 +532,13 @@ public struct Sun: Identifiable, Sendable {
         let sunriseDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
         
         return sunriseDate
+    }
+    
+    private func calculateSunriseSolarHourAngle() -> Angle {
+        let cosSolarHourAngle = clampCosineOfSolarHourAngle()
+        let solarHourAngle: Angle = .radians(acos(cosSolarHourAngle))
+        
+        return solarHourAngle
     }
     
     private func clampCosineOfSolarHourAngle() -> Double {
