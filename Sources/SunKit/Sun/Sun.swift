@@ -437,7 +437,7 @@ public struct Sun: Identifiable, Sendable {
             sunEclipticLongitude.degrees -= 360
         }
         
-        sunEclipticCoordinates = .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
+        sunEclipticCoordinates = calculateSunEclipticCoordinates()
         // Ecliptic to Equatorial
         sunEquatorialCoordinates = calculateSunEquatorialCoordinates()
         // Equatorial to Horizon
@@ -449,6 +449,10 @@ public struct Sun: Identifiable, Sendable {
         
         func calculateSunEquatorialCoordinates() -> EquatorialCoordinates  {
             sunEclipticCoordinates.ecliptic2Equatorial()
+        }
+        
+        func calculateSunEclipticCoordinates() -> EclipticCoordinates  {
+            .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
         }
     }
     
@@ -677,7 +681,7 @@ public struct Sun: Identifiable, Sendable {
             sunEclipticLongitude.degrees -= 360
         }
         
-        let sunEclipticCoordinates: EclipticCoordinates = .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
+        let sunEclipticCoordinates: EclipticCoordinates = calculateSunEclipticCoordinates()
         // Ecliptic to Equatorial
         var sunEquatorialCoordinates: EquatorialCoordinates = calculateSunEquatorialCoordinates()
         // Equatorial to Horizon
@@ -691,6 +695,10 @@ public struct Sun: Identifiable, Sendable {
         
         func calculateSunEquatorialCoordinates() -> EquatorialCoordinates  {
             sunEclipticCoordinates.ecliptic2Equatorial()
+        }
+        
+        func calculateSunEclipticCoordinates() -> EclipticCoordinates  {
+            .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
         }
     }
     
