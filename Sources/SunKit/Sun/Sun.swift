@@ -55,22 +55,26 @@ public struct Sun: Identifiable, Sendable {
     public private(set) var astronomicalDusk: Date = Date()
     public private(set) var solarMidnight: Date = Date()
     
-    /// Date at which morning Blue Hour starts. Sun at -6 degrees elevation = civil dusk
+    /// Date at which the morning Blue Hour starts.
+    /// The same elevation as Civil Dawn--when the Sun is at -6 degrees.
     public var morningBlueHourStart: Date {
         civilDawn
     }
     
-    /// Date at which morning Blue Hour ends. Sun at -4 degrees elevation = morning golden hour start
+    /// Date at which morning Blue Hour ends and the morning Golden Hour begins.
+    /// The same elevation as morning Golden Hour start--when the Sun is at -4 degrees.
     public var morningBlueHourEnd: Date {
         morningGoldenHourStart
     }
     
-    /// Date at which evening Blue Hour starts. Sun at -4 degrees elevation = evening golden hour end
+    /// Date at which evening Golden Hour ends and the evening Blue Hour begins.
+    /// The same elevation as morning Golden Hour end--when the Sun is at -4 degrees.
     public var eveningBlueHourStart: Date {
         eveningGoldenHourEnd
     }
     
-    /// Date at which morning Blue Hour ends. Sun at -6 degrees elevation = Civil Dawn
+    /// Date at which evening Blue Hour ends.
+    /// The same elevation as Civil Dusk--when the Sun is at -6 degrees.
     public var eveningBlueHourEnd: Date {
         civilDusk
     }
