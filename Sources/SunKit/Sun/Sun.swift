@@ -415,7 +415,7 @@ public struct Sun: Identifiable, Sendable {
     private mutating func updateSunCoordinates() {
         // Convert LCT to UT, GST, and LST times and adjust the date if needed
         let gstHMS = uT2GST(self.date)
-        let lstHMS = gST2LST(gstHMS,longitude: longitude)
+        let lstHMS = gST2LST(gstHMS, longitude: longitude)
         let lstDecimal = lstHMS.hMS2Decimal()
         // Julian number for standard epoch 2000
         let jdEpoch = 2451545.00
@@ -429,6 +429,7 @@ public struct Sun: Identifiable, Sendable {
         let equationOfCenter = 360 / Double.pi * sin(sunMeanAnomaly.radians) * 0.016708
         // Add EoC to sun mean anomaly to get the sun true anomaly
         var sunTrueAnomaly = sunMeanAnomaly.degrees + equationOfCenter
+        // Add or subtract multiples of 360° to adjust sun true anomaly to the range of 0° to 360°
         sunTrueAnomaly = extendedMod(sunTrueAnomaly, 360)
         var sunEclipticLongitude: Angle = .init(degrees: sunTrueAnomaly + sunEclipticLongitudePerigee.degrees)
         
@@ -440,7 +441,11 @@ public struct Sun: Identifiable, Sendable {
         // Ecliptic to Equatorial
         sunEquatorialCoordinates = sunEclipticCoordinates.ecliptic2Equatorial()
         // Equatorial to Horizon
-        sunHorizonCoordinates = sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal,latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
+        sunHorizonCoordinates = calculateSunHorizonCoordinates()
+        
+        func calculateSunHorizonCoordinates() -> HorizonCoordinates {
+            sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal,latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
+        }
     }
     
     private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
@@ -642,10 +647,11 @@ public struct Sun: Identifiable, Sendable {
         return newDate
     }
     
+    // TODO
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
         // Convert LCT to UT, GST, and LST times and adjust the date if needed
         let gstHMS = uT2GST(date)
-        let lstHMS = gST2LST(gstHMS,longitude: longitude)
+        let lstHMS = gST2LST(gstHMS, longitude: longitude)
         let lstDecimal = lstHMS.hMS2Decimal()
         // Julian number for standard epoch 2000
         let jdEpoch = 2451545.00
@@ -661,7 +667,6 @@ public struct Sun: Identifiable, Sendable {
         var sunTrueAnomaly = sunMeanAnomaly.degrees + equationOfCenter
         // Add or subtract multiples of 360° to adjust sun true anomaly to the range of 0° to 360°
         sunTrueAnomaly = extendedMod(sunTrueAnomaly, 360)
-        // Getting ecliptic longitude.
         var sunEclipticLongitude: Angle = .init(degrees: sunTrueAnomaly + sunEclipticLongitudePerigee.degrees)
         
         if sunEclipticLongitude.degrees > 360 {
@@ -672,9 +677,13 @@ public struct Sun: Identifiable, Sendable {
         // Ecliptic to Equatorial
         var sunEquatorialCoordinates: EquatorialCoordinates = sunEclipticCoordinates.ecliptic2Equatorial()
         // Equatorial to Horizon
-        let sunHorizonCoordinates: HorizonCoordinates = sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal,latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
+        let sunHorizonCoordinates: HorizonCoordinates = calculateSunHorizonCoordinates()
         
         return .init(altitude: sunHorizonCoordinates.altitude, azimuth: sunHorizonCoordinates.azimuth)
+        
+        func calculateSunHorizonCoordinates() -> HorizonCoordinates {
+            sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal,latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
+        }
     }
     
     private func getMarchEquinox() -> Date? {
