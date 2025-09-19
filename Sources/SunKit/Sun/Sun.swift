@@ -520,7 +520,7 @@ public struct Sun: Identifiable, Sendable {
     /// Sunrise is when the Sun reaches 0 degrees of elevation, aka the horizon, at the start of the day.
     private func getSunrise() -> Date? {
         let solarHourAngle = calculateSunriseSolarHourAngle()
-        let sunriseUTCMinutes = 720 - 4 * (location.coordinate.longitude + solarHourAngle.degrees) - equationOfTime
+        let sunriseUTCMinutes = calculateUTCMinutes(using: solarHourAngle)
         var sunriseSeconds = calculateSeconds(using: sunriseUTCMinutes)
         
         if sunriseSeconds < Int(SECONDS_IN_ONE_HOUR) {
@@ -532,12 +532,6 @@ public struct Sun: Identifiable, Sendable {
         let sunriseDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
         
         return sunriseDate
-    }
-    
-    private func calculateSeconds(using UTCMinutes: Double) -> Int {
-        let UTCSeconds = Int(UTCMinutes) * 60
-        
-        return UTCSeconds + timeZoneInSeconds
     }
     
     private func calculateSunriseSolarHourAngle() -> Angle {
@@ -562,6 +556,17 @@ public struct Sun: Identifiable, Sendable {
         let tanSunDeclination = tan(sunEquatorialCoordinates.declination.radians)
         
         return cosSolarZenithAngle / (cosLatitude * cosSunDeclination) - tanLatitude * tanSunDeclination
+    }
+    
+    private func calculateUTCMinutes(using solarHourAngle: Angle) -> Double {
+        let longitude = location.coordinate.longitude
+        return 720 - 4 * (longitude + solarHourAngle.degrees) - equationOfTime
+    }
+    
+    private func calculateSeconds(using UTCMinutes: Double) -> Int {
+        let UTCSeconds = Int(UTCMinutes) * 60
+        
+        return UTCSeconds + timeZoneInSeconds
     }
     
     /// Morning Golden Hour ends when Sun reaches 6 degrees of elevation.
@@ -595,7 +600,7 @@ public struct Sun: Identifiable, Sendable {
     /// Sunset is when the Sun reaches 0 degrees of elevation, aka the horizon, at the end of the day.
     private func getSunset() -> Date? {
         let solarHourAngle = calculateSunsetSolarHourAngle()
-        let sunsetUTCMinutes = 720 - 4 * (location.coordinate.longitude + solarHourAngle.degrees) - equationOfTime
+        let sunsetUTCMinutes = calculateUTCMinutes(using: solarHourAngle)
         var sunsetSeconds = calculateSeconds(using: sunsetUTCMinutes)
         
         if sunsetSeconds > SECONDS_IN_ONE_DAY {
