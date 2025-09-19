@@ -462,6 +462,13 @@ public struct Sun: Identifiable, Sendable {
         return sunEclipticLongitude
     }
     
+    private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
+        var sunMeanAnomaly: Angle = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunEclipticLongitudePerigee.degrees))
+        sunMeanAnomaly = .init(degrees: extendedMod(sunMeanAnomaly.degrees, 360))
+        
+        return sunMeanAnomaly
+    }
+    
     // TODO: Move behavior into EclipticCoordinates, refactor to Object
     private func calculateSunEclipticCoordinates(using sunEclipticLongitude: Angle) -> EclipticCoordinates {
         .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
@@ -470,13 +477,6 @@ public struct Sun: Identifiable, Sendable {
     // TODO: Move behavior into EclipticCoordinates
     private func calculateSunEquatorialCoordinates(using sunEclipticCoordinates: EclipticCoordinates) -> EquatorialCoordinates {
         sunEclipticCoordinates.ecliptic2Equatorial()
-    }
-   
-    private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
-        var sunMeanAnomaly: Angle = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunEclipticLongitudePerigee.degrees))
-        sunMeanAnomaly = .init(degrees: extendedMod(sunMeanAnomaly.degrees, 360))
-        
-        return sunMeanAnomaly
     }
     
     private func getSunEclipticLongitude(from sunMeanAnomaly: Angle) -> Angle {
