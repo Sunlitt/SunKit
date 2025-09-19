@@ -25,19 +25,19 @@ public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
     
     private(set) var hourAngle: Angle?
     
-    init(declination: Angle,rightAscension: Angle, hourAngle: Angle) {
+    init(declination: Angle, rightAscension: Angle, hourAngle: Angle) {
         self.declination = declination
         self.rightAscension = rightAscension
         self.hourAngle = hourAngle
     }
     
-    init(declination: Angle,rightAscension: Angle) {
+    init(declination: Angle, rightAscension: Angle) {
         self.declination = declination
         self.rightAscension = rightAscension
         self.hourAngle = nil
     }
     
-    init(declination: Angle,hourAngle: Angle) {
+    init(declination: Angle, hourAngle: Angle) {
         self.declination = declination
         self.hourAngle = hourAngle
         self.rightAscension = nil
@@ -68,7 +68,9 @@ public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
     /// - Parameter lstDecimal: Local Sideral Time in decimal
     /// - Returns: The value of right ascension just been set. Nil if hour angle is also nil
     public mutating func setRightAscensionFrom(lstDecimal: Double) -> Angle? {
-        guard let hourAngle = self.hourAngle else {return nil}
+        guard let hourAngle = self.hourAngle else {
+            return nil
+        }
         
         let hourAngleDecimal = hourAngle.degrees / 15
         self.rightAscension = .init(degrees: lstDecimal - hourAngleDecimal)
@@ -102,7 +104,7 @@ public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
         let tTwoEquatorialToHorizon = tOneEquatorialToHorizon / (cos(latitude.radians) * cos(altitude.radians))
         //Step8:
         var azimuth: Angle = .init(radians: acos(tTwoEquatorialToHorizon))
-        if sin(hourAngle!.radians) >= 0{
+        if sin(hourAngle!.radians) >= 0 {
             azimuth.degrees = 360 - azimuth.degrees
         }
         
@@ -131,7 +133,7 @@ public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
         let tTwoEquatorialToHorizon = tOneEquatorialToHorizon / (cos(latitude.radians) * cos(altitude.radians))
         //Step8:
         var azimuth: Angle = .init(radians: acos(tTwoEquatorialToHorizon))
-        if sin(hourAngle!.radians) >= 0{
+        if sin(hourAngle!.radians) >= 0 {
             azimuth.degrees = 360 - azimuth.degrees
         }
         
@@ -139,9 +141,11 @@ public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
     }
     
     public func equatorial2Ecliptic() -> EclipticCoordinates? {
-        guard var rightAscension = rightAscension else {return nil}
+        guard var rightAscension = rightAscension else {
+            return nil
+        }
         
-        rightAscension.degrees = rightAscension.degrees * 15 //from h format to degrees
+        rightAscension.degrees = rightAscension.degrees * 15 // from h format to degrees
         //Step5:
         let tEquatorialToEcliptic: Angle = .init(radians: sin(declination.radians) * cos(EclipticCoordinates.obliquityOfTheEcliptic.radians) - cos(declination.radians) * sin(EclipticCoordinates.obliquityOfTheEcliptic.radians) * sin(rightAscension.radians))
         //Step6:
@@ -153,8 +157,7 @@ public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
         //Step9:
         var r: Angle = .init(radians: atan(yEquatorialToEcliptic / xEquatorialToEcliptic))
         //Step9:
-        switch (yEquatorialToEcliptic >= 0,xEquatorialToEcliptic >= 0){
-            
+        switch (yEquatorialToEcliptic >= 0, xEquatorialToEcliptic >= 0) {
         case (true, true):
             break
         case (true,false):
