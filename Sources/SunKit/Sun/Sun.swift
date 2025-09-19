@@ -439,12 +439,16 @@ public struct Sun: Identifiable, Sendable {
         
         sunEclipticCoordinates = .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
         // Ecliptic to Equatorial
-        sunEquatorialCoordinates = sunEclipticCoordinates.ecliptic2Equatorial()
+        sunEquatorialCoordinates = calculateSunEquatorialCoordinates()
         // Equatorial to Horizon
         sunHorizonCoordinates = calculateSunHorizonCoordinates()
         
         func calculateSunHorizonCoordinates() -> HorizonCoordinates {
-            sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal,latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
+            sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
+        }
+        
+        func calculateSunEquatorialCoordinates() -> EquatorialCoordinates  {
+            sunEclipticCoordinates.ecliptic2Equatorial()
         }
     }
     
@@ -675,14 +679,18 @@ public struct Sun: Identifiable, Sendable {
         
         let sunEclipticCoordinates: EclipticCoordinates = .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
         // Ecliptic to Equatorial
-        var sunEquatorialCoordinates: EquatorialCoordinates = sunEclipticCoordinates.ecliptic2Equatorial()
+        var sunEquatorialCoordinates: EquatorialCoordinates = calculateSunEquatorialCoordinates()
         // Equatorial to Horizon
         let sunHorizonCoordinates: HorizonCoordinates = calculateSunHorizonCoordinates()
         
         return .init(altitude: sunHorizonCoordinates.altitude, azimuth: sunHorizonCoordinates.azimuth)
         
         func calculateSunHorizonCoordinates() -> HorizonCoordinates {
-            sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal,latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
+            sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
+        }
+        
+        func calculateSunEquatorialCoordinates() -> EquatorialCoordinates  {
+            sunEclipticCoordinates.ecliptic2Equatorial()
         }
     }
     
