@@ -1,5 +1,5 @@
 //
-//  Extensions.swift
+//  Calendar+startOfYear.swift
 //
 //
 //   Copyright 2024 Leonardo Bertinelli, Davide Biancardi, Raffaele Fulgente, Clelia Iovine, Nicolas Mariniello, Fabio Pizzano
@@ -19,14 +19,16 @@
 import Foundation
 
 
-extension TimeZone {
-    func offset(_ date: Date) -> Double {
-        let res =
-        Int(self.secondsFromGMT(for: date))
-        + Int(self.daylightSavingTimeOffset(for: date))
-        - Int(Calendar.current.timeZone.secondsFromGMT(for: date))
-        - Int(Calendar.current.timeZone.daylightSavingTimeOffset(for: date))
+extension Calendar {
+    func numberOfDaysSinceStartOfTheYear(for date: Date) -> Int {
+        let startOfTheYear: Date = startOfYear(date)
+        let startOfTheDay = startOfDay(for: date)
+        let numberOfDays = dateComponents([.day], from: startOfTheYear, to: startOfTheDay)
         
-        return Double(res)/SECONDS_IN_ONE_HOUR
+        return numberOfDays.day! + 1
+    }
+    
+    func startOfYear(_ date: Date) -> Date {
+        return self.date(from: self.dateComponents([.year], from: date))!
     }
 }
