@@ -524,10 +524,8 @@ public struct Sun: Identifiable, Sendable {
         if sunriseSeconds < Int(SECONDS_IN_ONE_HOUR) {
             sunriseSeconds = 0
         }
-        
-        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(sunriseSeconds))
-        let startOfDay = calendar.startOfDay(for: date)
-        let sunriseDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
+
+        let sunriseDate = calculateDate(using: sunriseSeconds)
         
         return sunriseDate
     }
@@ -575,6 +573,19 @@ public struct Sun: Identifiable, Sendable {
         return UTCSeconds + timeZoneInSeconds
     }
     
+    private func calculateDate(using seconds: Int) -> Date? {
+        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(seconds))
+        let startOfDay = calendar.startOfDay(for: date)
+        let date = calendar.date(
+            bySettingHour: hoursMinutesSeconds.0,
+            minute: hoursMinutesSeconds.1,
+            second: hoursMinutesSeconds.2,
+            of: startOfDay
+        )
+        
+        return date
+    }
+    
     /// Morning Golden Hour ends when Sun reaches 6 degrees of elevation.
     private func getMorningGoldenHourEnd() -> Date? {
         guard let morningGoldenHourEnd = getDateFrom(sunEvent: .morningGoldenHourEnd, morning: true) else {
@@ -611,9 +622,7 @@ public struct Sun: Identifiable, Sendable {
             sunsetSeconds = SECONDS_IN_ONE_DAY
         }
         
-        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(sunsetSeconds))
-        let startOfDay = calendar.startOfDay(for: date)
-        let sunsetDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
+        let sunsetDate = calculateDate(using: sunsetSeconds)
         
         return sunsetDate
     }
