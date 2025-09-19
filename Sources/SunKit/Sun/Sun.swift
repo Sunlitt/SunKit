@@ -35,20 +35,25 @@ public struct Sun: Identifiable, Sendable {
      Sun Events during the day
      *-------------------------------------------------------------------*/
     
-    public private(set) var sunrise: Date = Date()
-    public private(set) var sunset: Date = Date()
-    public private(set) var solarNoon: Date = Date()
-    public private(set) var solarMidnight: Date = Date()
-    public private(set) var eveningGoldenHourStart: Date = Date()
-    public private(set) var eveningGoldenHourEnd: Date = Date()
-    public private(set) var morningGoldenHourStart: Date = Date()
-    public private(set) var morningGoldenHourEnd: Date = Date()
-    public private(set) var civilDusk: Date = Date()
-    public private(set) var civilDawn: Date = Date()
-    public private(set) var nauticalDusk: Date = Date()
-    public private(set) var nauticalDawn: Date = Date()
-    public private(set) var astronomicalDusk: Date = Date()
+    /*
+     Sun Events during the day organized chronologically
+     */
     public private(set) var astronomicalDawn: Date = Date()
+    public private(set) var nauticalDawn: Date = Date()
+    public private(set) var civilDawn: Date = Date()
+    public private(set) var morningGoldenHourStart: Date = Date()
+    public private(set) var sunrise: Date = Date()
+    public private(set) var morningGoldenHourEnd: Date = Date()
+    
+    public private(set) var solarNoon: Date = Date()
+    
+    public private(set) var eveningGoldenHourStart: Date = Date()
+    public private(set) var sunset: Date = Date()
+    public private(set) var eveningGoldenHourEnd: Date = Date()
+    public private(set) var civilDusk: Date = Date()
+    public private(set) var nauticalDusk: Date = Date()
+    public private(set) var astronomicalDusk: Date = Date()
+    public private(set) var solarMidnight: Date = Date()
     
     /// Date at which morning Blue Hour starts. Sun at -6 degrees elevation = civil dusk
     public var morningBlueHourStart: Date {
