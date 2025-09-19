@@ -714,14 +714,6 @@ public struct Sun: Identifiable, Sendable {
     }
 }
 
-extension Sun: Equatable {
-    public static func == (lhs: Sun, rhs: Sun) -> Bool {
-        lhs.location == rhs.location &&
-        lhs.timeZone == rhs.timeZone &&
-        lhs.date == rhs.date
-    }
-}
-
 extension Sun: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(location)
