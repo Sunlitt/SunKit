@@ -354,9 +354,23 @@ public struct Sun: Identifiable, Sendable {
         return timeCorrectionFactorInSeconds
     }
     
-    /*--------------------------------------------------------------------
-     Private methods
-     *-------------------------------------------------------------------*/
+    /// - Returns: Length in meters of the object's shadow by the provided object height and current sun altitude.
+    public func shadowLength(
+        for objectHeight: Double = 1,
+        with altitude: Angle? = nil
+    ) -> Double? {
+        let altitude = altitude ?? self.altitude
+        
+        return if altitude.degrees > 0 && altitude.degrees < 90 {
+            objectHeight / tan(altitude.radians)
+        } else if altitude.degrees <= 0 {
+            nil
+        } else {
+            0
+        }
+    }
+ 
+    // MARK: - Refresh Sun State
     
     /// Updates in order all the sun coordinates: horizon, ecliptic and equatorial.
     /// Then get rise, set and noon times and their relative azimuths in degrees.
@@ -397,25 +411,6 @@ public struct Sun: Identifiable, Sendable {
         self.decemberSolstice = getDecemberSolstice() ?? Date()
     }
     
-    private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
-        var sunMeanAnomaly: Angle = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunEclipticLongitudePerigee.degrees))
-        sunMeanAnomaly = .init(degrees: extendedMod(sunMeanAnomaly.degrees, 360))
-        
-        return sunMeanAnomaly
-    }
-    
-    private func getSunEclipticLongitude(from sunMeanAnomaly: Angle) -> Angle {
-        let equationOfCenter = 360 / Double.pi * sin(sunMeanAnomaly.radians) * 0.016708
-        let trueAnomaly = sunMeanAnomaly.degrees + equationOfCenter
-        var eclipticLatitude: Angle = .init(degrees: trueAnomaly + sunEclipticLongitudePerigee.degrees)
-        
-        if eclipticLatitude.degrees > 360 {
-            eclipticLatitude.degrees -= 360
-        }
-        
-        return eclipticLatitude
-    }
-    
     /// Updates Horizon coordinates, Ecliptic coordinates and Equatorial coordinates of the Sun
     private mutating func updateSunCoordinates() {
         // Convert LCT to UT, GST, and LST times and adjust the date if needed
@@ -446,6 +441,205 @@ public struct Sun: Identifiable, Sendable {
         sunEquatorialCoordinates = sunEclipticCoordinates.ecliptic2Equatorial()
         // Equatorial to Horizon
         sunHorizonCoordinates = sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal,latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
+    }
+    
+    private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
+        var sunMeanAnomaly: Angle = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunEclipticLongitudePerigee.degrees))
+        sunMeanAnomaly = .init(degrees: extendedMod(sunMeanAnomaly.degrees, 360))
+        
+        return sunMeanAnomaly
+    }
+    
+    private func getSunEclipticLongitude(from sunMeanAnomaly: Angle) -> Angle {
+        let equationOfCenter = 360 / Double.pi * sin(sunMeanAnomaly.radians) * 0.016708
+        let trueAnomaly = sunMeanAnomaly.degrees + equationOfCenter
+        var eclipticLatitude: Angle = .init(degrees: trueAnomaly + sunEclipticLongitudePerigee.degrees)
+        
+        if eclipticLatitude.degrees > 360 {
+            eclipticLatitude.degrees -= 360
+        }
+        
+        return eclipticLatitude
+    }
+    
+    // MARK: - Get Day Events
+    
+    /// Astronomical Dawn is when the Sun reaches -18 degrees of elevation.
+    private func getAstronomicalDawn() -> Date? {
+        guard let astronomicalDawn = getDateFrom(sunEvent: .astronomical, morning: true) else {
+            return nil
+        }
+        
+        return astronomicalDawn
+    }
+    
+    /// Nautical Dusk is when the Sun reaches -12 degrees of elevation.
+    private func getNauticalDawn() -> Date? {
+        guard let nauticalDawn = getDateFrom(sunEvent: .nautical, morning: true) else {
+            return nil
+        }
+        
+        return nauticalDawn
+    }
+    
+    /// Civil Dawn is when the Sun reaches -6 degrees of elevation.
+    private func getCivilDawn() -> Date? {
+        guard let civilDawn = getDateFrom(sunEvent: .civil,morning: true) else {
+            return nil
+        }
+        
+        return civilDawn
+    }
+    
+    /// Morning Golden Hour starts when the Sun reaches -4 degrees of elevation.
+    private func getMorningGoldenHourStart() -> Date? {
+        guard let morningGoldenHourStart = getDateFrom(sunEvent: .morningGoldenHourStart, morning: true) else {
+            return nil
+        }
+        
+        return morningGoldenHourStart
+    }
+    
+    /// Sunrise is when the Sun reaches 0 degrees of elevation, aka the horizon, at the start of the day.
+    private func getSunrise() -> Date? {
+        var haArg = (cos(Angle.degrees(90.833).radians)) / (cos(latitude.radians) * cos(sunEquatorialCoordinates.declination.radians)) - tan(latitude.radians) * tan(sunEquatorialCoordinates.declination.radians)
+        
+        haArg = clamp(lower: -1, upper: 1, number: haArg)
+        let ha: Angle = .radians(acos(haArg))
+        let sunriseUTCMinutes = 720 - 4 * (location.coordinate.longitude + ha.degrees) - equationOfTime
+        var sunriseSeconds = (Int(sunriseUTCMinutes) * 60) + timeZoneInSeconds
+        let startOfDay = calendar.startOfDay(for: date)
+        
+        if sunriseSeconds < Int(SECONDS_IN_ONE_HOUR) {
+            sunriseSeconds = 0
+        }
+        
+        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(sunriseSeconds))
+        let sunriseDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
+        
+        return sunriseDate
+    }
+    
+    /// Morning Golden Hour ends when Sun reaches 6 degrees of elevation.
+    private func getMorningGoldenHourEnd() -> Date? {
+        guard let morningGoldenHourEnd = getDateFrom(sunEvent: .morningGoldenHourEnd, morning: true) else {
+            return nil
+        }
+        
+        return morningGoldenHourEnd
+    }
+    
+    /// Solar Noon is the time when the Sun is highest in the sky.
+    private func getSolarNoon() -> Date? {
+        let secondsForUTCSolarNoon = (720 - 4 * location.coordinate.longitude - equationOfTime) * 60
+        let secondsForSolarNoon = secondsForUTCSolarNoon + Double(timeZoneInSeconds)
+        let startOfTheDay = calendar.startOfDay(for: date)
+        let solarNoon = calendar.date(byAdding: .second, value: Int(secondsForSolarNoon), to: startOfTheDay)
+        
+        return solarNoon
+    }
+    
+    /// Evening Golden Hour begins when the Sun reaches 6 degrees of elevation.
+    private func getEveningGoldenHourStart() -> Date? {
+        guard let eveningGoldenHourStart = getDateFrom(sunEvent: .eveningGoldenHourStart) else {
+            return nil
+        }
+        
+        return eveningGoldenHourStart
+    }
+    
+    /// Sunset is when the Sun reaches 0 degrees of elevation, aka the horizon, at the end of the day.
+    private func getSunset() -> Date? {
+        var haArg = (cos(Angle.degrees(90.833).radians)) / (cos(latitude.radians) * cos(sunEquatorialCoordinates.declination.radians)) - tan(latitude.radians) * tan(sunEquatorialCoordinates.declination.radians)
+        
+        haArg = clamp(lower: -1, upper: 1, number: haArg)
+        let ha: Angle = .radians(-acos(haArg))
+        let sunsetUTCMinutes = 720 - 4 * (location.coordinate.longitude + ha.degrees) - equationOfTime
+        var sunsetSeconds = (Int(sunsetUTCMinutes) * 60) + timeZoneInSeconds
+        let startOfDay = calendar.startOfDay(for: date)
+        
+        if sunsetSeconds > SECONDS_IN_ONE_DAY {
+            sunsetSeconds = SECONDS_IN_ONE_DAY
+        }
+        
+        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(sunsetSeconds))
+        let sunsetDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
+        
+        return sunsetDate
+    }
+    
+    /// Evening Golden Hour ends when the sun reaches -4 degrees of elevation.
+    private func getEveningGoldenHourEnd() -> Date? {
+        guard let goldenHourFinish = getDateFrom(sunEvent: .eveningGoldenHourEnd) else {
+            return nil
+        }
+        
+        return goldenHourFinish
+    }
+    
+    /// Civil Dusk is when the Sun reaches -6 degrees of elevation.
+    private func getCivilDusk() -> Date? {
+        guard let civilDusk = getDateFrom(sunEvent: .civil, morning: false) else {
+            return nil
+        }
+        
+        return civilDusk
+    }
+    
+    /// Nautical Dusk is when the Sun reaches -12 degrees of elevation.
+    private func getNauticalDusk() -> Date? {
+        guard let nauticalDusk = getDateFrom(sunEvent: .nautical, morning: false) else {
+            return nil
+        }
+        
+        return nauticalDusk
+    }
+    
+    /// Astronomical Dusk is when the Sun reaches -18 degrees of elevation.
+    private func getAstronomicalDusk() -> Date? {
+        guard let astronomicalDusk = getDateFrom(sunEvent: .astronomical, morning: false) else {
+            return nil
+        }
+        
+        return astronomicalDusk
+    }
+    
+    /// Computes the solar midnight for self.date.
+    private func getSolarMidnight() -> Date? {
+        let secondsForUTCSolarMidnight = (0 - 4 * location.coordinate.longitude - equationOfTime) * 60
+        let secondsForSolarMidnight = secondsForUTCSolarMidnight + Double(timeZoneInSeconds)
+        let startOfTheDay = calendar.startOfDay(for: date)
+        let solarMidnight = calendar.date(byAdding: .second, value: Int(secondsForSolarMidnight), to: startOfTheDay)
+        
+        return solarMidnight
+    }
+    
+    ///  Computes the time at which the sun will reach the elevation given in input for self.date
+    /// - Parameters:
+    ///   - elevation: Elevation
+    ///   - morning: Sun reaches a specific elevation twice, this boolean variable is needed to find out which one need to be considered. The one reached in the morning or not.
+    /// - Returns: Time at which the Sun reaches that elevation. Nil if it didn't find it.
+    private func getDateFrom(
+        sunEvent : SunElevationEvents,
+        morning: Bool = false
+    ) -> Date? {
+        let elevationSun: Angle = .degrees(sunEvent.rawValue)
+        var cosHra = (sin(elevationSun.radians) - sin(sunEquatorialCoordinates.declination.radians) * sin(latitude.radians)) / (cos(sunEquatorialCoordinates.declination.radians) * cos(latitude.radians))
+        cosHra = clamp(lower: -1, upper: 1, number: cosHra)
+        let hraAngle: Angle = .radians(acos(cosHra))
+        var secondsForSunToReachElevation = (morning ? -1 : 1) * (hraAngle.degrees / 15) * SECONDS_IN_ONE_HOUR + TWELVE_HOUR_IN_SECONDS - timeCorrectionFactorInSeconds
+        let startOfTheDay = calendar.startOfDay(for: date)
+        
+        if (Int(secondsForSunToReachElevation) > SECONDS_IN_ONE_DAY) {
+            secondsForSunToReachElevation = Double(SECONDS_IN_ONE_DAY)
+        } else if (secondsForSunToReachElevation < SECONDS_IN_ONE_HOUR) {
+            secondsForSunToReachElevation = 0
+        }
+        
+        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSunToReachElevation))
+        let newDate = calendar.date(bySettingHour: hoursMinutesSeconds.0 , minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfTheDay)
+        
+        return newDate
     }
     
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
@@ -483,184 +677,6 @@ public struct Sun: Identifiable, Sendable {
         return .init(altitude: sunHorizonCoordinates.altitude, azimuth: sunHorizonCoordinates.azimuth)
     }
     
-    /// Solar Noon is the time when the Sun is highest in the sky.
-    private func getSolarNoon() -> Date? {
-        let secondsForUTCSolarNoon = (720 - 4 * location.coordinate.longitude - equationOfTime) * 60
-        let secondsForSolarNoon = secondsForUTCSolarNoon + Double(timeZoneInSeconds)
-        let startOfTheDay = calendar.startOfDay(for: date)
-        let solarNoon = calendar.date(byAdding: .second, value: Int(secondsForSolarNoon), to: startOfTheDay)
-        
-        return solarNoon
-    }
-    
-    /// Computes the solar midnight for self.date.
-    private func getSolarMidnight() -> Date? {
-        let secondsForUTCSolarMidnight = (0 - 4 * location.coordinate.longitude - equationOfTime) * 60
-        let secondsForSolarMidnight = secondsForUTCSolarMidnight + Double(timeZoneInSeconds)
-        let startOfTheDay = calendar.startOfDay(for: date)
-        let solarMidnight = calendar.date(byAdding: .second, value: Int(secondsForSolarMidnight), to: startOfTheDay)
-        
-        return solarMidnight
-    }
-    
-    /// Sunrise is when the Sun reaches 0 degrees of elevation, aka the horizon, at the start of the day.
-    private func getSunrise() -> Date? {
-        var haArg = (cos(Angle.degrees(90.833).radians)) / (cos(latitude.radians) * cos(sunEquatorialCoordinates.declination.radians)) - tan(latitude.radians) * tan(sunEquatorialCoordinates.declination.radians)
-        
-        haArg = clamp(lower: -1, upper: 1, number: haArg)
-        let ha: Angle = .radians(acos(haArg))
-        let sunriseUTCMinutes = 720 - 4 * (location.coordinate.longitude + ha.degrees) - equationOfTime
-        var sunriseSeconds = (Int(sunriseUTCMinutes) * 60) + timeZoneInSeconds
-        let startOfDay = calendar.startOfDay(for: date)
-        
-        if sunriseSeconds < Int(SECONDS_IN_ONE_HOUR) {
-            sunriseSeconds = 0
-        }
-        
-        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(sunriseSeconds))
-        let sunriseDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
-        
-        return sunriseDate
-    }
-    
-    /// Sunset is when the Sun reaches 0 degrees of elevation, aka the horizon, at the end of the day.
-    private func getSunset() -> Date? {
-        var haArg = (cos(Angle.degrees(90.833).radians)) / (cos(latitude.radians) * cos(sunEquatorialCoordinates.declination.radians)) - tan(latitude.radians) * tan(sunEquatorialCoordinates.declination.radians)
-        
-        haArg = clamp(lower: -1, upper: 1, number: haArg)
-        let ha: Angle = .radians(-acos(haArg))
-        let sunsetUTCMinutes = 720 - 4 * (location.coordinate.longitude + ha.degrees) - equationOfTime
-        var sunsetSeconds = (Int(sunsetUTCMinutes) * 60) + timeZoneInSeconds
-        let startOfDay = calendar.startOfDay(for: date)
-        
-        if sunsetSeconds > SECONDS_IN_ONE_DAY {
-            sunsetSeconds = SECONDS_IN_ONE_DAY
-        }
-        
-        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(sunsetSeconds))
-        let sunsetDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
-        
-        return sunsetDate
-    }
-    
-    ///  Computes the time at which the sun will reach the elevation given in input for self.date
-    /// - Parameters:
-    ///   - elevation: Elevation
-    ///   - morning: Sun reaches a specific elevation twice, this boolean variable is needed to find out which one need to be considered. The one reached in the morning or not.
-    /// - Returns: Time at which the Sun reaches that elevation. Nil if it didn't find it.
-    private func getDateFrom(
-        sunEvent : SunElevationEvents,
-        morning: Bool = false
-    ) -> Date? {
-        let elevationSun: Angle = .degrees(sunEvent.rawValue)
-        var cosHra = (sin(elevationSun.radians) - sin(sunEquatorialCoordinates.declination.radians) * sin(latitude.radians)) / (cos(sunEquatorialCoordinates.declination.radians) * cos(latitude.radians))
-        cosHra = clamp(lower: -1, upper: 1, number: cosHra)
-        let hraAngle: Angle = .radians(acos(cosHra))
-        var secondsForSunToReachElevation = (morning ? -1 : 1) * (hraAngle.degrees / 15) * SECONDS_IN_ONE_HOUR + TWELVE_HOUR_IN_SECONDS - timeCorrectionFactorInSeconds
-        let startOfTheDay = calendar.startOfDay(for: date)
-        
-        if (Int(secondsForSunToReachElevation) > SECONDS_IN_ONE_DAY) {
-            secondsForSunToReachElevation = Double(SECONDS_IN_ONE_DAY)
-        } else if (secondsForSunToReachElevation < SECONDS_IN_ONE_HOUR) {
-            secondsForSunToReachElevation = 0
-        }
-        
-        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSunToReachElevation))
-        let newDate = calendar.date(bySettingHour: hoursMinutesSeconds.0 , minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfTheDay)
-        
-        return newDate
-    }
-    
-    /// Evening Golden Hour begins when the Sun reaches 6 degrees of elevation.
-    private func getEveningGoldenHourStart() -> Date? {
-        guard let eveningGoldenHourStart = getDateFrom(sunEvent: .eveningGoldenHourStart) else {
-            return nil
-        }
-        
-        return eveningGoldenHourStart
-    }
-    
-    /// Evening Golden Hour ends when the sun reaches -4 degrees of elevation.
-    private func getEveningGoldenHourEnd() -> Date? {
-        guard let goldenHourFinish = getDateFrom(sunEvent: .eveningGoldenHourEnd) else {
-            return nil
-        }
-        
-        return goldenHourFinish
-    }
-    
-    /// Civil Dawn is when the Sun reaches -6 degrees of elevation.
-    private func getCivilDawn() -> Date? {
-        guard let civilDawn = getDateFrom(sunEvent: .civil,morning: true) else {
-            return nil
-        }
-        
-        return civilDawn
-    }
-    
-    /// Civil Dusk is when the Sun reaches -6 degrees of elevation.
-    private func getCivilDusk() -> Date? {
-        guard let civilDusk = getDateFrom(sunEvent: .civil, morning: false) else {
-            return nil
-        }
-        
-        return civilDusk
-    }
-    
-    /// Nautical Dusk is when the Sun reaches -12 degrees of elevation.
-    private func getNauticalDusk() -> Date? {
-        guard let nauticalDusk = getDateFrom(sunEvent: .nautical, morning: false) else {
-            return nil
-        }
-        
-        return nauticalDusk
-    }
-    
-    /// Nautical Dusk is when the Sun reaches -12 degrees of elevation.
-    private func getNauticalDawn() -> Date? {
-        guard let nauticalDawn = getDateFrom(sunEvent: .nautical, morning: true) else {
-            return nil
-        }
-        
-        return nauticalDawn
-    }
-    
-    /// Astronomical Dusk is when the Sun reaches -18 degrees of elevation.
-    private func getAstronomicalDusk() -> Date? {
-        guard let astronomicalDusk = getDateFrom(sunEvent: .astronomical, morning: false) else {
-            return nil
-        }
-        
-        return astronomicalDusk
-    }
-    
-    /// Astronomical Dawn is when the Sun reaches -18 degrees of elevation.
-    private func getAstronomicalDawn() -> Date? {
-        guard let astronomicalDawn = getDateFrom(sunEvent: .astronomical, morning: true) else {
-            return nil
-        }
-        
-        return astronomicalDawn
-    }
-    
-    /// Morning Golden Hour starts when the Sun reaches -4 degrees of elevation.
-    private func getMorningGoldenHourStart() -> Date? {
-        guard let morningGoldenHourStart = getDateFrom(sunEvent: .morningGoldenHourStart, morning: true) else {
-            return nil
-        }
-        
-        return morningGoldenHourStart
-    }
-    
-    /// Morning Golden Hour ends when Sun reaches 6 degrees of elevation.
-    private func getMorningGoldenHourEnd() -> Date? {
-        guard let morningGoldenHourEnd = getDateFrom(sunEvent: .morningGoldenHourEnd, morning: true) else {
-            return nil
-        }
-        
-        return morningGoldenHourEnd
-    }
-    
     private func getMarchEquinox() -> Date? {
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
@@ -695,22 +711,6 @@ public struct Sun: Identifiable, Sendable {
         let decemberSolsticeUTC = dateFromJd(jd: julianDayDecemberSolstice)
         
         return decemberSolsticeUTC
-    }
-    
-    /// - Returns: Length in meters of the object's shadow by the provided object height and current sun altitude.
-    public func shadowLength(
-        for objectHeight: Double = 1,
-        with altitude: Angle? = nil
-    ) -> Double? {
-        let altitude = altitude ?? self.altitude
-        
-        return if altitude.degrees > 0 && altitude.degrees < 90 {
-            objectHeight / tan(altitude.radians)
-        } else if altitude.degrees <= 0 {
-            nil
-        } else {
-            0
-        }
     }
 }
 
