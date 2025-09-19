@@ -655,7 +655,7 @@ public struct Sun: Identifiable, Sendable {
         return newDate
     }
     
-    // TODO
+    // TODO: Extract functions to collapse into updateSunCoordinates
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
         // Convert LCT to UT, GST, and LST times and adjust the date if needed
         let gstHMS = uT2GST(date)
