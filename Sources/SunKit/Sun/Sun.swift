@@ -55,22 +55,22 @@ public struct Sun: Identifiable, Sendable {
     public private(set) var astronomicalDusk: Date = Date()
     public private(set) var astronomicalDawn: Date = Date()
     
-    ///Date at which morning Blue Hour starts. Sun at -6 degrees elevation = civil dusk
+    /// Date at which morning Blue Hour starts. Sun at -6 degrees elevation = civil dusk
     public var morningBlueHourStart: Date {
         civilDawn
     }
     
-    ///Date at which morning Blue Hour ends. Sun at -4 degrees elevation = morning golden hour start
+    /// Date at which morning Blue Hour ends. Sun at -4 degrees elevation = morning golden hour start
     public var morningBlueHourEnd: Date {
         morningGoldenHourStart
     }
     
-    ///Date at which evening Blue Hour starts. Sun at -4 degrees elevation = evening golden hour end
+    /// Date at which evening Blue Hour starts. Sun at -4 degrees elevation = evening golden hour end
     public var eveningBlueHourStart: Date {
         eveningGoldenHourEnd
     }
     
-    ///Date at which morning Blue Hour ends. Sun at -6 degrees elevation = Civil Dawn
+    /// Date at which morning Blue Hour ends. Sun at -6 degrees elevation = Civil Dawn
     public var eveningBlueHourEnd: Date {
         civilDusk
     }
@@ -95,7 +95,7 @@ public struct Sun: Identifiable, Sendable {
     }
     
     public private(set) var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
-    public private(set) var sunEclipticCoordinates: EclipticCoordinates     = .init(eclipticLatitude: .zero, eclipticLongitude: .zero)
+    public private(set) var sunEclipticCoordinates: EclipticCoordinates = .init(eclipticLatitude: .zero, eclipticLongitude: .zero)
     
     /*--------------------------------------------------------------------
      Sun Events during the year
@@ -129,12 +129,12 @@ public struct Sun: Identifiable, Sendable {
     
     /// Returns night time in seconds.
     public var totalNightTime: Int {
-        let startOfTheDay   = calendar.startOfDay(for: date)
-        let endOfTheDay     = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: startOfTheDay)!
-        var diffComponents  = calendar.dateComponents([.second], from: startOfTheDay, to: sunrise)
+        let startOfTheDay = calendar.startOfDay(for: date)
+        let endOfTheDay = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: startOfTheDay)!
+        var diffComponents = calendar.dateComponents([.second], from: startOfTheDay, to: sunrise)
         var nightHours: Int = diffComponents.second ?? 0
-        diffComponents      = calendar.dateComponents([.second], from: sunset, to: endOfTheDay)
-        nightHours          = nightHours + (diffComponents.second ?? 0)
+        diffComponents = calendar.dateComponents([.second], from: sunset, to: endOfTheDay)
+        nightHours = nightHours + (diffComponents.second ?? 0)
         
         return nightHours
     }
@@ -238,7 +238,7 @@ public struct Sun: Identifiable, Sendable {
         let isSameDay: Bool = (newDay == oldDay)
         date = newDate
         
-        refresh(needToComputeSunEvents: !isSameDay)  //If is the same day no need to compute again Daily Sun Events
+        refresh(needToComputeSunEvents: !isSameDay)  // If is the same day no need to compute again Daily Sun Events
     }
     
     /*--------------------------------------------------------------------
@@ -299,7 +299,7 @@ public struct Sun: Identifiable, Sendable {
     
     private var calendar: Calendar {
         var calendar: Calendar = .init(identifier: .gregorian)
-        calendar.timeZone      = self.timeZone
+        calendar.timeZone = self.timeZone
         
         return calendar
     }
@@ -310,13 +310,13 @@ public struct Sun: Identifiable, Sendable {
     
     private var sunHorizonCoordinates: HorizonCoordinates = .init(altitude: .zero, azimuth: .zero)
     
-    //Sun constants
+    // Sun constants
     private let sunEclipticLongitudeAtTheEpoch: Angle = .init(degrees: 280.466069)
-    private let sunEclipticLongitudePerigee:    Angle = .init(degrees: 282.938346)
+    private let sunEclipticLongitudePerigee: Angle = .init(degrees: 282.938346)
     
     /// Number of the days passed since the start of the year for the self.date
     private var daysPassedFromStartOfTheYear: Int {
-        let year =  calendar.component(.year, from: date)
+        let year = calendar.component(.year, from: date)
         
         let dateFormatter: DateFormatter = DateFormatter()
         
@@ -346,14 +346,14 @@ public struct Sun: Identifiable, Sendable {
     }
     
     private var localStandardTimeMeridian: Double {
-        return (Double(self.timeZoneInSeconds) / SECONDS_IN_ONE_HOUR) * 15  //TimeZone in hour
+        return (Double(self.timeZoneInSeconds) / SECONDS_IN_ONE_HOUR) * 15  // TimeZone in hour
     }
     
     private var timeCorrectionFactorInSeconds: Double {
-        let timeCorrectionFactor          = 4 * (location.coordinate.longitude - localStandardTimeMeridian) + equationOfTime
-        let minutes: Double               = Double(Int(timeCorrectionFactor) * 60)
-        let seconds: Double               = timeCorrectionFactor.truncatingRemainder(dividingBy: 1) * 100
-        let timeCorrectionFactorInSeconds =  minutes + seconds
+        let timeCorrectionFactor = 4 * (location.coordinate.longitude - localStandardTimeMeridian) + equationOfTime
+        let minutes: Double = Double(Int(timeCorrectionFactor) * 60)
+        let seconds: Double = timeCorrectionFactor.truncatingRemainder(dividingBy: 1) * 100
+        let timeCorrectionFactorInSeconds = minutes + seconds
         
         return timeCorrectionFactorInSeconds
     }
@@ -372,43 +372,43 @@ public struct Sun: Identifiable, Sendable {
     private mutating func refresh(needToComputeSunEvents: Bool = true) {
         updateSunCoordinates()
         
-        if (needToComputeSunEvents){
-            self.sunrise          = getSunrise() ?? Date()
-            self.sunriseAzimuth   = getSunHorizonCoordinatesFrom(date: sunrise).azimuth.degrees
-            self.sunset           = getSunset() ?? Date()
-            self.sunsetAzimuth    = getSunHorizonCoordinatesFrom(date: sunset).azimuth.degrees
-            self.solarNoon        = getSolarNoon() ?? Date()
+        if (needToComputeSunEvents) {
+            self.sunrise = getSunrise() ?? Date()
+            self.sunriseAzimuth = getSunHorizonCoordinatesFrom(date: sunrise).azimuth.degrees
+            self.sunset = getSunset() ?? Date()
+            self.sunsetAzimuth = getSunHorizonCoordinatesFrom(date: sunset).azimuth.degrees
+            self.solarNoon = getSolarNoon() ?? Date()
             self.solarMidnight = getSolarMidnight() ?? Date()
             self.solarNoonAzimuth = getSunHorizonCoordinatesFrom(date: solarNoon).azimuth.degrees
-            self.eveningGoldenHourStart  = getEveningGoldenHourStart()  ?? Date()
-            self.eveningGoldenHourEnd    = getEveningGoldenHourEnd() ?? Date()
-            self.civilDusk       = getCivilDusk() ?? Date()
-            self.civilDawn        = getCivilDawn()  ?? Date()
-            self.nauticalDusk  = getNauticalDusk() ?? Date()
-            self.nauticalDawn   = getNauticalDawn()  ?? Date()
+            self.eveningGoldenHourStart = getEveningGoldenHourStart() ?? Date()
+            self.eveningGoldenHourEnd = getEveningGoldenHourEnd() ?? Date()
+            self.civilDusk = getCivilDusk() ?? Date()
+            self.civilDawn = getCivilDawn() ?? Date()
+            self.nauticalDusk = getNauticalDusk() ?? Date()
+            self.nauticalDawn = getNauticalDawn() ?? Date()
             self.astronomicalDusk = getAstronomicalDusk() ?? Date()
-            self.astronomicalDawn  = getAstronomicalDawn()  ?? Date()
+            self.astronomicalDawn = getAstronomicalDawn() ?? Date()
             self.morningGoldenHourStart = getMorningGoldenHourStart() ?? Date()
-            self.morningGoldenHourEnd   = getMorningGoldenHourEnd() ?? Date()
+            self.morningGoldenHourEnd = getMorningGoldenHourEnd() ?? Date()
         }
         
-        self.marchEquinox     = getMarchEquinox()     ?? Date()
-        self.juneSolstice     = getJuneSolstice()     ?? Date()
+        self.marchEquinox = getMarchEquinox() ?? Date()
+        self.juneSolstice = getJuneSolstice() ?? Date()
         self.septemberEquinox = getSeptemberEquinox() ?? Date()
         self.decemberSolstice = getDecemberSolstice() ?? Date()
     }
     
     private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
-        var sunMeanAnomaly: Angle  = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunEclipticLongitudePerigee.degrees))
+        var sunMeanAnomaly: Angle = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunEclipticLongitudePerigee.degrees))
         sunMeanAnomaly = .init(degrees: extendedMod(sunMeanAnomaly.degrees, 360))
         
         return sunMeanAnomaly
     }
     
     private func getSunEclipticLongitude(from sunMeanAnomaly: Angle) -> Angle {
-        let equationOfCenter        = 360 / Double.pi * sin(sunMeanAnomaly.radians) * 0.016708
-        let trueAnomaly             = sunMeanAnomaly.degrees + equationOfCenter
-        var eclipticLatitude: Angle =  .init(degrees: trueAnomaly + sunEclipticLongitudePerigee.degrees)
+        let equationOfCenter = 360 / Double.pi * sin(sunMeanAnomaly.radians) * 0.016708
+        let trueAnomaly = sunMeanAnomaly.degrees + equationOfCenter
+        var eclipticLatitude: Angle = .init(degrees: trueAnomaly + sunEclipticLongitudePerigee.degrees)
         
         if eclipticLatitude.degrees > 360 {
             eclipticLatitude.degrees -= 360
@@ -428,7 +428,7 @@ public struct Sun: Identifiable, Sendable {
         // Compute the Julian day number for the desired date using the Greenwich date and TT
         let jdTT = jdFromDate(date: self.date)
         // Compute the total number of elapsed days, including fractional days, since the standard epoch (i.e., JD − JDe)
-        let elapsedDaysSinceStandardEpoch: Double = jdTT - jdEpoch //De
+        let elapsedDaysSinceStandardEpoch: Double = jdTT - jdEpoch
         // Use the algorithm from section 6.2.3 to calculate the Sun’s ecliptic longitude and mean anomaly for the given UT date and time.
         let sunMeanAnomaly = getSunMeanAnomaly(from: elapsedDaysSinceStandardEpoch)
         // Use Equation 6.2.4 to aproximate the Equation of the center
@@ -461,7 +461,7 @@ public struct Sun: Identifiable, Sendable {
         // Compute the Julian day number for the desired date using the Greenwich date and TT
         let jdTT = jdFromDate(date: date)
         // Compute the total number of elapsed days, including fractional days, since the standard epoch (i.e., JD − JDe)
-        let elapsedDaysSinceStandardEpoch: Double = jdTT - jdEpoch //De
+        let elapsedDaysSinceStandardEpoch: Double = jdTT - jdEpoch
         // Use the algorithm from section 6.2.3 to calculate the Sun’s ecliptic longitude and mean anomaly for the given UT date and time.
         let sunMeanAnomaly = getSunMeanAnomaly(from: elapsedDaysSinceStandardEpoch)
         // Use Equation 6.2.4 to aproximate the Equation of the center
@@ -489,9 +489,9 @@ public struct Sun: Identifiable, Sendable {
     /// Solar Noon is the time when the Sun is highest in the sky.
     private func getSolarNoon() -> Date? {
         let secondsForUTCSolarNoon = (720 - 4 * location.coordinate.longitude - equationOfTime) * 60
-        let secondsForSolarNoon    = secondsForUTCSolarNoon + Double(timeZoneInSeconds)
-        let startOfTheDay          = calendar.startOfDay(for: date)
-        let solarNoon = calendar.date(byAdding: .second, value: Int(secondsForSolarNoon) , to: startOfTheDay)
+        let secondsForSolarNoon = secondsForUTCSolarNoon + Double(timeZoneInSeconds)
+        let startOfTheDay = calendar.startOfDay(for: date)
+        let solarNoon = calendar.date(byAdding: .second, value: Int(secondsForSolarNoon), to: startOfTheDay)
         
         return solarNoon
     }
@@ -499,10 +499,9 @@ public struct Sun: Identifiable, Sendable {
     /// Computes the solar midnight for self.date.
     private func getSolarMidnight() -> Date? {
         let secondsForUTCSolarMidnight = (0 - 4 * location.coordinate.longitude - equationOfTime) * 60
-        let secondsForSolarMidnight    = secondsForUTCSolarMidnight + Double(timeZoneInSeconds)
-        let startOfTheDay          = calendar.startOfDay(for: date)
-        
-        let solarMidnight = calendar.date(byAdding: .second, value: Int(secondsForSolarMidnight) , to: startOfTheDay)
+        let secondsForSolarMidnight = secondsForUTCSolarMidnight + Double(timeZoneInSeconds)
+        let startOfTheDay = calendar.startOfDay(for: date)
+        let solarMidnight = calendar.date(byAdding: .second, value: Int(secondsForSolarMidnight), to: startOfTheDay)
         
         return solarMidnight
     }
@@ -511,11 +510,11 @@ public struct Sun: Identifiable, Sendable {
     private func getSunrise() -> Date? {
         var haArg = (cos(Angle.degrees(90.833).radians)) / (cos(latitude.radians) * cos(sunEquatorialCoordinates.declination.radians)) - tan(latitude.radians) * tan(sunEquatorialCoordinates.declination.radians)
         
-        haArg                 = clamp(lower: -1, upper: 1, number: haArg)
-        let ha: Angle         = .radians(acos(haArg))
+        haArg = clamp(lower: -1, upper: 1, number: haArg)
+        let ha: Angle = .radians(acos(haArg))
         let sunriseUTCMinutes = 720 - 4 * (location.coordinate.longitude + ha.degrees) - equationOfTime
-        var sunriseSeconds    = (Int(sunriseUTCMinutes) * 60) + timeZoneInSeconds
-        let startOfDay        = calendar.startOfDay(for: date)
+        var sunriseSeconds = (Int(sunriseUTCMinutes) * 60) + timeZoneInSeconds
+        let startOfDay = calendar.startOfDay(for: date)
         
         if sunriseSeconds < Int(SECONDS_IN_ONE_HOUR) {
             sunriseSeconds = 0
@@ -531,11 +530,11 @@ public struct Sun: Identifiable, Sendable {
     private func getSunset() -> Date? {
         var haArg = (cos(Angle.degrees(90.833).radians)) / (cos(latitude.radians) * cos(sunEquatorialCoordinates.declination.radians)) - tan(latitude.radians) * tan(sunEquatorialCoordinates.declination.radians)
         
-        haArg                = clamp(lower: -1, upper: 1, number: haArg)
-        let ha: Angle        = .radians(-acos(haArg))
+        haArg = clamp(lower: -1, upper: 1, number: haArg)
+        let ha: Angle = .radians(-acos(haArg))
         let sunsetUTCMinutes = 720 - 4 * (location.coordinate.longitude + ha.degrees) - equationOfTime
-        var sunsetSeconds    = (Int(sunsetUTCMinutes) * 60) + timeZoneInSeconds
-        let startOfDay       = calendar.startOfDay(for: date)
+        var sunsetSeconds = (Int(sunsetUTCMinutes) * 60) + timeZoneInSeconds
+        let startOfDay = calendar.startOfDay(for: date)
         
         if sunsetSeconds > SECONDS_IN_ONE_DAY {
             sunsetSeconds = SECONDS_IN_ONE_DAY
@@ -560,12 +559,12 @@ public struct Sun: Identifiable, Sendable {
         var cosHra = (sin(elevationSun.radians) - sin(sunEquatorialCoordinates.declination.radians) * sin(latitude.radians)) / (cos(sunEquatorialCoordinates.declination.radians) * cos(latitude.radians))
         cosHra = clamp(lower: -1, upper: 1, number: cosHra)
         let hraAngle: Angle = .radians(acos(cosHra))
-        var secondsForSunToReachElevation = (morning ? -1 : 1) * (hraAngle.degrees / 15) * SECONDS_IN_ONE_HOUR  + TWELVE_HOUR_IN_SECONDS - timeCorrectionFactorInSeconds
+        var secondsForSunToReachElevation = (morning ? -1 : 1) * (hraAngle.degrees / 15) * SECONDS_IN_ONE_HOUR + TWELVE_HOUR_IN_SECONDS - timeCorrectionFactorInSeconds
         let startOfTheDay = calendar.startOfDay(for: date)
         
-        if (Int(secondsForSunToReachElevation) > SECONDS_IN_ONE_DAY){
+        if (Int(secondsForSunToReachElevation) > SECONDS_IN_ONE_DAY) {
             secondsForSunToReachElevation = Double(SECONDS_IN_ONE_DAY)
-        } else if (secondsForSunToReachElevation < SECONDS_IN_ONE_HOUR){
+        } else if (secondsForSunToReachElevation < SECONDS_IN_ONE_HOUR) {
             secondsForSunToReachElevation = 0
         }
         
@@ -649,7 +648,7 @@ public struct Sun: Identifiable, Sendable {
     
     /// Morning Golden Hour starts when the Sun reaches -4 degrees of elevation.
     private func getMorningGoldenHourStart() -> Date? {
-        guard let morningGoldenHourStart = getDateFrom(sunEvent: .morningGoldenHourStart , morning: true) else {
+        guard let morningGoldenHourStart = getDateFrom(sunEvent: .morningGoldenHourStart, morning: true) else {
             return nil
         }
         
@@ -658,7 +657,7 @@ public struct Sun: Identifiable, Sendable {
     
     /// Morning Golden Hour ends when Sun reaches 6 degrees of elevation.
     private func getMorningGoldenHourEnd() -> Date? {
-        guard let morningGoldenHourEnd = getDateFrom(sunEvent: .morningGoldenHourEnd , morning: true) else {
+        guard let morningGoldenHourEnd = getDateFrom(sunEvent: .morningGoldenHourEnd, morning: true) else {
             return nil
         }
         
