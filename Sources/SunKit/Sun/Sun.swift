@@ -519,8 +519,7 @@ public struct Sun: Identifiable, Sendable {
     
     /// Sunrise is when the Sun reaches 0 degrees of elevation, aka the horizon, at the start of the day.
     private func getSunrise() -> Date? {
-        var haArg = (cos(Angle.degrees(90.833).radians)) / (cos(latitude.radians) * cos(sunEquatorialCoordinates.declination.radians)) - tan(latitude.radians) * tan(sunEquatorialCoordinates.declination.radians)
-        
+        var haArg = calculateCosineofSolarHourAngle()
         haArg = clamp(lower: -1, upper: 1, number: haArg)
         let ha: Angle = .radians(acos(haArg))
         let sunriseUTCMinutes = 720 - 4 * (location.coordinate.longitude + ha.degrees) - equationOfTime
@@ -535,6 +534,16 @@ public struct Sun: Identifiable, Sendable {
         let sunriseDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
         
         return sunriseDate
+    }
+    
+    private func calculateCosineofSolarHourAngle() -> Double {
+        let cosSolarZenithAngle = cos(Angle.degrees(90.833).radians)
+        let cosLatitude = cos(latitude.radians)
+        let cosSunDeclination = cos(sunEquatorialCoordinates.declination.radians)
+        let tanLatitude = tan(latitude.radians)
+        let tanSunDeclination = tan(sunEquatorialCoordinates.declination.radians)
+        
+        return cosSolarZenithAngle / (cosLatitude * cosSunDeclination) - tanLatitude * tanSunDeclination
     }
     
     /// Morning Golden Hour ends when Sun reaches 6 degrees of elevation.
@@ -567,7 +576,7 @@ public struct Sun: Identifiable, Sendable {
     
     /// Sunset is when the Sun reaches 0 degrees of elevation, aka the horizon, at the end of the day.
     private func getSunset() -> Date? {
-        var haArg = (cos(Angle.degrees(90.833).radians)) / (cos(latitude.radians) * cos(sunEquatorialCoordinates.declination.radians)) - tan(latitude.radians) * tan(sunEquatorialCoordinates.declination.radians)
+        var haArg = calculateCosineofSolarHourAngle()
         
         haArg = clamp(lower: -1, upper: 1, number: haArg)
         let ha: Angle = .radians(-acos(haArg))
