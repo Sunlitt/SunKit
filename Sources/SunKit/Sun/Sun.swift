@@ -418,10 +418,26 @@ public struct Sun: Identifiable, Sendable {
         let gstHMS = uT2GST(self.date)
         let lstHMS = gST2LST(gstHMS, longitude: longitude)
         let lstDecimal = lstHMS.hMS2Decimal()
+        
+        let sunEclipticLongitude: Angle = calculateSunEclipticLongitude(using: self.date)
+        
+        sunEclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
+        // Ecliptic to Equatorial
+        sunEquatorialCoordinates = calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
+        // Equatorial to Horizon
+        sunHorizonCoordinates = calculateSunHorizonCoordinates(using: lstDecimal)
+        
+        // TODO: Move behavior into EquatorialCoordinates, refactor to Object
+        func calculateSunHorizonCoordinates(using lstDecimal: Double) -> HorizonCoordinates {
+            sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
+        }
+    }
+    
+    private func calculateSunEclipticLongitude(using date: Date) -> Angle {
         // Julian number for standard epoch 2000
         let jdEpoch = 2451545.00
         // Compute the Julian day number for the desired date using the Greenwich date and TT
-        let jdTT = jdFromDate(date: self.date)
+        let jdTT = jdFromDate(date: date)
         // Compute the total number of elapsed days, including fractional days, since the standard epoch (i.e., JD − JDe)
         let elapsedDaysSinceStandardEpoch: Double = jdTT - jdEpoch
         // Use the algorithm from section 6.2.3 to calculate the Sun’s ecliptic longitude and mean anomaly for the given UT date and time.
@@ -438,16 +454,7 @@ public struct Sun: Identifiable, Sendable {
             sunEclipticLongitude.degrees -= 360
         }
         
-        sunEclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
-        // Ecliptic to Equatorial
-        sunEquatorialCoordinates = calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
-        // Equatorial to Horizon
-        sunHorizonCoordinates = calculateSunHorizonCoordinates(using: lstDecimal)
-        
-        // TODO: Move behavior into EquatorialCoordinates, refactor to Object
-        func calculateSunHorizonCoordinates(using lstDecimal: Double) -> HorizonCoordinates {
-            sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
-        }
+        return sunEclipticLongitude
     }
     
     // TODO: Move behavior into EclipticCoordinates, refactor to Object
@@ -665,25 +672,8 @@ public struct Sun: Identifiable, Sendable {
         let gstHMS = uT2GST(date)
         let lstHMS = gST2LST(gstHMS, longitude: longitude)
         let lstDecimal = lstHMS.hMS2Decimal()
-        // Julian number for standard epoch 2000
-        let jdEpoch = 2451545.00
-        // Compute the Julian day number for the desired date using the Greenwich date and TT
-        let jdTT = jdFromDate(date: date)
-        // Compute the total number of elapsed days, including fractional days, since the standard epoch (i.e., JD − JDe)
-        let elapsedDaysSinceStandardEpoch: Double = jdTT - jdEpoch
-        // Use the algorithm from section 6.2.3 to calculate the Sun’s ecliptic longitude and mean anomaly for the given UT date and time.
-        let sunMeanAnomaly = getSunMeanAnomaly(from: elapsedDaysSinceStandardEpoch)
-        // Use Equation 6.2.4 to aproximate the Equation of the center
-        let equationOfCenter = 360 / Double.pi * sin(sunMeanAnomaly.radians) * 0.016708
-        // Add EoC to sun mean anomaly to get the sun true anomaly
-        var sunTrueAnomaly = sunMeanAnomaly.degrees + equationOfCenter
-        // Add or subtract multiples of 360° to adjust sun true anomaly to the range of 0° to 360°
-        sunTrueAnomaly = extendedMod(sunTrueAnomaly, 360)
-        var sunEclipticLongitude: Angle = .init(degrees: sunTrueAnomaly + sunEclipticLongitudePerigee.degrees)
         
-        if sunEclipticLongitude.degrees > 360 {
-            sunEclipticLongitude.degrees -= 360
-        }
+        let sunEclipticLongitude: Angle = calculateSunEclipticLongitude(using: date)
         
         let sunEclipticCoordinates: EclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
         // Ecliptic to Equatorial
