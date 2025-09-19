@@ -682,10 +682,17 @@ public struct Sun: Identifiable, Sendable {
     
     // MARK: - Get Month Events
     
+    // TODO: Move magic numbers into Enum cases or subclasses
+    
     private func getMarchEquinox() -> Date? {
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
-        let julianDayMarchEquinox: Double = 1721139.2855 + 365.2421376 * year + 0.0679190 * pow(t, 2) - 0.0027879 * pow(t, 3)
+        let marchSolsticeJulianDayConstant = 1721139.2855
+        let marchSolsticeMeanYearLengthInDays = 365.2421376
+        let quadraticCorrection = 0.0679190
+        let cubicCorrection = 0.0027879
+        
+        let julianDayMarchEquinox: Double = marchSolsticeJulianDayConstant + marchSolsticeMeanYearLengthInDays * year + quadraticCorrection * pow(t, 2) - cubicCorrection * pow(t, 3)
         let marchEquinoxUTC = dateFromJd(jd: julianDayMarchEquinox)
         
         return marchEquinoxUTC
@@ -694,7 +701,12 @@ public struct Sun: Identifiable, Sendable {
     private func getJuneSolstice() -> Date? {
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
-        let julianDayJuneSolstice: Double = 1721233.2486 + 365.2417284 * year - 0.0530180 * pow(t, 2) + 0.0093320 * pow(t, 3)
+        let juneSolsticeJulianDayConstant = 1721233.2486
+        let juneSolsticeMeanYearLengthInDays = 365.2417284
+        let quadraticCorrection = 0.0530180
+        let cubicCorrection = 0.0093320
+        
+        let julianDayJuneSolstice: Double = juneSolsticeJulianDayConstant + juneSolsticeMeanYearLengthInDays * year - quadraticCorrection * pow(t, 2) + cubicCorrection * pow(t, 3)
         let juneSolsticeUTC = dateFromJd(jd: julianDayJuneSolstice)
         
         return juneSolsticeUTC
@@ -703,7 +715,12 @@ public struct Sun: Identifiable, Sendable {
     private func getSeptemberEquinox() -> Date? {
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
-        let julianDaySeptemberEquinox: Double = 1721325.6978 + 365.2425055 * year - 0.126689 * pow(t, 2) + 0.0019401 * pow(t, 3)
+        let septemberSolsticeJulianDayConstant = 1721325.6978
+        let septemberSolsticeMeanYearLengthInDays = 365.2425055
+        let quadraticCorrection = 0.126689
+        let cubicCorrection = 0.0019401
+        
+        let julianDaySeptemberEquinox: Double = septemberSolsticeJulianDayConstant + septemberSolsticeMeanYearLengthInDays * year - quadraticCorrection * pow(t, 2) + cubicCorrection * pow(t, 3)
         let septemberEquinoxUTC = dateFromJd(jd: julianDaySeptemberEquinox)
         
         return septemberEquinoxUTC
@@ -712,7 +729,12 @@ public struct Sun: Identifiable, Sendable {
     private func getDecemberSolstice() -> Date? {
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
-        let julianDayDecemberSolstice: Double = 1721414.3920 + 365.2428898 * year - 0.0109650 * pow(t, 2) - 0.0084885 * pow(t, 3)
+        let decemberSolsticeJulianDayConstant = 1721414.3920
+        let decemberSolsticeMeanYearLengthInDays = 365.2428898
+        let quadraticCorrection = 0.0109650
+        let cubicCorrection = 0.0084885
+        
+        let julianDayDecemberSolstice: Double = decemberSolsticeJulianDayConstant + decemberSolsticeMeanYearLengthInDays * year - quadraticCorrection * pow(t, 2) - cubicCorrection * pow(t, 3)
         let decemberSolsticeUTC = dateFromJd(jd: julianDayDecemberSolstice)
         
         return decemberSolsticeUTC
