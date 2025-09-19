@@ -519,9 +519,7 @@ public struct Sun: Identifiable, Sendable {
     
     /// Sunrise is when the Sun reaches 0 degrees of elevation, aka the horizon, at the start of the day.
     private func getSunrise() -> Date? {
-        let solarHourAngle = calculateSunriseSolarHourAngle()
-        let sunriseUTCMinutes = calculateUTCMinutes(using: solarHourAngle)
-        var sunriseSeconds = calculateSeconds(using: sunriseUTCMinutes)
+        var sunriseSeconds = calculateSunriseSeconds()
         
         if sunriseSeconds < Int(SECONDS_IN_ONE_HOUR) {
             sunriseSeconds = 0
@@ -532,6 +530,14 @@ public struct Sun: Identifiable, Sendable {
         let sunriseDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
         
         return sunriseDate
+    }
+    
+    private func calculateSunriseSeconds() -> Int {
+        let solarHourAngle = calculateSunriseSolarHourAngle()
+        let sunriseUTCMinutes = calculateUTCMinutes(using: solarHourAngle)
+        let sunriseSeconds = calculateSeconds(using: sunriseUTCMinutes)
+        
+        return sunriseSeconds
     }
     
     private func calculateSunriseSolarHourAngle() -> Angle {
