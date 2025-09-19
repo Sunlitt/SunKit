@@ -1,5 +1,5 @@
 //
-//  Extensions.swift
+//  TimeZone+offset.swift
 //
 //
 //   Copyright 2024 Leonardo Bertinelli, Davide Biancardi, Raffaele Fulgente, Clelia Iovine, Nicolas Mariniello, Fabio Pizzano
@@ -21,12 +21,11 @@ import Foundation
 
 extension TimeZone {
     func offset(_ date: Date) -> Double {
-        let res =
-        Int(self.secondsFromGMT(for: date))
+        let res = Int(self.secondsFromGMT(for: date))
         + Int(self.daylightSavingTimeOffset(for: date))
         - Int(Calendar.current.timeZone.secondsFromGMT(for: date))
         - Int(Calendar.current.timeZone.daylightSavingTimeOffset(for: date))
         
-        return Double(res)/SECONDS_IN_ONE_HOUR
+        return Double(res) / SECONDS_IN_ONE_HOUR
     }
 }
