@@ -97,9 +97,8 @@ public struct Sun: Identifiable, Sendable {
     public var altitude: Angle {
         sunHorizonCoordinates.altitude
     }
-    
+    // TODO: Use SunCoordinates as backing object for these Coordinates.
     private var sunHorizonCoordinates: HorizonCoordinates = .init(altitude: .zero, azimuth: .zero)
-    
     public private(set) var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
     public private(set) var sunEclipticCoordinates: EclipticCoordinates = .init(eclipticLatitude: .zero, eclipticLongitude: .zero)
     
