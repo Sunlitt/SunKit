@@ -519,8 +519,7 @@ public struct Sun: Identifiable, Sendable {
     
     /// Sunrise is when the Sun reaches 0 degrees of elevation, aka the horizon, at the start of the day.
     private func getSunrise() -> Date? {
-        var haArg = calculateCosineofSolarHourAngle()
-        haArg = clamp(lower: -1, upper: 1, number: haArg)
+        let haArg = clampCosineOfSolarHourAngle()
         let ha: Angle = .radians(acos(haArg))
         let sunriseUTCMinutes = 720 - 4 * (location.coordinate.longitude + ha.degrees) - equationOfTime
         var sunriseSeconds = (Int(sunriseUTCMinutes) * 60) + timeZoneInSeconds
@@ -536,8 +535,15 @@ public struct Sun: Identifiable, Sendable {
         return sunriseDate
     }
     
-    private func calculateCosineofSolarHourAngle() -> Double {
-        let cosSolarZenithAngle = cos(Angle.degrees(90.833).radians)
+    private func clampCosineOfSolarHourAngle() -> Double {
+        let cosSolarHourAngle = calculateCosineOfSolarHourAngle()
+        
+        return clamp(lower: -1, upper: 1, number: cosSolarHourAngle)
+    }
+    
+    private func calculateCosineOfSolarHourAngle() -> Double {
+        let solarZenithAngle = 90.833
+        let cosSolarZenithAngle = cos(Angle.degrees(solarZenithAngle).radians)
         let cosLatitude = cos(latitude.radians)
         let cosSunDeclination = cos(sunEquatorialCoordinates.declination.radians)
         let tanLatitude = tan(latitude.radians)
@@ -576,9 +582,7 @@ public struct Sun: Identifiable, Sendable {
     
     /// Sunset is when the Sun reaches 0 degrees of elevation, aka the horizon, at the end of the day.
     private func getSunset() -> Date? {
-        var haArg = calculateCosineofSolarHourAngle()
-        
-        haArg = clamp(lower: -1, upper: 1, number: haArg)
+        let haArg = clampCosineOfSolarHourAngle()
         let ha: Angle = .radians(-acos(haArg))
         let sunsetUTCMinutes = 720 - 4 * (location.coordinate.longitude + ha.degrees) - equationOfTime
         var sunsetSeconds = (Int(sunsetUTCMinutes) * 60) + timeZoneInSeconds
