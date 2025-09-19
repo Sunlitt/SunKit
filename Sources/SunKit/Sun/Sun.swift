@@ -479,18 +479,6 @@ public struct Sun: Identifiable, Sendable {
         sunEclipticCoordinates.ecliptic2Equatorial()
     }
     
-    private func getSunEclipticLongitude(from sunMeanAnomaly: Angle) -> Angle {
-        let equationOfCenter = 360 / Double.pi * sin(sunMeanAnomaly.radians) * 0.016708
-        let trueAnomaly = sunMeanAnomaly.degrees + equationOfCenter
-        var eclipticLatitude: Angle = .init(degrees: trueAnomaly + sunEclipticLongitudePerigee.degrees)
-        
-        if eclipticLatitude.degrees > 360 {
-            eclipticLatitude.degrees -= 360
-        }
-        
-        return eclipticLatitude
-    }
-    
     // MARK: - Get Day Events
     
     /// Astronomical Dawn is when the Sun reaches -18 degrees of elevation.
