@@ -522,13 +522,13 @@ public struct Sun: Identifiable, Sendable {
         let solarHourAngle = calculateSunriseSolarHourAngle()
         let sunriseUTCMinutes = 720 - 4 * (location.coordinate.longitude + solarHourAngle.degrees) - equationOfTime
         var sunriseSeconds = (Int(sunriseUTCMinutes) * 60) + timeZoneInSeconds
-        let startOfDay = calendar.startOfDay(for: date)
         
         if sunriseSeconds < Int(SECONDS_IN_ONE_HOUR) {
             sunriseSeconds = 0
         }
         
         let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(sunriseSeconds))
+        let startOfDay = calendar.startOfDay(for: date)
         let sunriseDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
         
         return sunriseDate
@@ -591,13 +591,13 @@ public struct Sun: Identifiable, Sendable {
         let solarHourAngle = calculateSunsetSolarHourAngle()
         let sunsetUTCMinutes = 720 - 4 * (location.coordinate.longitude + solarHourAngle.degrees) - equationOfTime
         var sunsetSeconds = (Int(sunsetUTCMinutes) * 60) + timeZoneInSeconds
-        let startOfDay = calendar.startOfDay(for: date)
         
         if sunsetSeconds > SECONDS_IN_ONE_DAY {
             sunsetSeconds = SECONDS_IN_ONE_DAY
         }
         
         let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(sunsetSeconds))
+        let startOfDay = calendar.startOfDay(for: date)
         let sunsetDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
         
         return sunsetDate
