@@ -35,43 +35,28 @@ public struct Sun: Identifiable, Sendable {
      Sun Events during the day
      *-------------------------------------------------------------------*/
     
-    ///Date of Sunrise
     public private(set) var sunrise: Date = Date()
-    ///Date of Sunset
     public private(set) var sunset: Date = Date()
-    ///Date of Solar Noon  for
     public private(set) var solarNoon: Date = Date()
-    ///Date of Solar Midnight
     public private(set) var solarMidnight: Date = Date()
     
-    ///Date at which evening  evening Golden hour starts
     public private(set) var eveningGoldenHourStart: Date = Date()
-    ///Date at which evening  evening Golden hour ends
     public private(set) var eveningGoldenHourEnd: Date = Date()
     
-    ///Date at which evening  Morning Golden hour starts
     public private(set) var morningGoldenHourStart: Date = Date()
-    ///Date at which evening  Morning Golden hour ends
     public private(set) var morningGoldenHourEnd: Date = Date()
     
-    
-    ///Date at which there is the Civil Dusk
     public private(set) var civilDusk: Date = Date()
-    ///Date at which there is the Civil Dawn
     public private(set) var civilDawn: Date = Date()
     
-    ///Date at which there is the Nautical Dusk
     public private(set) var nauticalDusk: Date = Date()
-    ///Date at which there is the Nautical Dawn
     public private(set) var nauticalDawn: Date = Date()
     
-    ///Date at which there is the Astronomical Dusk
     public private(set) var astronomicalDusk: Date = Date()
-    ///Date at which there is the Astronomical Dawn
     public private(set) var astronomicalDawn: Date = Date()
     
     ///Date at which morning Blue Hour starts. Sun at -6 degrees elevation = civil dusk
-    public var morningBlueHourStart: Date{
+    public var morningBlueHourStart: Date {
         civilDawn
     }
     
@@ -81,7 +66,7 @@ public struct Sun: Identifiable, Sendable {
     }
     
     ///Date at which evening Blue Hour starts. Sun at -4 degrees elevation = evening golden hour end
-    public var eveningBlueHourStart: Date{
+    public var eveningBlueHourStart: Date {
         eveningGoldenHourEnd
     }
     
@@ -95,11 +80,8 @@ public struct Sun: Identifiable, Sendable {
      Sun Azimuths for Self.date and for Sunrise,Sunset and Solar Noon
      *-------------------------------------------------------------------*/
     
-    ///Azimuth of Sunrise
     public private(set) var sunriseAzimuth: Double = 0
-    ///Azimuth of Sunset
     public private(set) var sunsetAzimuth: Double = 0
-    ///Azimuth of Solar noon
     public private(set) var solarNoonAzimuth: Double = 0
     
     // Sun azimuth for (Location,Date) in Self
@@ -119,13 +101,9 @@ public struct Sun: Identifiable, Sendable {
      Sun Events during the year
      *-------------------------------------------------------------------*/
     
-    ///Date at which  there will be march equinox
     public private(set) var marchEquinox: Date = Date()
-    ///Date at which  there will be june solstice
     public private(set) var juneSolstice: Date = Date()
-    ///Date at which  there will be september solstice
     public private(set) var septemberEquinox: Date = Date()
-    ///Date at which  there will be december solstice
     public private(set) var decemberSolstice: Date = Date()
     
     /*--------------------------------------------------------------------
@@ -142,14 +120,14 @@ public struct Sun: Identifiable, Sendable {
         .init(degrees: location.coordinate.latitude)
     }
     
-    /// Returns daylight time in seconds
+    /// Returns daylight time in seconds.
     public var totalDayLightTime: Int {
         let diffComponents = calendar.dateComponents([.second], from: sunrise, to: sunset)
         
         return diffComponents.second ?? 0
     }
     
-    /// Returns night time in seconds
+    /// Returns night time in seconds.
     public var totalNightTime: Int {
         let startOfTheDay   = calendar.startOfDay(for: date)
         let endOfTheDay     = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: startOfTheDay)!
@@ -421,7 +399,6 @@ public struct Sun: Identifiable, Sendable {
     }
     
     private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
-        //Compute mean anomaly sun
         var sunMeanAnomaly: Angle  = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunEclipticLongitudePerigee.degrees))
         sunMeanAnomaly = .init(degrees: extendedMod(sunMeanAnomaly.degrees, 360))
         
@@ -429,7 +406,6 @@ public struct Sun: Identifiable, Sendable {
     }
     
     private func getSunEclipticLongitude(from sunMeanAnomaly: Angle) -> Angle {
-        //eclipticLatitude
         let equationOfCenter        = 360 / Double.pi * sin(sunMeanAnomaly.radians) * 0.016708
         let trueAnomaly             = sunMeanAnomaly.degrees + equationOfCenter
         var eclipticLatitude: Angle =  .init(degrees: trueAnomaly + sunEclipticLongitudePerigee.degrees)
@@ -443,122 +419,84 @@ public struct Sun: Identifiable, Sendable {
     
     /// Updates Horizon coordinates, Ecliptic coordinates and Equatorial coordinates of the Sun
     private mutating func updateSunCoordinates() {
-        //Step1:
-        //Convert LCT to UT, GST, and LST times and adjust the date if needed
+        // Convert LCT to UT, GST, and LST times and adjust the date if needed
         let gstHMS = uT2GST(self.date)
         let lstHMS = gST2LST(gstHMS,longitude: longitude)
-        
         let lstDecimal = lstHMS.hMS2Decimal()
-        
-        //Step2:
-        //Julian number for standard epoch 2000
+        // Julian number for standard epoch 2000
         let jdEpoch = 2451545.00
-        
-        //Step3:
-        //Compute the Julian day number for the desired date using the Greenwich date and TT
-        
+        // Compute the Julian day number for the desired date using the Greenwich date and TT
         let jdTT = jdFromDate(date: self.date)
-        
-        //Step5:
-        //Compute the total number of elapsed days, including fractional days, since the standard epoch (i.e., JD − JDe)
+        // Compute the total number of elapsed days, including fractional days, since the standard epoch (i.e., JD − JDe)
         let elapsedDaysSinceStandardEpoch: Double = jdTT - jdEpoch //De
-        
-        //Step6: Use the algorithm from section 6.2.3 to calculate the Sun’s ecliptic longitude and mean anomaly for the given UT date and time.
+        // Use the algorithm from section 6.2.3 to calculate the Sun’s ecliptic longitude and mean anomaly for the given UT date and time.
         let sunMeanAnomaly = getSunMeanAnomaly(from: elapsedDaysSinceStandardEpoch)
-        
-        //Step7: Use Equation 6.2.4 to aproximate the Equation of the center
+        // Use Equation 6.2.4 to aproximate the Equation of the center
         let equationOfCenter = 360 / Double.pi * sin(sunMeanAnomaly.radians) * 0.016708
-        
-        //Step8: Add EoC to sun mean anomaly to get the sun true anomaly
+        // Add EoC to sun mean anomaly to get the sun true anomaly
         var sunTrueAnomaly = sunMeanAnomaly.degrees + equationOfCenter
-        
-        //Step9:
         sunTrueAnomaly = extendedMod(sunTrueAnomaly, 360)
-        
-        //Step10:
         var sunEclipticLongitude: Angle = .init(degrees: sunTrueAnomaly + sunEclipticLongitudePerigee.degrees)
         
-        //Step11:
         if sunEclipticLongitude.degrees > 360 {
             sunEclipticLongitude.degrees -= 360
         }
         
         sunEclipticCoordinates = .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
-        
-        //Step12: Ecliptic to Equatorial
+        // Ecliptic to Equatorial
         sunEquatorialCoordinates = sunEclipticCoordinates.ecliptic2Equatorial()
-        
-        //Step13: Equatorial to Horizon
+        // Equatorial to Horizon
         sunHorizonCoordinates = sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal,latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
     }
     
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
-        //Step1:
-        //Convert LCT to UT, GST, and LST times and adjust the date if needed
+        // Convert LCT to UT, GST, and LST times and adjust the date if needed
         let gstHMS = uT2GST(date)
         let lstHMS = gST2LST(gstHMS,longitude: longitude)
-        
         let lstDecimal = lstHMS.hMS2Decimal()
         
-        //Step2:
-        //Julian number for standard epoch 2000
+        // Julian number for standard epoch 2000
         let jdEpoch = 2451545.00
         
-        //Step3:
-        //Compute the Julian day number for the desired date using the Greenwich date and TT
-        
+        // Compute the Julian day number for the desired date using the Greenwich date and TT
         let jdTT = jdFromDate(date: date)
-        
-        //Step5:
-        //Compute the total number of elapsed days, including fractional days, since the standard epoch (i.e., JD − JDe)
+        // Compute the total number of elapsed days, including fractional days, since the standard epoch (i.e., JD − JDe)
         let elapsedDaysSinceStandardEpoch: Double = jdTT - jdEpoch //De
-        
-        //Step6: Use the algorithm from section 6.2.3 to calculate the Sun’s ecliptic longitude and mean anomaly for the given UT date and time.
+        // Use the algorithm from section 6.2.3 to calculate the Sun’s ecliptic longitude and mean anomaly for the given UT date and time.
         let sunMeanAnomaly = getSunMeanAnomaly(from: elapsedDaysSinceStandardEpoch)
-        
-        //Step7: Use Equation 6.2.4 to aproximate the Equation of the center
+        // Use Equation 6.2.4 to aproximate the Equation of the center
         let equationOfCenter = 360 / Double.pi * sin(sunMeanAnomaly.radians) * 0.016708
-        
-        //Step8: Add EoC to sun mean anomaly to get the sun true anomaly
+        // Add EoC to sun mean anomaly to get the sun true anomaly
         var sunTrueAnomaly = sunMeanAnomaly.degrees + equationOfCenter
-        
-        //Step9: Add or subtract multiples of 360° to adjust sun true anomaly to the range of 0° to 360°
+        // Add or subtract multiples of 360° to adjust sun true anomaly to the range of 0° to 360°
         sunTrueAnomaly = extendedMod(sunTrueAnomaly, 360)
-        
-        
-        //Step10: Getting ecliptic longitude.
+        // Getting ecliptic longitude.
         var sunEclipticLongitude: Angle = .init(degrees: sunTrueAnomaly + sunEclipticLongitudePerigee.degrees)
         
-        //Step11:
         if sunEclipticLongitude.degrees > 360 {
             sunEclipticLongitude.degrees -= 360
         }
         
         let sunEclipticCoordinates: EclipticCoordinates = .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
-        
-        //Step12: Ecliptic to Equatorial
+        // Ecliptic to Equatorial
         var sunEquatorialCoordinates: EquatorialCoordinates = sunEclipticCoordinates.ecliptic2Equatorial()
-        
-        //Step13: Equatorial to Horizon
+        // Equatorial to Horizon
         let sunHorizonCoordinates: HorizonCoordinates = sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal,latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
         
         return .init(altitude: sunHorizonCoordinates.altitude, azimuth: sunHorizonCoordinates.azimuth)
     }
     
-    /// Computes the solar noon for self.date. Solar noon is the time when the sun is highest in the sky.
-    /// - Returns: Solar noon time
+    /// Solar Noon is the time when the Sun is highest in the sky.
     private func getSolarNoon() -> Date? {
         let secondsForUTCSolarNoon = (720 - 4 * location.coordinate.longitude - equationOfTime) * 60
         let secondsForSolarNoon    = secondsForUTCSolarNoon + Double(timeZoneInSeconds)
         let startOfTheDay          = calendar.startOfDay(for: date)
-        
         let solarNoon = calendar.date(byAdding: .second, value: Int(secondsForSolarNoon) , to: startOfTheDay)
         
         return solarNoon
     }
     
     /// Computes the solar midnight for self.date.
-    /// - Returns: Solar midnight time
     private func getSolarMidnight() -> Date? {
         let secondsForUTCSolarMidnight = (0 - 4 * location.coordinate.longitude - equationOfTime) * 60
         let secondsForSolarMidnight    = secondsForUTCSolarMidnight + Double(timeZoneInSeconds)
@@ -569,8 +507,7 @@ public struct Sun: Identifiable, Sendable {
         return solarMidnight
     }
     
-    /// Computes the Sunrise time for self.date
-    /// - Returns: Sunrise time
+    /// Sunrise is when the Sun reaches 0 degrees of elevation, aka the horizon, at the start of the day.
     private func getSunrise() -> Date? {
         var haArg = (cos(Angle.degrees(90.833).radians)) / (cos(latitude.radians) * cos(sunEquatorialCoordinates.declination.radians)) - tan(latitude.radians) * tan(sunEquatorialCoordinates.declination.radians)
         
@@ -585,14 +522,12 @@ public struct Sun: Identifiable, Sendable {
         }
         
         let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(sunriseSeconds))
-        
         let sunriseDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
         
         return sunriseDate
     }
     
-    /// Computes the Sunset time for self.date
-    /// - Returns: Sunset time
+    /// Sunset is when the Sun reaches 0 degrees of elevation, aka the horizon, at the end of the day.
     private func getSunset() -> Date? {
         var haArg = (cos(Angle.degrees(90.833).radians)) / (cos(latitude.radians) * cos(sunEquatorialCoordinates.declination.radians)) - tan(latitude.radians) * tan(sunEquatorialCoordinates.declination.radians)
         
@@ -607,7 +542,6 @@ public struct Sun: Identifiable, Sendable {
         }
         
         let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(sunsetSeconds))
-        
         let sunsetDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
         
         return sunsetDate
@@ -630,22 +564,18 @@ public struct Sun: Identifiable, Sendable {
         let startOfTheDay = calendar.startOfDay(for: date)
         
         if (Int(secondsForSunToReachElevation) > SECONDS_IN_ONE_DAY){
-            
             secondsForSunToReachElevation = Double(SECONDS_IN_ONE_DAY)
-        }
-        else if (secondsForSunToReachElevation < SECONDS_IN_ONE_HOUR){
-            
+        } else if (secondsForSunToReachElevation < SECONDS_IN_ONE_HOUR){
             secondsForSunToReachElevation = 0
         }
-        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSunToReachElevation))
         
+        let hoursMinutesSeconds: (Int, Int, Int) = secondsToHoursMinutesSeconds(Int(secondsForSunToReachElevation))
         let newDate = calendar.date(bySettingHour: hoursMinutesSeconds.0 , minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfTheDay)
         
         return newDate
     }
     
-    /// Golden Hour in the evening begins when the sun reaches elevation equals to 6 degrees
-    /// - Returns: Time at which the GoldenHour starts
+    /// Evening Golden Hour begins when the Sun reaches 6 degrees of elevation.
     private func getEveningGoldenHourStart() -> Date? {
         guard let eveningGoldenHourStart = getDateFrom(sunEvent: .eveningGoldenHourStart) else {
             return nil
@@ -654,8 +584,7 @@ public struct Sun: Identifiable, Sendable {
         return eveningGoldenHourStart
     }
     
-    /// Golden Hour in the evening ends when the sun reaches elevation equals to -4 degrees
-    /// - Returns: Time at which the GoldenHour ends
+    /// Evening Golden Hour ends when the sun reaches -4 degrees of elevation.
     private func getEveningGoldenHourEnd() -> Date? {
         guard let goldenHourFinish = getDateFrom(sunEvent: .eveningGoldenHourEnd) else {
             return nil
@@ -664,8 +593,7 @@ public struct Sun: Identifiable, Sendable {
         return goldenHourFinish
     }
     
-    /// Civil Dawn is when the Sun reaches -6 degrees of elevation. Also known as civil sunrise
-    /// - Returns: Civil Dawn time
+    /// Civil Dawn is when the Sun reaches -6 degrees of elevation.
     private func getCivilDawn() -> Date? {
         guard let civilDawn = getDateFrom(sunEvent: .civil,morning: true) else {
             return nil
@@ -674,8 +602,7 @@ public struct Sun: Identifiable, Sendable {
         return civilDawn
     }
     
-    /// civil dusk is when the Sun reaches -6 degrees of elevation. Also known as civil sunrise.
-    /// - Returns: civil dusk time
+    /// Civil Dusk is when the Sun reaches -6 degrees of elevation.
     private func getCivilDusk() -> Date? {
         guard let civilDusk = getDateFrom(sunEvent: .civil, morning: false) else {
             return nil
@@ -685,7 +612,6 @@ public struct Sun: Identifiable, Sendable {
     }
     
     /// Nautical Dusk is when the Sun reaches -12 degrees of elevation.
-    /// - Returns: Nautical Dusk
     private func getNauticalDusk() -> Date? {
         guard let nauticalDusk = getDateFrom(sunEvent: .nautical, morning: false) else {
             return nil
@@ -695,7 +621,6 @@ public struct Sun: Identifiable, Sendable {
     }
     
     /// Nautical Dusk is when the Sun reaches -12 degrees of elevation.
-    /// - Returns: Nautical Dawn
     private func getNauticalDawn() -> Date? {
         guard let nauticalDawn = getDateFrom(sunEvent: .nautical, morning: true) else {
             return nil
@@ -705,7 +630,6 @@ public struct Sun: Identifiable, Sendable {
     }
     
     /// Astronomical Dusk is when the Sun reaches -18 degrees of elevation.
-    /// - Returns: Astronomical Dusk
     private func getAstronomicalDusk() -> Date? {
         guard let astronomicalDusk = getDateFrom(sunEvent: .astronomical, morning: false) else {
             return nil
@@ -715,7 +639,6 @@ public struct Sun: Identifiable, Sendable {
     }
     
     /// Astronomical Dawn is when the Sun reaches -18 degrees of elevation.
-    /// - Returns: Astronomical Dawn
     private func getAstronomicalDawn() -> Date? {
         guard let astronomicalDawn = getDateFrom(sunEvent: .astronomical, morning: true) else {
             return nil
@@ -724,8 +647,7 @@ public struct Sun: Identifiable, Sendable {
         return astronomicalDawn
     }
     
-    /// Morning Golden Hour start when Sun reaches -4 degress  of elevation
-    /// - Returns: Morning golden hour start
+    /// Morning Golden Hour starts when the Sun reaches -4 degrees of elevation.
     private func getMorningGoldenHourStart() -> Date? {
         guard let morningGoldenHourStart = getDateFrom(sunEvent: .morningGoldenHourStart , morning: true) else {
             return nil
@@ -734,8 +656,7 @@ public struct Sun: Identifiable, Sendable {
         return morningGoldenHourStart
     }
     
-    /// Morning Golden Hour ends when Sun reaches 6 degress  of elevation
-    /// - Returns: Morning golden hour end
+    /// Morning Golden Hour ends when Sun reaches 6 degrees of elevation.
     private func getMorningGoldenHourEnd() -> Date? {
         guard let morningGoldenHourEnd = getDateFrom(sunEvent: .morningGoldenHourEnd , morning: true) else {
             return nil
