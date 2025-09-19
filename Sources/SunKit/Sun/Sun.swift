@@ -519,7 +519,7 @@ public struct Sun: Identifiable, Sendable {
     
     /// Sunrise is when the Sun reaches 0 degrees of elevation, aka the horizon, at the start of the day.
     private func getSunrise() -> Date? {
-        let solarHourAngle: Angle = calculateSunriseSolarHourAngle()
+        let solarHourAngle = calculateSunriseSolarHourAngle()
         let sunriseUTCMinutes = 720 - 4 * (location.coordinate.longitude + solarHourAngle.degrees) - equationOfTime
         var sunriseSeconds = (Int(sunriseUTCMinutes) * 60) + timeZoneInSeconds
         let startOfDay = calendar.startOfDay(for: date)
@@ -588,9 +588,8 @@ public struct Sun: Identifiable, Sendable {
     
     /// Sunset is when the Sun reaches 0 degrees of elevation, aka the horizon, at the end of the day.
     private func getSunset() -> Date? {
-        let haArg = clampCosineOfSolarHourAngle()
-        let ha: Angle = .radians(-acos(haArg))
-        let sunsetUTCMinutes = 720 - 4 * (location.coordinate.longitude + ha.degrees) - equationOfTime
+        let solarHourAngle = calculateSunsetSolarHourAngle()
+        let sunsetUTCMinutes = 720 - 4 * (location.coordinate.longitude + solarHourAngle.degrees) - equationOfTime
         var sunsetSeconds = (Int(sunsetUTCMinutes) * 60) + timeZoneInSeconds
         let startOfDay = calendar.startOfDay(for: date)
         
@@ -602,6 +601,13 @@ public struct Sun: Identifiable, Sendable {
         let sunsetDate = calendar.date(bySettingHour: hoursMinutesSeconds.0, minute: hoursMinutesSeconds.1, second: hoursMinutesSeconds.2, of: startOfDay)
         
         return sunsetDate
+    }
+    
+    private func calculateSunsetSolarHourAngle() -> Angle {
+        let cosSolarHourAngle = clampCosineOfSolarHourAngle()
+        let solarHourAngle: Angle = .radians(-acos(cosSolarHourAngle))
+        
+        return solarHourAngle
     }
     
     /// Evening Golden Hour ends when the sun reaches -4 degrees of elevation.
