@@ -94,16 +94,12 @@ public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
             return nil
         }
         
-        //Step4:
         let tZeroEquatorialToHorizon = sin(declination.radians) * sin(latitude.radians) + cos(declination.radians) * cos(latitude.radians) * cos(hourAngle!.radians)
-        //Step5:
         let altitude: Angle = .init(radians: asin(tZeroEquatorialToHorizon))
-        //Step6:
         let tOneEquatorialToHorizon = sin(declination.radians) - sin(latitude.radians) * sin(altitude.radians)
-        //Step7:
         let tTwoEquatorialToHorizon = tOneEquatorialToHorizon / (cos(latitude.radians) * cos(altitude.radians))
-        //Step8:
         var azimuth: Angle = .init(radians: acos(tTwoEquatorialToHorizon))
+        
         if sin(hourAngle!.radians) >= 0 {
             azimuth.degrees = 360 - azimuth.degrees
         }
@@ -123,16 +119,12 @@ public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
             return nil
         }
         
-        //Step4:
         let tZeroEquatorialToHorizon = sin(declination.radians) * sin(latitude.radians) + cos(declination.radians) * cos(latitude.radians) * cos(hourAngle!.radians)
-        //Step5:
         let altitude: Angle = .init(radians: asin(tZeroEquatorialToHorizon))
-        //Step6:
         let tOneEquatorialToHorizon = sin(declination.radians) - sin(latitude.radians) * sin(altitude.radians)
-        //Step7:
         let tTwoEquatorialToHorizon = tOneEquatorialToHorizon / (cos(latitude.radians) * cos(altitude.radians))
-        //Step8:
         var azimuth: Angle = .init(radians: acos(tTwoEquatorialToHorizon))
+        
         if sin(hourAngle!.radians) >= 0 {
             azimuth.degrees = 360 - azimuth.degrees
         }
@@ -146,17 +138,13 @@ public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
         }
         
         rightAscension.degrees = rightAscension.degrees * 15 // from h format to degrees
-        //Step5:
+        
         let tEquatorialToEcliptic: Angle = .init(radians: sin(declination.radians) * cos(EclipticCoordinates.obliquityOfTheEcliptic.radians) - cos(declination.radians) * sin(EclipticCoordinates.obliquityOfTheEcliptic.radians) * sin(rightAscension.radians))
-        //Step6:
         let eclipticLatitude: Angle = .init(radians: asin(tEquatorialToEcliptic.radians))
-        //Step7:
         let yEquatorialToEcliptic = sin(rightAscension.radians) * cos(EclipticCoordinates.obliquityOfTheEcliptic.radians) + tan(declination.radians) * sin(EclipticCoordinates.obliquityOfTheEcliptic.radians)
-        //Step8:
         let xEquatorialToEcliptic = cos(rightAscension.radians)
-        //Step9:
         var r: Angle = .init(radians: atan(yEquatorialToEcliptic / xEquatorialToEcliptic))
-        //Step9:
+        
         switch (yEquatorialToEcliptic >= 0, xEquatorialToEcliptic >= 0) {
         case (true, true):
             break
