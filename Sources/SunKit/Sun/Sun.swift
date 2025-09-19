@@ -414,11 +414,7 @@ public struct Sun: Identifiable, Sendable {
     
     /// Updates Horizon coordinates, Ecliptic coordinates and Equatorial coordinates of the Sun
     private mutating func updateSunCoordinates() {
-        // Convert LCT to UT, GST, and LST times and adjust the date if needed
-        let gstHMS = uT2GST(self.date)
-        let lstHMS = gST2LST(gstHMS, longitude: longitude)
-        let lstDecimal = lstHMS.hMS2Decimal()
-        
+        let lstDecimal = calculateLSTDecimal(using: self.date)
         let sunEclipticLongitude: Angle = calculateSunEclipticLongitude(using: self.date)
         
         sunEclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
@@ -431,6 +427,15 @@ public struct Sun: Identifiable, Sendable {
         func calculateSunHorizonCoordinates(using lstDecimal: Double) -> HorizonCoordinates {
             sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
         }
+    }
+    
+    private func calculateLSTDecimal(using date: Date) -> Double {
+        // Convert LCT to UT, GST, and LST times and adjust the date if needed
+        let gstHMS = uT2GST(self.date)
+        let lstHMS = gST2LST(gstHMS, longitude: longitude)
+        let lstDecimal = lstHMS.hMS2Decimal()
+        
+        return lstDecimal
     }
     
     private func calculateSunEclipticLongitude(using date: Date) -> Angle {
@@ -668,11 +673,7 @@ public struct Sun: Identifiable, Sendable {
     
     // TODO: Extract functions to collapse into updateSunCoordinates
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
-        // Convert LCT to UT, GST, and LST times and adjust the date if needed
-        let gstHMS = uT2GST(date)
-        let lstHMS = gST2LST(gstHMS, longitude: longitude)
-        let lstDecimal = lstHMS.hMS2Decimal()
-        
+        let lstDecimal = calculateLSTDecimal(using: date)
         let sunEclipticLongitude: Angle = calculateSunEclipticLongitude(using: date)
         
         let sunEclipticCoordinates: EclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
