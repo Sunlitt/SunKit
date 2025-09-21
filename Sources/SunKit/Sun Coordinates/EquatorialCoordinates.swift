@@ -47,85 +47,6 @@ public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
         self.declination = declination
     }
     
-    /// To set right ascension we need LST and right ascension. If right ascension is nill we can't set it.
-    /// - Parameter lstDecimal: Local Sideral Time in decimal
-    /// - Returns: The value of hour angle just been set. Nil if right ascension  is also nil
-    public mutating func setHourAngleFrom(lstDecimal: Double) -> Angle? {
-        guard let rightAscension = self.rightAscension else {
-            return nil
-        }
-        
-        var hourAngleDecimal = lstDecimal - rightAscension.degrees
-        if hourAngleDecimal < 0 {
-            hourAngleDecimal += 24
-        }
-        self.hourAngle = .init(degrees: hourAngleDecimal * 15)
-        
-        return self.hourAngle
-    }
-    
-    /// To set right ascension we need LST and hour angle. If hour angle is nill we can't set it.
-    /// - Parameter lstDecimal: Local Sideral Time in decimal
-    /// - Returns: The value of right ascension just been set. Nil if hour angle is also nil
-    public mutating func setRightAscensionFrom(lstDecimal: Double) -> Angle? {
-        guard let hourAngle = self.hourAngle else {
-            return nil
-        }
-        
-        let hourAngleDecimal = hourAngle.degrees / 15
-        self.rightAscension = .init(degrees: lstDecimal - hourAngleDecimal)
-        
-        return self.rightAscension
-    }
-    
-    /// Converts Equatorial coordinates to Horizon coordinates.
-    ///
-    /// Since horizon coordinates depend on the position, we need also  latitude parameter to create an EquatorialCoordinates instance.
-    ///
-    /// - Parameters:
-    ///   - lstDecimal: Local Sidereal Time in decimal format.
-    ///   - latitude: Latitude of the observer
-    /// - Returns: Horizon coordinates for the given latitude and LST. Nil if hour angle cannot be computed due to the miss right ascnsion information
-    public mutating func equatorial2Horizon(
-        lstDecimal: Double,
-        latitude: Angle
-    ) -> HorizonCoordinates? {
-        guard let _ = setHourAngleFrom(lstDecimal: lstDecimal) else {
-            return nil
-        }
-        
-       return calculateHorizonCoordinates(from: latitude)
-    }
-    
-    /// Converts Equatorial coordinates to Horizon coordinates.
-    ///
-    /// Since horizon coordinates depend on the position, we need also latitude parameter to create an EquatorialCoordinates instance.
-    ///
-    /// - Parameters:
-    ///   - latitude: Latitude of the observer
-    /// - Returns: Horizon coordinates for the given latitude. Nil if hour angle is not defined.
-    public func equatorial2Horizon(latitude: Angle) -> HorizonCoordinates? {
-        guard let _ = self.hourAngle else {
-            return nil
-        }
-        
-        return calculateHorizonCoordinates(from: latitude)
-    }
-    
-    private func calculateHorizonCoordinates(from latitude: Angle) -> HorizonCoordinates {
-        let tZeroEquatorialToHorizon = sin(declination.radians) * sin(latitude.radians) + cos(declination.radians) * cos(latitude.radians) * cos(hourAngle!.radians)
-        let altitude: Angle = .init(radians: asin(tZeroEquatorialToHorizon))
-        let tOneEquatorialToHorizon = sin(declination.radians) - sin(latitude.radians) * sin(altitude.radians)
-        let tTwoEquatorialToHorizon = tOneEquatorialToHorizon / (cos(latitude.radians) * cos(altitude.radians))
-        var azimuth: Angle = .init(radians: acos(tTwoEquatorialToHorizon))
-        
-        if sin(hourAngle!.radians) >= 0 {
-            azimuth.degrees = 360 - azimuth.degrees
-        }
-        
-        return .init(altitude: altitude, azimuth: azimuth)
-    }
-    
     public func equatorial2Ecliptic() -> EclipticCoordinates? {
         guard var rightAscension = rightAscension else {
             return nil
@@ -153,5 +74,84 @@ public struct EquatorialCoordinates: Equatable, Hashable, Codable, Sendable {
         let eclipticLongitude: Angle = .init(degrees: r.degrees)
         
         return .init(eclipticLatitude: eclipticLatitude, eclipticLongitude: eclipticLongitude)
+    }
+    
+    /// Converts Equatorial coordinates to Horizon coordinates.
+    ///
+    /// Since horizon coordinates depend on the position, we need also  latitude parameter to create an EquatorialCoordinates instance.
+    ///
+    /// - Parameters:
+    ///   - lstDecimal: Local Sidereal Time in decimal format.
+    ///   - latitude: Latitude of the observer
+    /// - Returns: Horizon coordinates for the given latitude and LST. Nil if hour angle cannot be computed due to the miss right ascnsion information
+    public mutating func equatorial2Horizon(
+        lstDecimal: Double,
+        latitude: Angle
+    ) -> HorizonCoordinates? {
+        guard let _ = setHourAngleFrom(lstDecimal: lstDecimal) else {
+            return nil
+        }
+        
+       return calculateHorizonCoordinates(from: latitude)
+    }
+    
+    /// To set right ascension we need LST and right ascension. If right ascension is nill we can't set it.
+    /// - Parameter lstDecimal: Local Sideral Time in decimal
+    /// - Returns: The value of hour angle just been set. Nil if right ascension  is also nil
+    public mutating func setHourAngleFrom(lstDecimal: Double) -> Angle? {
+        guard let rightAscension = self.rightAscension else {
+            return nil
+        }
+        
+        var hourAngleDecimal = lstDecimal - rightAscension.degrees
+        if hourAngleDecimal < 0 {
+            hourAngleDecimal += 24
+        }
+        self.hourAngle = .init(degrees: hourAngleDecimal * 15)
+        
+        return self.hourAngle
+    }
+    
+    private func calculateHorizonCoordinates(from latitude: Angle) -> HorizonCoordinates {
+        let tZeroEquatorialToHorizon = sin(declination.radians) * sin(latitude.radians) + cos(declination.radians) * cos(latitude.radians) * cos(hourAngle!.radians)
+        let altitude: Angle = .init(radians: asin(tZeroEquatorialToHorizon))
+        let tOneEquatorialToHorizon = sin(declination.radians) - sin(latitude.radians) * sin(altitude.radians)
+        let tTwoEquatorialToHorizon = tOneEquatorialToHorizon / (cos(latitude.radians) * cos(altitude.radians))
+        var azimuth: Angle = .init(radians: acos(tTwoEquatorialToHorizon))
+        
+        if sin(hourAngle!.radians) >= 0 {
+            azimuth.degrees = 360 - azimuth.degrees
+        }
+        
+        return .init(altitude: altitude, azimuth: azimuth)
+    }
+    
+    /// Converts Equatorial coordinates to Horizon coordinates.
+    ///
+    /// Since horizon coordinates depend on the position, we need also latitude parameter to create an EquatorialCoordinates instance.
+    ///
+    /// - Parameters:
+    ///   - latitude: Latitude of the observer
+    /// - Returns: Horizon coordinates for the given latitude. Nil if hour angle is not defined.
+    public func equatorial2Horizon(latitude: Angle) -> HorizonCoordinates? {
+        guard let _ = self.hourAngle else {
+            return nil
+        }
+        
+        return calculateHorizonCoordinates(from: latitude)
+    }
+    
+    /// To set right ascension we need LST and hour angle. If hour angle is nill we can't set it.
+    /// - Parameter lstDecimal: Local Sideral Time in decimal
+    /// - Returns: The value of right ascension just been set. Nil if hour angle is also nil
+    public mutating func setRightAscensionFrom(lstDecimal: Double) -> Angle? {
+        guard let hourAngle = self.hourAngle else {
+            return nil
+        }
+        
+        let hourAngleDecimal = hourAngle.degrees / 15
+        self.rightAscension = .init(degrees: lstDecimal - hourAngleDecimal)
+        
+        return self.rightAscension
     }
 }
