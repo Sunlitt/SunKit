@@ -101,7 +101,28 @@ public struct Sun: Identifiable, Sendable {
     private var sunHorizonCoordinates: HorizonCoordinates = .init(altitude: .zero, azimuth: .zero)
     public private(set) var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
     public private(set) var sunEclipticCoordinates: EclipticCoordinates = .init(eclipticLatitude: .zero, eclipticLongitude: .zero)
-    
+
+    /*
+     public var azimuth: Angle {
+         sunCoordinates.azimuth
+     }
+     
+     public var altitude: Angle {
+         sunCoordinates.altitude
+     }
+     
+     private var sunHorizonCoordinates: HorizonCoordinates {
+         sunCoordinates.horizonCoordinates
+     }
+     
+     public var sunEquatorialCoordinates: EquatorialCoordinates {
+         sunCoordinates.equatorialCoordinates
+     }
+     
+     public var sunEclipticCoordinates: EclipticCoordinates {
+         sunCoordinates.eclipticCoordinates
+     }
+     */
     /*--------------------------------------------------------------------
      Sun Events during the year
      *-------------------------------------------------------------------*/
@@ -428,6 +449,21 @@ public struct Sun: Identifiable, Sendable {
         }
     }
     
+    /*
+     // TODO: Move calculateLSTDecimal and calculateSunEclipticLongitude into SunCoordinates
+     /// Updates Horizon coordinates, Ecliptic coordinates and Equatorial coordinates of the Sun
+     private mutating func updateSunCoordinates() {
+         let lstDecimal = calculateLSTDecimal(using: self.date)
+         let sunEclipticLongitude: Angle = calculateSunEclipticLongitude(using: self.date)
+         
+         sunCoordinates.setCoordinates(
+             sunEclipticLongitude: sunEclipticLongitude,
+             lstDecimal: lstDecimal,
+             latitude: latitude
+         )
+     }
+     */
+    
     private func calculateLSTDecimal(using date: Date) -> Double {
         // Convert LCT to UT, GST, and LST times and adjust the date if needed
         let gstHMS = uT2GST(self.date)
@@ -468,6 +504,7 @@ public struct Sun: Identifiable, Sendable {
         return sunMeanAnomaly
     }
     
+    // TODO: Delete
     // TODO: Move behavior into EclipticCoordinates, refactor to Object
     private func calculateSunEclipticCoordinates(using sunEclipticLongitude: Angle) -> EclipticCoordinates {
         .init(eclipticLatitude: .zero, eclipticLongitude: sunEclipticLongitude)
@@ -734,6 +771,20 @@ public struct Sun: Identifiable, Sendable {
             sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
         }
     }
+    
+    /*
+     public mutating func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
+         let lstDecimal = calculateLSTDecimal(using: date)
+         let sunEclipticLongitude: Angle = calculateSunEclipticLongitude(using: date)
+         let sunHorizonCoordinates = sunCoordinates.getSunHorizonCoordinatesGiven(
+             sunEclipticLongitude: sunEclipticLongitude,
+             lstDecimal: lstDecimal,
+             latitude: latitude
+         )
+         
+         return sunHorizonCoordinates
+     }
+     */
     
     // MARK: - Get Month Events
     
