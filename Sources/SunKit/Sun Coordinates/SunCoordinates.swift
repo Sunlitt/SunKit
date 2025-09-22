@@ -24,6 +24,7 @@ internal struct SunCoordinates: Sendable {
     internal var equatorialCoordinates: EquatorialCoordinates
     internal var horizonCoordinates: HorizonCoordinates
     
+    internal let sunEclipticLongitudeAtTheEpoch: Angle = .init(degrees: 280.466069)
     internal let sunEclipticLongitudePerigee: Angle = .init(degrees: 282.938346)
     
     internal var azimuth: Angle {

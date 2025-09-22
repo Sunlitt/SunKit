@@ -331,9 +331,6 @@ public struct Sun: Identifiable, Sendable {
         timeZone.secondsFromGMT(for: self.date)
     }
     
-    // Sun constants
-    private let sunEclipticLongitudeAtTheEpoch: Angle = .init(degrees: 280.466069)
-    
     /// Number of the days passed since the start of the year for the self.date
     private var daysPassedFromStartOfTheYear: Int {
         let year = calendar.component(.year, from: date)
@@ -499,7 +496,7 @@ public struct Sun: Identifiable, Sendable {
     }
     
     private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
-        var sunMeanAnomaly: Angle = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunCoordinates.sunEclipticLongitudePerigee.degrees))
+        var sunMeanAnomaly: Angle = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunCoordinates.sunEclipticLongitudeAtTheEpoch.degrees - sunCoordinates.sunEclipticLongitudePerigee.degrees))
         sunMeanAnomaly = .init(degrees: extendedMod(sunMeanAnomaly.degrees, 360))
         
         return sunMeanAnomaly
