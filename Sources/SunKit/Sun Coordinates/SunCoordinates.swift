@@ -63,9 +63,8 @@ internal struct SunCoordinates: Sendable {
         setSunHorizonCoordinates(using: lstDecimal, latitude: latitude)
     }
     
-    // TODO: Remove mutating func, need to refactor EquatorialCoordinates
-    internal mutating func getSunHorizonCoordinatesGiven(
-        sunEclipticLongitude: Angle,
+    internal func getSunHorizonCoordinates(
+        given sunEclipticLongitude: Angle,
         lstDecimal: Double,
         latitude: Angle
     ) -> HorizonCoordinates {
@@ -107,11 +106,11 @@ internal struct SunCoordinates: Sendable {
         using lstDecimal: Double,
         latitude: Angle
     ) {
-//        self.horizonCoordinates = calculateSunHorizonCoordinates(
-//            using: equatorialCoordinates,
-//            lstDecimal: lstDecimal,
-//            latitude: latitude
-//        )
+        self.horizonCoordinates = calculateSunHorizonCoordinates(
+            using: equatorialCoordinates,
+            lstDecimal: lstDecimal,
+            latitude: latitude
+        )
     }
     
     internal func calculateSunHorizonCoordinates(
