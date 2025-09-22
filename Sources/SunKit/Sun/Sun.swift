@@ -433,7 +433,7 @@ public struct Sun: Identifiable, Sendable {
     /// Updates Horizon coordinates, Ecliptic coordinates and Equatorial coordinates of the Sun
     private mutating func updateSunCoordinates() {
         let lstDecimal = calculateLSTDecimal(using: self.date)
-        let sunEclipticLongitude: Angle = calculateSunEclipticLongitude(using: self.date)
+        let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: self.date)
         
         sunEclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
         // Ecliptic to Equatorial
@@ -469,30 +469,6 @@ public struct Sun: Identifiable, Sendable {
         let lstDecimal = lstHMS.hMS2Decimal()
         
         return lstDecimal
-    }
-    
-    private func calculateSunEclipticLongitude(using date: Date) -> Angle {
-        // Julian number for standard epoch 2000
-        let jdEpoch = 2451545.00
-        // Compute the Julian day number for the desired date using the Greenwich date and TT
-        let jdTT = jdFromDate(date: date)
-        // Compute the total number of elapsed days, including fractional days, since the standard epoch (i.e., JD − JDe)
-        let elapsedDaysSinceStandardEpoch: Double = jdTT - jdEpoch
-        // Use the algorithm from section 6.2.3 to calculate the Sun’s ecliptic longitude and mean anomaly for the given UT date and time.
-        let sunMeanAnomaly = sunCoordinates.getSunMeanAnomaly(from: elapsedDaysSinceStandardEpoch)
-        // Use Equation 6.2.4 to aproximate the Equation of the center
-        let equationOfCenter = 360 / Double.pi * sin(sunMeanAnomaly.radians) * 0.016708
-        // Add EoC to sun mean anomaly to get the sun true anomaly
-        var sunTrueAnomaly = sunMeanAnomaly.degrees + equationOfCenter
-        // Add or subtract multiples of 360° to adjust sun true anomaly to the range of 0° to 360°
-        sunTrueAnomaly = extendedMod(sunTrueAnomaly, 360)
-        var sunEclipticLongitude: Angle = .init(degrees: sunTrueAnomaly + sunCoordinates.sunEclipticLongitudePerigee.degrees)
-        
-        if sunEclipticLongitude.degrees > 360 {
-            sunEclipticLongitude.degrees -= 360
-        }
-        
-        return sunEclipticLongitude
     }
     
     // TODO: Delete
@@ -747,7 +723,7 @@ public struct Sun: Identifiable, Sendable {
     // TODO: Extract functions to collapse into updateSunCoordinates
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
         let lstDecimal = calculateLSTDecimal(using: date)
-        let sunEclipticLongitude: Angle = calculateSunEclipticLongitude(using: date)
+        let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: date)
         
         let sunEclipticCoordinates: EclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
         // Ecliptic to Equatorial
