@@ -397,7 +397,7 @@ public struct Sun: Identifiable, Sendable {
     ///
     /// - Parameter needToComputeAgainSunEvents: True if Sunrise,Sunset and all the others daily sun events have to be computed.
     private mutating func refresh(needToComputeSunEvents: Bool = true) {
-        updateSunCoordinates()
+        updateSunCoordinates(using: self.date, longitude: self.longitude, latitude: self.latitude)
         
         if (needToComputeSunEvents) {
             self.astronomicalDawn = getAstronomicalDawn() ?? Date()
@@ -431,11 +431,11 @@ public struct Sun: Identifiable, Sendable {
     // TODO: SunCoordinates implicitly depends on self.date and self.longitude (location)
     
     /// Updates Horizon coordinates, Ecliptic coordinates and Equatorial coordinates of the Sun
-    private mutating func updateSunCoordinates() {
-        let lstDecimal = sunCoordinates.calculateLSTDecimal(using: self.date, longitude: self.longitude)
-        let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: self.date)
+    private mutating func updateSunCoordinates(using date: Date, longitude: Angle, latitude: Angle) {
+        let lstDecimal = sunCoordinates.calculateLSTDecimal(using: date, longitude: longitude)
+        let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: date)
         
-        updateCoordinates(sunEclipticLongitude: sunEclipticLongitude, lstDecimal: lstDecimal, latitude: self.latitude)
+        updateCoordinates(sunEclipticLongitude: sunEclipticLongitude, lstDecimal: lstDecimal, latitude: latitude)
     }
     
     private mutating func updateCoordinates(
