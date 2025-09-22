@@ -452,19 +452,14 @@ public struct Sun: Identifiable, Sendable {
         )
     }
     
-    // TODO: Extract functions to collapse into updateSunCoordinates
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
         let lstDecimal = sunCoordinates.calculateLSTDecimal(using: date, longitude: self.longitude)
         let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: date)
         
-        let sunEclipticCoordinates: EclipticCoordinates = sunCoordinates.calculateSunEclipticCoordinates(using: sunEclipticLongitude)
-        // Ecliptic to Equatorial
-        let sunEquatorialCoordinates: EquatorialCoordinates = sunCoordinates.calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
-        // Equatorial to Horizon
-        let sunHorizonCoordinates: HorizonCoordinates = sunCoordinates.calculateSunHorizonCoordinates(
-            using: sunEquatorialCoordinates,
+        let sunHorizonCoordinates = sunCoordinates.getSunHorizonCoordinates(
+            given: sunEclipticLongitude,
             lstDecimal: lstDecimal,
-            latitude: latitude
+            latitude: self.latitude
         )
         
         return .init(altitude: sunHorizonCoordinates.altitude, azimuth: sunHorizonCoordinates.azimuth)
