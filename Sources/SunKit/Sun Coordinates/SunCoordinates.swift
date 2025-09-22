@@ -53,7 +53,18 @@ internal struct SunCoordinates: Sendable {
     
     // MARK: - Coordinates
     
-    internal mutating func setCoordinates(
+    internal mutating func setSunCoordinates(using date: Date, longitude: Angle, latitude: Angle) {
+        let lstDecimal = calculateLSTDecimal(using: date, longitude: longitude)
+        let sunEclipticLongitude: Angle = calculateSunEclipticLongitude(using: date)
+        
+        setCoordinates(
+            sunEclipticLongitude: sunEclipticLongitude,
+            lstDecimal: lstDecimal,
+            latitude: latitude
+        )
+    }
+    
+    private mutating func setCoordinates(
         sunEclipticLongitude: Angle,
         lstDecimal: Double,
         latitude: Angle

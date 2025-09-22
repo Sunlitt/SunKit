@@ -413,14 +413,7 @@ public struct Sun: Identifiable, Sendable {
     
     /// Updates Horizon coordinates, Ecliptic coordinates and Equatorial coordinates of the Sun
     private mutating func updateSunCoordinates(using date: Date, longitude: Angle, latitude: Angle) {
-        let lstDecimal = sunCoordinates.calculateLSTDecimal(using: date, longitude: longitude)
-        let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: date)
-        
-        sunCoordinates.setCoordinates(
-            sunEclipticLongitude: sunEclipticLongitude,
-            lstDecimal: lstDecimal,
-            latitude: latitude
-        )
+        sunCoordinates.setSunCoordinates(using: date, longitude: longitude, latitude: latitude)
     }
     
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
