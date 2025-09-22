@@ -16,11 +16,10 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-
 import Foundation
 
+
 public struct Angle: Equatable, Hashable, Codable, Sendable {
-        
     public static var zero: Angle = .init()
     
     public init() {
@@ -30,11 +29,11 @@ public struct Angle: Equatable, Hashable, Codable, Sendable {
     public init(radians: Double) {
         _radians = radians
     }
-  
+    
     public init(degrees: Double) {
         _radians = degrees * Double.pi / 180.0
     }
-        
+    
     public var degrees: Double {
         get { _radians * 180.0 / Double.pi }
         set { _radians = newValue * Double.pi / 180 }
@@ -54,5 +53,4 @@ public struct Angle: Equatable, Hashable, Codable, Sendable {
     public static func radians(_ value: Double) -> Angle {
         .init(radians: value)
     }
-
 }

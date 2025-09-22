@@ -21,8 +21,8 @@ import Foundation
 import CoreLocation
 @testable import SunKit
 
+
 final class UT_Sun: XCTestCase {
-    
     /*--------------------------------------------------------------------
      Thresholds. UTs will pass if |output - expectedOutput| < threshold
      *-------------------------------------------------------------------*/
@@ -31,7 +31,7 @@ final class UT_Sun: XCTestCase {
     static let sunSetRiseThresholdInSeconds: Double = 120 //2 minutes in seconds
     static let sunEquinoxesAndSolsticesThresholdInSeconds: Double = 700 // approxametly 11 minutes
     
-    static let objectShadowThreshold: Double = 0.01 
+    static let objectShadowThreshold: Double = 0.01
     
     /*--------------------------------------------------------------------
      Naples timezone and location
@@ -65,7 +65,6 @@ final class UT_Sun: XCTestCase {
      *-------------------------------------------------------------------*/
     static let mumbaiLocation: CLLocation = .init(latitude: 18.94017, longitude: 72.83489)
     static let timeZoneMumbai = 5.5
-    
     
     /// Test of  Sun azimuth, sunrise, sunset, evening golden hour start and evening golden hour end
     /// Value for expected results have been taken from SunCalc.org
@@ -108,30 +107,30 @@ final class UT_Sun: XCTestCase {
         
         let expectedastronomicalDusk = createDateCustomTimeZone(day: 19, month: 11, year: 2022, hour: 18, minute: 17, seconds: 20,timeZone: timeZoneUnderTest)
         
-    
+        
         //Step4: Check if the output are close to the expected ones
         
         XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth.degrees) <  UT_Sun.sunAzimuthThreshold)
         XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude.degrees) <  UT_Sun.sunAltitudeThreshold)
-       
+        
         XCTAssertTrue(abs(expectedSunRise.timeIntervalSince1970 - sunUnderTest.sunrise.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSunset.timeIntervalSince1970 - sunUnderTest.sunset.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedGoldenHourStart.timeIntervalSince1970 - sunUnderTest.eveningGoldenHourStart.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedGoldenHourEnd.timeIntervalSince1970 - sunUnderTest.eveningGoldenHourEnd.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedcivilDusk.timeIntervalSince1970 - sunUnderTest.civilDusk.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedcivilDawn.timeIntervalSince1970 - sunUnderTest.civilDawn.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedSolarNoon.timeIntervalSince1970 - sunUnderTest.solarNoon.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectednauticalDusk.timeIntervalSince1970 - sunUnderTest.nauticalDusk.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectednauticalDawn.timeIntervalSince1970 - sunUnderTest.nauticalDawn.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedastronomicalDusk.timeIntervalSince1970 - sunUnderTest.astronomicalDusk.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedastronomicalDawn.timeIntervalSince1970 - sunUnderTest.astronomicalDawn.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         
         //Test: 31/12/2024 15:32. Timezone +1. Leap Year.
         
@@ -158,21 +157,21 @@ final class UT_Sun: XCTestCase {
         expectedcivilDusk = createDateCustomTimeZone(day: 31, month: 12, year: 2024, hour: 17, minute: 16, seconds: 06,timeZone: timeZoneUnderTest)
         
         expectedSolarNoon = createDateCustomTimeZone(day: 31, month: 12, year: 2024, hour: 12, minute: 06, seconds: 11,timeZone: timeZoneUnderTest)
-
+        
         //Step4: Check if the output are close to the expected ones
         
         XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth.degrees) <  UT_Sun.sunAzimuthThreshold)
         XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude.degrees) <  UT_Sun.sunAltitudeThreshold)
-       
+        
         XCTAssertTrue(abs(expectedSunRise.timeIntervalSince1970 - sunUnderTest.sunrise.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSunset.timeIntervalSince1970 - sunUnderTest.sunset.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedGoldenHourStart.timeIntervalSince1970 - sunUnderTest.eveningGoldenHourStart.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedGoldenHourEnd.timeIntervalSince1970 - sunUnderTest.eveningGoldenHourEnd.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedcivilDusk.timeIntervalSince1970 - sunUnderTest.civilDusk.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedcivilDawn.timeIntervalSince1970 - sunUnderTest.civilDawn.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedSolarNoon.timeIntervalSince1970 - sunUnderTest.solarNoon.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         
         
@@ -204,23 +203,23 @@ final class UT_Sun: XCTestCase {
         expectedcivilDusk = createDateCustomTimeZone(day: 1, month: 8, year: 2022, hour: 19, minute: 14, seconds: 00,timeZone: timeZoneUnderTest)
         
         expectedSolarNoon = createDateCustomTimeZone(day: 1, month: 8, year: 2022, hour: 11, minute: 47, seconds: 36,timeZone: timeZoneUnderTest)
-
+        
         //Step4: Check if the output are close to the expected ones
         
         XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth.degrees) <  UT_Sun.sunAzimuthThreshold)
         XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude.degrees) <  UT_Sun.sunAltitudeThreshold)
-       
+        
         XCTAssertTrue(abs(expectedSunRise.timeIntervalSince1970 - sunUnderTest.sunrise.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSunset.timeIntervalSince1970 - sunUnderTest.sunset.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedGoldenHourStart.timeIntervalSince1970 - sunUnderTest.eveningGoldenHourStart.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedGoldenHourEnd.timeIntervalSince1970 - sunUnderTest.eveningGoldenHourEnd.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedcivilDusk.timeIntervalSince1970 - sunUnderTest.civilDusk.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedcivilDawn.timeIntervalSince1970 - sunUnderTest.civilDawn.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedSolarNoon.timeIntervalSince1970 - sunUnderTest.solarNoon.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-      
+        
         /*--------------------------------------------------------------------
          Louisa USA
          *-------------------------------------------------------------------*/
@@ -234,7 +233,7 @@ final class UT_Sun: XCTestCase {
         //Step2: Setting 1/01/15 22:00 as date. (No daylight saving)
         dateUnderTest = createDateCustomTimeZone(day: 1, month: 1, year: 2015, hour: 22, minute: 00, seconds: 00,timeZone: timeZoneUnderTest)
         sunUnderTest.setDate(dateUnderTest)
-
+        
         //Step3: Saving expected outputs
         expectedAzimuth = 287.62
         expectedAltitude = -57.41
@@ -249,21 +248,21 @@ final class UT_Sun: XCTestCase {
         expectedcivilDusk = createDateCustomTimeZone(day: 1, month: 1, year: 2015, hour: 17, minute: 32, seconds: 27,timeZone: timeZoneUnderTest)
         
         expectedSolarNoon = createDateCustomTimeZone(day: 1, month: 1, year: 2015, hour: 12, minute: 15, seconds: 23,timeZone: timeZoneUnderTest)
-
+        
         //Step4: Check if the output are close to the expected ones
         
         XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth.degrees) <  UT_Sun.sunAzimuthThreshold)
         XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude.degrees) <  UT_Sun.sunAltitudeThreshold)
-       
+        
         XCTAssertTrue(abs(expectedSunRise.timeIntervalSince1970 - sunUnderTest.sunrise.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSunset.timeIntervalSince1970 - sunUnderTest.sunset.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedGoldenHourStart.timeIntervalSince1970 - sunUnderTest.eveningGoldenHourStart.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedGoldenHourEnd.timeIntervalSince1970 - sunUnderTest.eveningGoldenHourEnd.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedcivilDusk.timeIntervalSince1970 - sunUnderTest.civilDusk.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedcivilDawn.timeIntervalSince1970 - sunUnderTest.civilDawn.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
-       
+        
         XCTAssertTrue(abs(expectedSolarNoon.timeIntervalSince1970 - sunUnderTest.solarNoon.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         
         /*--------------------------------------------------------------------
@@ -290,12 +289,12 @@ final class UT_Sun: XCTestCase {
         expectedcivilDusk = createDateCustomTimeZone(day: 19, month: 1, year: 2022, hour: 15, minute: 05, seconds: 08,timeZone: timeZoneUnderTest)
         
         expectedSolarNoon = createDateCustomTimeZone(day: 19, month: 1, year: 2022, hour: 11, minute: 54, seconds: 52,timeZone: timeZoneUnderTest)
-
+        
         //Step4: Check if the output are close to the expected ones
         
         XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth.degrees) <  UT_Sun.sunAzimuthThreshold)
         XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude.degrees) <  UT_Sun.sunAltitudeThreshold)
-       
+        
         XCTAssertTrue(abs(expectedSunRise.timeIntervalSince1970 - sunUnderTest.sunrise.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSunset.timeIntervalSince1970 - sunUnderTest.sunset.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedcivilDusk.timeIntervalSince1970 - sunUnderTest.civilDusk.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
@@ -327,12 +326,12 @@ final class UT_Sun: XCTestCase {
         expectedcivilDusk = createDateCustomTimeZone(day: 12, month: 3, year: 2023, hour: 19, minute: 09, seconds: 19,timeZone: timeZoneUnderTest)
         
         expectedSolarNoon = createDateCustomTimeZone(day: 12, month: 3, year: 2023, hour: 12, minute: 48, seconds: 31,timeZone: timeZoneUnderTest)
-
+        
         //Step4: Check if the output are close to the expected ones
         
         XCTAssertTrue(abs(expectedAzimuth - sunUnderTest.azimuth.degrees) <  UT_Sun.sunAzimuthThreshold)
         XCTAssertTrue(abs(expectedAltitude - sunUnderTest.altitude.degrees) <  UT_Sun.sunAltitudeThreshold)
-       
+        
         XCTAssertTrue(abs(expectedSunRise.timeIntervalSince1970 - sunUnderTest.sunrise.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedSunset.timeIntervalSince1970 - sunUnderTest.sunset.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
         XCTAssertTrue(abs(expectedcivilDusk.timeIntervalSince1970 - sunUnderTest.civilDusk.timeIntervalSince1970) <  UT_Sun.sunSetRiseThresholdInSeconds)
@@ -342,51 +341,42 @@ final class UT_Sun: XCTestCase {
         
         //Test for issue #26 in github
         guard let pst = TimeZone(abbreviation: "PST") else {
-                abort()
-            }
-            
-            guard let utc = TimeZone(abbreviation: "UTC") else {
-                abort()
-            }
-            
-            let location: CLLocation = .init(latitude: 34.052235, longitude: -118.243683)
-
-            var sun = Sun.init(location: location, timeZone: pst)
-            
-            sun.setDate(SunKit.createDateCustomTimeZone(day: 11, month: 3, year: 2023, hour: 22, minute: 00, seconds: 00, timeZone: pst))
-            XCTAssertEqual(sun.sunrise.toString(pst), "03/11, 06:08")
-            XCTAssertEqual(sun.sunset.toString(pst), "03/11, 17:58")
-            XCTAssertEqual(sun.sunrise.toString(utc), "03/11, 14:08")
-            XCTAssertEqual(sun.sunset.toString(utc), "03/12, 01:58")
-
-            sun.setDate(SunKit.createDateCustomTimeZone(day: 13, month: 3, year: 2023, hour: 22, minute: 00, seconds: 00, timeZone: pst))
-            XCTAssertEqual(sun.sunrise.toString(pst), "03/13, 07:06")
-            XCTAssertEqual(sun.sunset.toString(pst), "03/13, 18:59")
-            XCTAssertEqual(sun.sunrise.toString(utc), "03/13, 14:06")
-            XCTAssertEqual(sun.sunset.toString(utc), "03/14, 01:59")
+            abort()
+        }
         
+        guard let utc = TimeZone(abbreviation: "UTC") else {
+            abort()
+        }
+        
+        let location: CLLocation = .init(latitude: 34.052235, longitude: -118.243683)
+        
+        var sun = Sun.init(location: location, timeZone: pst)
+        
+        sun.setDate(SunKit.createDateCustomTimeZone(day: 11, month: 3, year: 2023, hour: 22, minute: 00, seconds: 00, timeZone: pst))
+        XCTAssertEqual(sun.sunrise.toString(pst), "03/11, 06:08")
+        XCTAssertEqual(sun.sunset.toString(pst), "03/11, 17:58")
+        XCTAssertEqual(sun.sunrise.toString(utc), "03/11, 14:08")
+        XCTAssertEqual(sun.sunset.toString(utc), "03/12, 01:58")
+        
+        sun.setDate(SunKit.createDateCustomTimeZone(day: 13, month: 3, year: 2023, hour: 22, minute: 00, seconds: 00, timeZone: pst))
+        XCTAssertEqual(sun.sunrise.toString(pst), "03/13, 07:06")
+        XCTAssertEqual(sun.sunset.toString(pst), "03/13, 18:59")
+        XCTAssertEqual(sun.sunrise.toString(utc), "03/13, 14:06")
+        XCTAssertEqual(sun.sunset.toString(utc), "03/14, 01:59")
     }
     
-    func testOfObjectShadow() throws{
-        
+    func testOfObjectShadow() throws {
         //Step1: Creating sun instance in Naples and with timezone +1 (No daylight saving)
         let timeZoneUnderTest: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
-//        let timeZoneDaylightSaving: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaplesDaylightSaving * Int(SECONDS_IN_ONE_HOUR)) ?? .current
+        //        let timeZoneDaylightSaving: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaplesDaylightSaving * Int(SECONDS_IN_ONE_HOUR)) ?? .current
         let sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneUnderTest)
         
-
-        
         XCTAssertTrue(abs(sunUnderTest.shadowLength(with: .init(degrees: 43.40))! - 1.06 ) <= UT_Sun.objectShadowThreshold)
-        
         XCTAssertTrue(sunUnderTest.shadowLength(with: .init(degrees: -0.01))  == nil)
-        
         XCTAssertTrue(sunUnderTest.shadowLength(with: .init(degrees: 90))  == 0)
- 
-        
     }
     
     func testOfEquinoxesAndSolstices() throws {
-        
         //Test: 19/01/22 17:31. Timezone +1. Naples
         
         //Step1: Creating sun instance in Naples and with timezone +1 (No daylight saving)
@@ -399,31 +389,24 @@ final class UT_Sun: XCTestCase {
         sunUnderTest.setDate(dateUnderTest)
         
         //Step3: Saving expected outputs
-    
         let expectedMarchEquinox = createDateCustomTimeZone(day: 20, month: 3, year: 2022, hour: 16, minute: 33, seconds: 00,timeZone: timeZoneUnderTest)
         let expectedJuneSolstice = createDateCustomTimeZone(day: 21, month: 6, year: 2022, hour: 11, minute: 13, seconds: 00,timeZone: timeZoneDaylightSaving)
         let expectedSeptemberEquinox = createDateCustomTimeZone(day: 23, month: 09, year: 2022, hour: 03, minute: 03, seconds: 00,timeZone: timeZoneDaylightSaving)
         let expectedDecemberSolstice = createDateCustomTimeZone(day: 21, month: 12, year: 2022, hour: 22, minute: 47, seconds: 00,timeZone: timeZoneUnderTest)
-
+        
         //Step4: Check if the output are close to the expected ones
         XCTAssertTrue(abs(expectedMarchEquinox.timeIntervalSince1970 - sunUnderTest.marchEquinox.timeIntervalSince1970)
                       <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
- 
         XCTAssertTrue(abs(expectedJuneSolstice.timeIntervalSince1970 - sunUnderTest.juneSolstice.timeIntervalSince1970)
                       <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
-        
         XCTAssertTrue(abs(expectedSeptemberEquinox.timeIntervalSince1970 - sunUnderTest.septemberEquinox.timeIntervalSince1970)
                       <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
-       
         XCTAssertTrue(abs(expectedDecemberSolstice.timeIntervalSince1970 - sunUnderTest.decemberSolstice.timeIntervalSince1970)
                       <  UT_Sun.sunEquinoxesAndSolsticesThresholdInSeconds)
-            
     }
-    
     
     /// Test of  a sun ionstance whenm you play with timezones and change location
     func testOfSunWhenTimezoneChanges() throws {
-        
         //Step1: Creating Sun instance in Naples and with timezone +1
         let timeZoneNaples: TimeZone = .init(secondsFromGMT: UT_Sun.timeZoneNaples * Int(SECONDS_IN_ONE_HOUR)) ?? .current
         var sunUnderTest = Sun.init(location: UT_Sun.naplesLocation, timeZone: timeZoneNaples)
@@ -441,10 +424,7 @@ final class UT_Sun: XCTestCase {
         
         //Step5: Check if output of sunUnderTest.date matches the expected output
         XCTAssertTrue(expectedDate == sunUnderTest.date)
-        
     }
-    
-    
     
     func testPerformance() throws {
         // Performance of setDate function that will refresh all the sun variables

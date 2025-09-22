@@ -1,5 +1,5 @@
 //
-//  SunElevationEvents.swift
+//  Date+Strideable.swift
 //
 //
 //   Copyright 2024 Leonardo Bertinelli, Davide Biancardi, Raffaele Fulgente, Clelia Iovine, Nicolas Mariniello, Fabio Pizzano
@@ -19,13 +19,26 @@
 import Foundation
 
 
-enum SunElevationEvents: Double {
-    case civil           = -6
-    case nautical        = -12
-    case astronomical    = -18
-    case eveningGoldenHourStart =  6
-    case eveningGoldenHourEnd   = -4
+// Allows us to loop between two dates using interval time n.
+extension Date: @retroactive Strideable {
+    public func distance(to other: Date) -> TimeInterval {
+        return other.timeIntervalSinceReferenceDate - self.timeIntervalSinceReferenceDate
+    }
     
-    static var morningGoldenHourStart: SunElevationEvents { .eveningGoldenHourEnd }
-    static var morningGoldenHourEnd: SunElevationEvents { .eveningGoldenHourStart }
+    func toString(_ timeZone: TimeZone) -> String {
+        let df = DateFormatter()
+        df.timeZone = timeZone
+        let custom = DateFormatter.dateFormat(
+            fromTemplate: "MMdd HH:mm",
+            options: 0,
+            locale: Locale(identifier: "en")
+        )
+        df.dateFormat = custom
+        
+        return df.string(from: self)
+    }
+    
+    public func advanced(by n: TimeInterval) -> Date {
+        return self + n
+    }
 }

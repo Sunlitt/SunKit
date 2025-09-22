@@ -19,12 +19,12 @@
 import XCTest
 @testable import SunKit
 
+
 final class UT_HorizonCoordinates: XCTestCase {
     
     /// Test of horizon2Equatorial
     func testOfhorizon2Equatorial() throws {
-        
-    //Test1: Converting altitude 40° and azimuth 115° to equatorial coordinates for an observer at 38° N latitude. Expected out shall be hour angle = 21.031560h and declination = 8.084044°.
+        //Test1: Converting altitude 40° and azimuth 115° to equatorial coordinates for an observer at 38° N latitude. Expected out shall be hour angle = 21.031560h and declination = 8.084044°.
         
         //Step1:
         let horizonCoordinatesUnderTest: HorizonCoordinates = .init(altitude: .degrees(40), azimuth: .degrees(115))

@@ -1,6 +1,6 @@
 //
 //  HMS.swift
-//  
+//
 //
 //   Copyright 2024 Leonardo Bertinelli, Davide Biancardi, Raffaele Fulgente, Clelia Iovine, Nicolas Mariniello, Fabio Pizzano
 //
@@ -21,13 +21,11 @@ import Foundation
 
 /// Time expressed in HMS format
 public struct HMS: Equatable, Hashable, Codable, Sendable {
-    
     public var hours: Double
     public var minutes: Double
     public var seconds: Double
     
     public init(from date: Date){
-        
         var calendar: Calendar = .init(identifier: .gregorian)
         calendar.timeZone = .init(abbreviation: "GMT")!
         
@@ -37,14 +35,12 @@ public struct HMS: Equatable, Hashable, Codable, Sendable {
     }
     
     public init(hours: Double,minutes: Double,seconds: Double){
-        
         self.hours = hours
         self.minutes = minutes
         self.seconds = seconds
     }
     
     public init(decimal: Double){
-        
         //Step1:
         let sign = decimal < 0 ? -1 : 1
         //Step2:
@@ -57,17 +53,16 @@ public struct HMS: Equatable, Hashable, Codable, Sendable {
         let seconds = 60 * (60 * dec.truncatingRemainder(dividingBy: 1)).truncatingRemainder(dividingBy: 1)
         //Step6:
         hours *= sign
-
+        
         self.hours = Double(hours)
         self.minutes = Double(minutes)
         self.seconds = seconds
-    
+        
     }
     
     /// It converts from HMS format to decimal
     /// - Returns: HMS of the instance expressed in decimal format
     public func hMS2Decimal() -> Double {
-        
         //Step3:
         let dm: Double = Double(seconds / 60)
         //Step4:
@@ -79,5 +74,4 @@ public struct HMS: Equatable, Hashable, Codable, Sendable {
         
         return decimalHour
     }
-    
 }

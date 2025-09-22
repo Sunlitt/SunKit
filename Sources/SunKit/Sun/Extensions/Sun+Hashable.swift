@@ -1,5 +1,5 @@
 //
-//  SunElevationEvents.swift
+//  Sun+Hashable.swift
 //
 //
 //   Copyright 2024 Leonardo Bertinelli, Davide Biancardi, Raffaele Fulgente, Clelia Iovine, Nicolas Mariniello, Fabio Pizzano
@@ -19,13 +19,10 @@
 import Foundation
 
 
-enum SunElevationEvents: Double {
-    case civil           = -6
-    case nautical        = -12
-    case astronomical    = -18
-    case eveningGoldenHourStart =  6
-    case eveningGoldenHourEnd   = -4
-    
-    static var morningGoldenHourStart: SunElevationEvents { .eveningGoldenHourEnd }
-    static var morningGoldenHourEnd: SunElevationEvents { .eveningGoldenHourStart }
+extension Sun: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(location)
+        hasher.combine(timeZone)
+        hasher.combine(date)
+    }
 }
