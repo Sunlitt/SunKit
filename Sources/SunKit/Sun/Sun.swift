@@ -333,7 +333,6 @@ public struct Sun: Identifiable, Sendable {
     
     // Sun constants
     private let sunEclipticLongitudeAtTheEpoch: Angle = .init(degrees: 280.466069)
-    private let sunEclipticLongitudePerigee: Angle = .init(degrees: 282.938346)
     
     /// Number of the days passed since the start of the year for the self.date
     private var daysPassedFromStartOfTheYear: Int {
@@ -432,6 +431,8 @@ public struct Sun: Identifiable, Sendable {
         self.decemberSolstice = getDecemberSolstice() ?? Date()
     }
     
+    // TODO: SunCoordinates implicitly depends on self.date and self.longitude (location)
+    
     /// Updates Horizon coordinates, Ecliptic coordinates and Equatorial coordinates of the Sun
     private mutating func updateSunCoordinates() {
         let lstDecimal = calculateLSTDecimal(using: self.date)
@@ -488,7 +489,7 @@ public struct Sun: Identifiable, Sendable {
         var sunTrueAnomaly = sunMeanAnomaly.degrees + equationOfCenter
         // Add or subtract multiples of 360° to adjust sun true anomaly to the range of 0° to 360°
         sunTrueAnomaly = extendedMod(sunTrueAnomaly, 360)
-        var sunEclipticLongitude: Angle = .init(degrees: sunTrueAnomaly + sunEclipticLongitudePerigee.degrees)
+        var sunEclipticLongitude: Angle = .init(degrees: sunTrueAnomaly + sunCoordinates.sunEclipticLongitudePerigee.degrees)
         
         if sunEclipticLongitude.degrees > 360 {
             sunEclipticLongitude.degrees -= 360
@@ -498,7 +499,7 @@ public struct Sun: Identifiable, Sendable {
     }
     
     private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
-        var sunMeanAnomaly: Angle = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunEclipticLongitudePerigee.degrees))
+        var sunMeanAnomaly: Angle = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunCoordinates.sunEclipticLongitudePerigee.degrees))
         sunMeanAnomaly = .init(degrees: extendedMod(sunMeanAnomaly.degrees, 360))
         
         return sunMeanAnomaly
