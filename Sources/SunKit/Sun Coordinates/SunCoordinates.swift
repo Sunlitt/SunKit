@@ -114,16 +114,15 @@ internal struct SunCoordinates: Sendable {
 //        )
     }
     
-    // TODO: Remove mutating func, need to refactor EquatorialCoordinates
-    internal mutating func calculateSunHorizonCoordinates(
+    internal func calculateSunHorizonCoordinates(
         using sunEquatorialCoordinates: EquatorialCoordinates,
         lstDecimal: Double,
         latitude: Angle
     ) -> HorizonCoordinates {
-//        let horizonCoordinates = sunEquatorialCoordinates.getHorizonCoordinates(lstDecimal: lstDecimal, latitude: latitude)
+        var _sunEquatorialCoordinates = sunEquatorialCoordinates
+        let horizonCoordinates = _sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude)
         
-//        return horizonCoordinates ?? .init(altitude: .zero, azimuth: .zero)
-        return .init(altitude: .zero, azimuth: .zero)
+        return horizonCoordinates ?? .init(altitude: .zero, azimuth: .zero)
     }
     
     // MARK: - Helpers
