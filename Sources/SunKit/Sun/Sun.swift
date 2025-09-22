@@ -432,7 +432,7 @@ public struct Sun: Identifiable, Sendable {
     
     /// Updates Horizon coordinates, Ecliptic coordinates and Equatorial coordinates of the Sun
     private mutating func updateSunCoordinates() {
-        let lstDecimal = calculateLSTDecimal(using: self.date)
+        let lstDecimal = sunCoordinates.calculateLSTDecimal(using: self.date, longitude: self.longitude)
         let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: self.date)
         
         sunEclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
@@ -461,15 +461,6 @@ public struct Sun: Identifiable, Sendable {
          )
      }
      */
-    
-    private func calculateLSTDecimal(using date: Date) -> Double {
-        // Convert LCT to UT, GST, and LST times and adjust the date if needed
-        let gstHMS = uT2GST(self.date)
-        let lstHMS = gST2LST(gstHMS, longitude: longitude)
-        let lstDecimal = lstHMS.hMS2Decimal()
-        
-        return lstDecimal
-    }
     
     // TODO: Delete
     // TODO: Move behavior into EclipticCoordinates, refactor to Object
@@ -722,7 +713,7 @@ public struct Sun: Identifiable, Sendable {
     
     // TODO: Extract functions to collapse into updateSunCoordinates
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
-        let lstDecimal = calculateLSTDecimal(using: date)
+        let lstDecimal = sunCoordinates.calculateLSTDecimal(using: self.date, longitude: self.longitude)
         let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: date)
         
         let sunEclipticCoordinates: EclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)

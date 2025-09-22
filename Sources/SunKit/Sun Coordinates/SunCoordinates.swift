@@ -128,6 +128,15 @@ internal struct SunCoordinates: Sendable {
     
     // MARK: - Helpers
     
+    internal func calculateLSTDecimal(using date: Date, longitude: Angle) -> Double {
+        // Convert LCT to UT, GST, and LST times and adjust the date if needed
+        let gstHMS = uT2GST(date)
+        let lstHMS = gST2LST(gstHMS, longitude: longitude)
+        let lstDecimal = lstHMS.hMS2Decimal()
+        
+        return lstDecimal
+    }
+    
     internal func calculateSunEclipticLongitude(using date: Date) -> Angle {
         // Julian number for standard epoch 2000
         let jdEpoch = 2451545.00
