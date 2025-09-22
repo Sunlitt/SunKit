@@ -448,7 +448,6 @@ public struct Sun: Identifiable, Sendable {
     }
     
     /*
-     // TODO: Move calculateLSTDecimal and calculateSunEclipticLongitude into SunCoordinates
      /// Updates Horizon coordinates, Ecliptic coordinates and Equatorial coordinates of the Sun
      private mutating func updateSunCoordinates() {
          let lstDecimal = calculateLSTDecimal(using: self.date)
@@ -472,6 +471,39 @@ public struct Sun: Identifiable, Sendable {
     private func calculateSunEquatorialCoordinates(using sunEclipticCoordinates: EclipticCoordinates) -> EquatorialCoordinates {
         sunEclipticCoordinates.ecliptic2Equatorial()
     }
+    
+    // TODO: Extract functions to collapse into updateSunCoordinates
+    public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
+        let lstDecimal = sunCoordinates.calculateLSTDecimal(using: self.date, longitude: self.longitude)
+        let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: date)
+        
+        let sunEclipticCoordinates: EclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
+        // Ecliptic to Equatorial
+        var sunEquatorialCoordinates: EquatorialCoordinates = calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
+        // Equatorial to Horizon
+        let sunHorizonCoordinates: HorizonCoordinates = calculateSunHorizonCoordinates(using: lstDecimal)
+        
+        return .init(altitude: sunHorizonCoordinates.altitude, azimuth: sunHorizonCoordinates.azimuth)
+        
+        // TODO: Move behavior intoEquatorialCoordinates, refactor to Object
+        func calculateSunHorizonCoordinates(using lstDecimal: Double) -> HorizonCoordinates {
+            sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
+        }
+    }
+    
+    /*
+     public mutating func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
+         let lstDecimal = calculateLSTDecimal(using: date)
+         let sunEclipticLongitude: Angle = calculateSunEclipticLongitude(using: date)
+         let sunHorizonCoordinates = sunCoordinates.getSunHorizonCoordinatesGiven(
+             sunEclipticLongitude: sunEclipticLongitude,
+             lstDecimal: lstDecimal,
+             latitude: latitude
+         )
+         
+         return sunHorizonCoordinates
+     }
+     */
     
     // MARK: - Get Day Events
     
@@ -708,41 +740,6 @@ public struct Sun: Identifiable, Sendable {
         
         return newDate
     }
-    
-    // MARK: - Get Horizon Coordinates
-    
-    // TODO: Extract functions to collapse into updateSunCoordinates
-    public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
-        let lstDecimal = sunCoordinates.calculateLSTDecimal(using: self.date, longitude: self.longitude)
-        let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: date)
-        
-        let sunEclipticCoordinates: EclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
-        // Ecliptic to Equatorial
-        var sunEquatorialCoordinates: EquatorialCoordinates = calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
-        // Equatorial to Horizon
-        let sunHorizonCoordinates: HorizonCoordinates = calculateSunHorizonCoordinates(using: lstDecimal)
-        
-        return .init(altitude: sunHorizonCoordinates.altitude, azimuth: sunHorizonCoordinates.azimuth)
-        
-        // TODO: Move behavior intoEquatorialCoordinates, refactor to Object
-        func calculateSunHorizonCoordinates(using lstDecimal: Double) -> HorizonCoordinates {
-            sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
-        }
-    }
-    
-    /*
-     public mutating func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
-         let lstDecimal = calculateLSTDecimal(using: date)
-         let sunEclipticLongitude: Angle = calculateSunEclipticLongitude(using: date)
-         let sunHorizonCoordinates = sunCoordinates.getSunHorizonCoordinatesGiven(
-             sunEclipticLongitude: sunEclipticLongitude,
-             lstDecimal: lstDecimal,
-             latitude: latitude
-         )
-         
-         return sunHorizonCoordinates
-     }
-     */
     
     // MARK: - Get Month Events
     
