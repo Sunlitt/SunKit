@@ -479,7 +479,7 @@ public struct Sun: Identifiable, Sendable {
         // Compute the total number of elapsed days, including fractional days, since the standard epoch (i.e., JD − JDe)
         let elapsedDaysSinceStandardEpoch: Double = jdTT - jdEpoch
         // Use the algorithm from section 6.2.3 to calculate the Sun’s ecliptic longitude and mean anomaly for the given UT date and time.
-        let sunMeanAnomaly = getSunMeanAnomaly(from: elapsedDaysSinceStandardEpoch)
+        let sunMeanAnomaly = sunCoordinates.getSunMeanAnomaly(from: elapsedDaysSinceStandardEpoch)
         // Use Equation 6.2.4 to aproximate the Equation of the center
         let equationOfCenter = 360 / Double.pi * sin(sunMeanAnomaly.radians) * 0.016708
         // Add EoC to sun mean anomaly to get the sun true anomaly
@@ -493,13 +493,6 @@ public struct Sun: Identifiable, Sendable {
         }
         
         return sunEclipticLongitude
-    }
-    
-    private func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
-        var sunMeanAnomaly: Angle = .init(degrees:(((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunCoordinates.sunEclipticLongitudeAtTheEpoch.degrees - sunCoordinates.sunEclipticLongitudePerigee.degrees))
-        sunMeanAnomaly = .init(degrees: extendedMod(sunMeanAnomaly.degrees, 360))
-        
-        return sunMeanAnomaly
     }
     
     // TODO: Delete

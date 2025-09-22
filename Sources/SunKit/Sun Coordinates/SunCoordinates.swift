@@ -125,4 +125,13 @@ internal struct SunCoordinates: Sendable {
 //        return horizonCoordinates ?? .init(altitude: .zero, azimuth: .zero)
         return .init(altitude: .zero, azimuth: .zero)
     }
+    
+    // MARK: - Helpers
+    
+    internal func getSunMeanAnomaly(from elapsedDaysSinceStandardEpoch: Double) -> Angle {
+        var sunMeanAnomaly: Angle = .init(degrees: (((360.0 * elapsedDaysSinceStandardEpoch) / 365.242191) + sunEclipticLongitudeAtTheEpoch.degrees - sunEclipticLongitudePerigee.degrees))
+        sunMeanAnomaly = .init(degrees: extendedMod(sunMeanAnomaly.degrees, 360))
+        
+        return sunMeanAnomaly
+    }
 }
