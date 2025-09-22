@@ -428,8 +428,6 @@ public struct Sun: Identifiable, Sendable {
         self.decemberSolstice = getDecemberSolstice() ?? Date()
     }
     
-    // TODO: SunCoordinates implicitly depends on self.date and self.longitude (location)
-    
     /// Updates Horizon coordinates, Ecliptic coordinates and Equatorial coordinates of the Sun
     private mutating func updateSunCoordinates(using date: Date, longitude: Angle, latitude: Angle) {
         let lstDecimal = sunCoordinates.calculateLSTDecimal(using: date, longitude: longitude)
@@ -482,21 +480,20 @@ public struct Sun: Identifiable, Sendable {
     
     // TODO: Extract functions to collapse into updateSunCoordinates
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
-        let lstDecimal = sunCoordinates.calculateLSTDecimal(using: self.date, longitude: self.longitude)
+        let lstDecimal = sunCoordinates.calculateLSTDecimal(using: date, longitude: self.longitude)
         let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: date)
         
         let sunEclipticCoordinates: EclipticCoordinates = sunCoordinates.calculateSunEclipticCoordinates(using: sunEclipticLongitude)
         // Ecliptic to Equatorial
-        var sunEquatorialCoordinates: EquatorialCoordinates = sunCoordinates.calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
+        let sunEquatorialCoordinates: EquatorialCoordinates = sunCoordinates.calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
         // Equatorial to Horizon
-        let sunHorizonCoordinates: HorizonCoordinates = calculateSunHorizonCoordinates(using: lstDecimal)
+        let sunHorizonCoordinates: HorizonCoordinates = calculateSunHorizonCoordinates(
+            using: sunEquatorialCoordinates,
+            lstDecimal: lstDecimal,
+            latitude: latitude
+        )
         
         return .init(altitude: sunHorizonCoordinates.altitude, azimuth: sunHorizonCoordinates.azimuth)
-        
-        // TODO: Move behavior intoEquatorialCoordinates, refactor to Object
-        func calculateSunHorizonCoordinates(using lstDecimal: Double) -> HorizonCoordinates {
-            sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
-        }
     }
     
     /*
