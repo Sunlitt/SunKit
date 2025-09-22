@@ -435,6 +435,14 @@ public struct Sun: Identifiable, Sendable {
         let lstDecimal = sunCoordinates.calculateLSTDecimal(using: self.date, longitude: self.longitude)
         let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: self.date)
         
+        updateCoordinates(sunEclipticLongitude: sunEclipticLongitude, lstDecimal: lstDecimal, latitude: self.latitude)
+    }
+    
+    private mutating func updateCoordinates(
+        sunEclipticLongitude: Angle,
+        lstDecimal: Double,
+        latitude: Angle
+    ) {
         sunEclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
         // Ecliptic to Equatorial
         sunEquatorialCoordinates = calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
