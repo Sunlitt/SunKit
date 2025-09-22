@@ -122,7 +122,6 @@ internal struct SunCoordinates: Sendable {
         self.equatorialCoordinates = calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
     }
     
-    // TODO: Move behavior into EclipticCoordinates
     internal func calculateSunEquatorialCoordinates(using sunEclipticCoordinates: EclipticCoordinates) -> EquatorialCoordinates {
         sunEclipticCoordinates.ecliptic2Equatorial()
     }
