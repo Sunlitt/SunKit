@@ -445,7 +445,7 @@ public struct Sun: Identifiable, Sendable {
     ) {
         sunEclipticCoordinates = sunCoordinates.calculateSunEclipticCoordinates(using: sunEclipticLongitude)
         // Ecliptic to Equatorial
-        sunEquatorialCoordinates = calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
+        sunEquatorialCoordinates = sunCoordinates.calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
         // Equatorial to Horizon
         sunHorizonCoordinates = calculateSunHorizonCoordinates(using: lstDecimal)
         
@@ -469,11 +469,6 @@ public struct Sun: Identifiable, Sendable {
      }
      */
     
-    // TODO: Move behavior into EclipticCoordinates
-    private func calculateSunEquatorialCoordinates(using sunEclipticCoordinates: EclipticCoordinates) -> EquatorialCoordinates {
-        sunEclipticCoordinates.ecliptic2Equatorial()
-    }
-    
     // TODO: Extract functions to collapse into updateSunCoordinates
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
         let lstDecimal = sunCoordinates.calculateLSTDecimal(using: self.date, longitude: self.longitude)
@@ -481,7 +476,7 @@ public struct Sun: Identifiable, Sendable {
         
         let sunEclipticCoordinates: EclipticCoordinates = sunCoordinates.calculateSunEclipticCoordinates(using: sunEclipticLongitude)
         // Ecliptic to Equatorial
-        var sunEquatorialCoordinates: EquatorialCoordinates = calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
+        var sunEquatorialCoordinates: EquatorialCoordinates = sunCoordinates.calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
         // Equatorial to Horizon
         let sunHorizonCoordinates: HorizonCoordinates = calculateSunHorizonCoordinates(using: lstDecimal)
         
