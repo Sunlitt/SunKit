@@ -97,7 +97,7 @@ internal struct SunCoordinates: Sendable {
     
     // MARK: Ecliptic Coordinates
     
-    internal mutating func setSunEclipticCoordinates(using sunEclipticLongitude: Angle) {
+    private mutating func setSunEclipticCoordinates(using sunEclipticLongitude: Angle) {
         self.eclipticCoordinates = calculateSunEclipticCoordinates(using: sunEclipticLongitude)
     }
     
@@ -107,7 +107,7 @@ internal struct SunCoordinates: Sendable {
     
     // MARK: Equatorial Coordinates
     
-    internal mutating func setSunEquatorialCoordinates(using sunEclipticCoordinates: EclipticCoordinates) {
+    private mutating func setSunEquatorialCoordinates(using sunEclipticCoordinates: EclipticCoordinates) {
         self.equatorialCoordinates = calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
     }
     
@@ -118,7 +118,7 @@ internal struct SunCoordinates: Sendable {
     
     // MARK: Horizon Coordinates
     
-    internal mutating func setSunHorizonCoordinates(
+    private mutating func setSunHorizonCoordinates(
         using lstDecimal: Double,
         latitude: Angle
     ) {
