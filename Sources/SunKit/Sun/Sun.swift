@@ -91,38 +91,21 @@ public struct Sun: Identifiable, Sendable {
     private var sunCoordinates: SunCoordinates = .init()
     
     public var azimuth: Angle {
-        sunHorizonCoordinates.azimuth
+        sunCoordinates.azimuth
     }
     
     public var altitude: Angle {
-        sunHorizonCoordinates.altitude
+        sunCoordinates.altitude
     }
-    // TODO: Use SunCoordinates as backing object for these Coordinates.
-    private var sunHorizonCoordinates: HorizonCoordinates = .init(altitude: .zero, azimuth: .zero)
-    public private(set) var sunEquatorialCoordinates: EquatorialCoordinates = .init(declination: .zero)
-    public private(set) var sunEclipticCoordinates: EclipticCoordinates = .init(eclipticLatitude: .zero, eclipticLongitude: .zero)
-
-    /*
-     public var azimuth: Angle {
-         sunCoordinates.azimuth
-     }
-     
-     public var altitude: Angle {
-         sunCoordinates.altitude
-     }
-     
-     private var sunHorizonCoordinates: HorizonCoordinates {
-         sunCoordinates.horizonCoordinates
-     }
-     
-     public var sunEquatorialCoordinates: EquatorialCoordinates {
-         sunCoordinates.equatorialCoordinates
-     }
-     
-     public var sunEclipticCoordinates: EclipticCoordinates {
-         sunCoordinates.eclipticCoordinates
-     }
-     */
+    
+    public var sunEquatorialCoordinates: EquatorialCoordinates {
+        sunCoordinates.equatorialCoordinates
+    }
+    
+    public var sunEclipticCoordinates: EclipticCoordinates {
+        sunCoordinates.eclipticCoordinates
+    }
+    
     /*--------------------------------------------------------------------
      Sun Events during the year
      *-------------------------------------------------------------------*/
@@ -433,20 +416,8 @@ public struct Sun: Identifiable, Sendable {
         let lstDecimal = sunCoordinates.calculateLSTDecimal(using: date, longitude: longitude)
         let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: date)
         
-        updateCoordinates(sunEclipticLongitude: sunEclipticLongitude, lstDecimal: lstDecimal, latitude: latitude)
-    }
-    
-    private mutating func updateCoordinates(
-        sunEclipticLongitude: Angle,
-        lstDecimal: Double,
-        latitude: Angle
-    ) {
-        sunEclipticCoordinates = sunCoordinates.calculateSunEclipticCoordinates(using: sunEclipticLongitude)
-        // Ecliptic to Equatorial
-        sunEquatorialCoordinates = sunCoordinates.calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
-        // Equatorial to Horizon
-        sunHorizonCoordinates = sunCoordinates.calculateSunHorizonCoordinates(
-            using: sunEquatorialCoordinates,
+        sunCoordinates.setCoordinates(
+            sunEclipticLongitude: sunEclipticLongitude,
             lstDecimal: lstDecimal,
             latitude: latitude
         )
