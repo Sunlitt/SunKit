@@ -664,8 +664,6 @@ public struct Sun: Identifiable, Sendable {
     
     // MARK: - Get Month Events
     
-    // TODO: Move magic numbers into Enum cases or subclasses
-    
     private func getMarchEquinox() -> Date? {
         let year = Double(calendar.component(.year, from: self.date))
         let t: Double = year / 1000
