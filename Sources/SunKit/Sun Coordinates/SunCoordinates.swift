@@ -64,6 +64,22 @@ internal struct SunCoordinates: Sendable {
     }
     
     internal func getSunHorizonCoordinates(
+        given date: Date,
+        longitude: Angle,
+        latitude: Angle
+    ) -> HorizonCoordinates {
+        let lstDecimal = calculateLSTDecimal(using: date, longitude: longitude)
+        let sunEclipticLongitude: Angle = calculateSunEclipticLongitude(using: date)
+        let sunHorizonCoordinates = getSunHorizonCoordinates(
+            given: sunEclipticLongitude,
+            lstDecimal: lstDecimal,
+            latitude: latitude
+        )
+        
+        return .init(altitude: sunHorizonCoordinates.altitude, azimuth: sunHorizonCoordinates.azimuth)
+    }
+    
+    private func getSunHorizonCoordinates(
         given sunEclipticLongitude: Angle,
         lstDecimal: Double,
         latitude: Angle

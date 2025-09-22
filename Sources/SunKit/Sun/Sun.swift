@@ -88,7 +88,7 @@ public struct Sun: Identifiable, Sendable {
     public private(set) var sunsetAzimuth: Double = 0
     
     /// The object backing the public interface for Sun coordinates.
-    private let sunCoordinates: SunCoordinates = .init()
+    private var sunCoordinates: SunCoordinates = .init()
     
     public var azimuth: Angle {
         sunHorizonCoordinates.azimuth
@@ -453,16 +453,13 @@ public struct Sun: Identifiable, Sendable {
     }
     
     public func getSunHorizonCoordinatesFrom(date: Date) -> HorizonCoordinates {
-        let lstDecimal = sunCoordinates.calculateLSTDecimal(using: date, longitude: self.longitude)
-        let sunEclipticLongitude: Angle = sunCoordinates.calculateSunEclipticLongitude(using: date)
-        
         let sunHorizonCoordinates = sunCoordinates.getSunHorizonCoordinates(
-            given: sunEclipticLongitude,
-            lstDecimal: lstDecimal,
+            given: date,
+            longitude: self.longitude,
             latitude: self.latitude
         )
         
-        return .init(altitude: sunHorizonCoordinates.altitude, azimuth: sunHorizonCoordinates.azimuth)
+        return sunHorizonCoordinates
     }
     
     // MARK: - Get Day Events
