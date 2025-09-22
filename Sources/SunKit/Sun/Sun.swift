@@ -447,12 +447,23 @@ public struct Sun: Identifiable, Sendable {
         // Ecliptic to Equatorial
         sunEquatorialCoordinates = sunCoordinates.calculateSunEquatorialCoordinates(using: sunEclipticCoordinates)
         // Equatorial to Horizon
-        sunHorizonCoordinates = calculateSunHorizonCoordinates(using: lstDecimal)
+        sunHorizonCoordinates = calculateSunHorizonCoordinates(
+            using: sunEquatorialCoordinates,
+            lstDecimal: lstDecimal,
+            latitude: latitude
+        )
+    }
+    
+    // TODO: Move behavior into EquatorialCoordinates, refactor to Object
+    private func calculateSunHorizonCoordinates(
+        using sunEquatorialCoordinates: EquatorialCoordinates,
+        lstDecimal: Double,
+        latitude: Angle
+    ) -> HorizonCoordinates {
+        var _sunEquatorialCoordinates = sunEquatorialCoordinates
+        let horizonCoordinates = _sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude)
         
-        // TODO: Move behavior into EquatorialCoordinates, refactor to Object
-        func calculateSunHorizonCoordinates(using lstDecimal: Double) -> HorizonCoordinates {
-            sunEquatorialCoordinates.equatorial2Horizon(lstDecimal: lstDecimal, latitude: latitude) ?? .init(altitude: .zero, azimuth: .zero)
-        }
+        return horizonCoordinates ?? .init(altitude: .zero, azimuth: .zero)
     }
     
     /*
