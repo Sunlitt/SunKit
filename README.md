@@ -33,7 +33,7 @@ Attribution is essential to make sure that our hard work is properly recognized 
 let naplesLocation: CLLocation = .init(latitude: 40.84014, longitude: 14.25226)
 
 // Timezone for the location of interest. It's highly recommended to initialize it via identifier
-let timeZoneNaples: Timezone = .init(identifier: "Europe/Rome") ?? .current
+let timeZoneNaples: TimeZone = .init(identifier: "Europe/Rome") ?? .current
 
 // Creating the Sun instance which will store all the information you need about sun events and his position
 var mySun: Sun = .init(location: naplesLocation, timeZone: timeZoneNaples)
